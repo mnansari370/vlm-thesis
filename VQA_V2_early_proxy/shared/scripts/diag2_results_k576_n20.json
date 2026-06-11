@@ -1,0 +1,1453 @@
+{
+  "k": 576,
+  "n_samples": 20,
+  "path_a_acc": 0.8166666666666668,
+  "path_b_acc": 0.75,
+  "path_c_acc": 0.8166666666666668,
+  "path_a": [
+    {
+      "question_id": 262148000,
+      "question": "Where is he looking?",
+      "pred": "Down",
+      "raw_answers": [
+        "down",
+        "down",
+        "at table",
+        "skateboard",
+        "down",
+        "table",
+        "down",
+        "down",
+        "down",
+        "down"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        603
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 262148001,
+      "question": "What are the people in the background doing?",
+      "pred": "Watching",
+      "raw_answers": [
+        "spectating",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        607
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 262148002,
+      "question": "What is he on top of?",
+      "pred": "Skateboard",
+      "raw_answers": [
+        "table",
+        "table",
+        "table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "skateboard",
+        "picnic table"
+      ],
+      "score": 0.3333333333333333,
+      "input_ids_shape": [
+        1,
+        605
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393225000,
+      "question": "What website copyrighted the picture?",
+      "pred": "Foodiebakercom",
+      "raw_answers": [
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker",
+        "foodiebakercom",
+        "foodiebakercom",
+        "http://foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        606
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393225001,
+      "question": "Is this a creamy soup?",
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 0.0,
+      "input_ids_shape": [
+        1,
+        605
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393225002,
+      "question": "Is this rice noodle soup?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        606
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393225003,
+      "question": "What is to the right of the soup?",
+      "pred": "Chopsticks",
+      "raw_answers": [
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "shrimp",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks spoon"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        607
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393226000,
+      "question": "What is the man doing in the street?",
+      "pred": "Walking",
+      "raw_answers": [
+        "crossing it",
+        "walking",
+        "walking",
+        "crossing",
+        "crossing road",
+        "walking",
+        "crossing",
+        "walking",
+        "crossing",
+        "walking"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        607
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393226001,
+      "question": "How many photo's can you see?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "4",
+        "4",
+        "4",
+        "1",
+        "1",
+        "4",
+        "1",
+        "1"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        607
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 393226002,
+      "question": "What does the truck on the left sell?",
+      "pred": "Ice cream",
+      "raw_answers": [
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        608
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 240301000,
+      "question": "Why is there a gap between the roof and wall?",
+      "pred": "Ventilation",
+      "raw_answers": [
+        "ventilation",
+        "provide air",
+        "to air out barn from stinky bovines",
+        "keep cow safe",
+        "airflow",
+        "to let sunlight in",
+        "yes",
+        "yes",
+        "for air",
+        "air"
+      ],
+      "score": 0.3333333333333333,
+      "input_ids_shape": [
+        1,
+        609
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 240301001,
+      "question": "Is it daylight in this picture?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        606
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 240301002,
+      "question": "Why is the cow laying down?",
+      "pred": "Resting",
+      "raw_answers": [
+        "tired",
+        "tired",
+        "4",
+        "resting",
+        "tired",
+        "tired",
+        "resting",
+        "tired",
+        "it's tired",
+        "tired"
+      ],
+      "score": 0.6666666666666666,
+      "input_ids_shape": [
+        1,
+        606
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 131089000,
+      "question": "What color is the grass in this picture?",
+      "pred": "Green",
+      "raw_answers": [
+        "gray",
+        "green",
+        "green",
+        "black, white",
+        "green",
+        "gray",
+        "green",
+        "brown",
+        "gray",
+        "green"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        607
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 131089001,
+      "question": "Did the batter hit the ball?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "no",
+        "yes"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        605
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 131089002,
+      "question": "How many are playing ball?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "boy"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        604
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 131089003,
+      "question": "Is there a chain link fence in the image?",
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 0.0,
+      "input_ids_shape": [
+        1,
+        609
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 131089004,
+      "question": "Is the boy playing baseball?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        604
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 262162000,
+      "question": "Is that a folding chair?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        605
+      ],
+      "n_image_tokens": 576
+    },
+    {
+      "question_id": 262162001,
+      "question": "How many beds?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "10",
+        "1",
+        "1",
+        "1"
+      ],
+      "score": 1.0,
+      "input_ids_shape": [
+        1,
+        603
+      ],
+      "n_image_tokens": 576
+    }
+  ],
+  "path_b": [
+    {
+      "question_id": 262148000,
+      "question": "Where is he looking?",
+      "pred": "Down",
+      "raw_answers": [
+        "down",
+        "down",
+        "at table",
+        "skateboard",
+        "down",
+        "table",
+        "down",
+        "down",
+        "down",
+        "down"
+      ],
+      "score": 1.0,
+      "seq_len": 603,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 262148001,
+      "question": "What are the people in the background doing?",
+      "pred": "Standing",
+      "raw_answers": [
+        "spectating",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching"
+      ],
+      "score": 0.0,
+      "seq_len": 607,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 262148002,
+      "question": "What is he on top of?",
+      "pred": "Table",
+      "raw_answers": [
+        "table",
+        "table",
+        "table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "skateboard",
+        "picnic table"
+      ],
+      "score": 1.0,
+      "seq_len": 605,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393225000,
+      "question": "What website copyrighted the picture?",
+      "pred": "None",
+      "raw_answers": [
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker",
+        "foodiebakercom",
+        "foodiebakercom",
+        "http://foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker"
+      ],
+      "score": 0.0,
+      "seq_len": 606,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393225001,
+      "question": "Is this a creamy soup?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 1.0,
+      "seq_len": 605,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393225002,
+      "question": "Is this rice noodle soup?",
+      "pred": "No",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 0.0,
+      "seq_len": 606,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393225003,
+      "question": "What is to the right of the soup?",
+      "pred": "Carrot",
+      "raw_answers": [
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "shrimp",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks spoon"
+      ],
+      "score": 0.0,
+      "seq_len": 607,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393226000,
+      "question": "What is the man doing in the street?",
+      "pred": "Walking",
+      "raw_answers": [
+        "crossing it",
+        "walking",
+        "walking",
+        "crossing",
+        "crossing road",
+        "walking",
+        "crossing",
+        "walking",
+        "crossing",
+        "walking"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393226001,
+      "question": "How many photo's can you see?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "4",
+        "4",
+        "4",
+        "1",
+        "1",
+        "4",
+        "1",
+        "1"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 393226002,
+      "question": "What does the truck on the left sell?",
+      "pred": "Ice cream",
+      "raw_answers": [
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream"
+      ],
+      "score": 1.0,
+      "seq_len": 608,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 240301000,
+      "question": "Why is there a gap between the roof and wall?",
+      "pred": "Ventilation",
+      "raw_answers": [
+        "ventilation",
+        "provide air",
+        "to air out barn from stinky bovines",
+        "keep cow safe",
+        "airflow",
+        "to let sunlight in",
+        "yes",
+        "yes",
+        "for air",
+        "air"
+      ],
+      "score": 0.3333333333333333,
+      "seq_len": 609,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 240301001,
+      "question": "Is it daylight in this picture?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 606,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 240301002,
+      "question": "Why is the cow laying down?",
+      "pred": "Resting",
+      "raw_answers": [
+        "tired",
+        "tired",
+        "4",
+        "resting",
+        "tired",
+        "tired",
+        "resting",
+        "tired",
+        "it's tired",
+        "tired"
+      ],
+      "score": 0.6666666666666666,
+      "seq_len": 606,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 131089000,
+      "question": "What color is the grass in this picture?",
+      "pred": "Green",
+      "raw_answers": [
+        "gray",
+        "green",
+        "green",
+        "black, white",
+        "green",
+        "gray",
+        "green",
+        "brown",
+        "gray",
+        "green"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 131089001,
+      "question": "Did the batter hit the ball?",
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "no",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 605,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 131089002,
+      "question": "How many are playing ball?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "boy"
+      ],
+      "score": 1.0,
+      "seq_len": 604,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 131089003,
+      "question": "Is there a chain link fence in the image?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 1.0,
+      "seq_len": 609,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 131089004,
+      "question": "Is the boy playing baseball?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 604,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 262162000,
+      "question": "Is that a folding chair?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 1.0,
+      "seq_len": 605,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "question_id": 262162001,
+      "question": "How many beds?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "10",
+        "1",
+        "1",
+        "1"
+      ],
+      "score": 1.0,
+      "seq_len": 603,
+      "ordering": "[img\u00d7576, BOS, SYS..., question, ASST]  \u2190 WRONG",
+      "positions_0_to_4": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "path_c": [
+    {
+      "question_id": 262148000,
+      "question": "Where is he looking?",
+      "pred": "Down",
+      "raw_answers": [
+        "down",
+        "down",
+        "at table",
+        "skateboard",
+        "down",
+        "table",
+        "down",
+        "down",
+        "down",
+        "down"
+      ],
+      "score": 1.0,
+      "seq_len": 603,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d722]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhere is he looking? Answer the question using a single wor'"
+    },
+    {
+      "question_id": 262148001,
+      "question": "What are the people in the background doing?",
+      "pred": "Watching",
+      "raw_answers": [
+        "spectating",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d726]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat are the people in the background doing? Answer the que'"
+    },
+    {
+      "question_id": 262148002,
+      "question": "What is he on top of?",
+      "pred": "Skateboard",
+      "raw_answers": [
+        "table",
+        "table",
+        "table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "skateboard",
+        "picnic table"
+      ],
+      "score": 0.3333333333333333,
+      "seq_len": 605,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d724]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat is he on top of? Answer the question using a single wo'"
+    },
+    {
+      "question_id": 393225000,
+      "question": "What website copyrighted the picture?",
+      "pred": "Foodiebakercom",
+      "raw_answers": [
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker",
+        "foodiebakercom",
+        "foodiebakercom",
+        "http://foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker"
+      ],
+      "score": 1.0,
+      "seq_len": 606,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d725]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat website copyrighted the picture? Answer the question u'"
+    },
+    {
+      "question_id": 393225001,
+      "question": "Is this a creamy soup?",
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 0.0,
+      "seq_len": 605,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d724]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nIs this a creamy soup? Answer the question using a single w'"
+    },
+    {
+      "question_id": 393225002,
+      "question": "Is this rice noodle soup?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 606,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d725]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nIs this rice noodle soup? Answer the question using a singl'"
+    },
+    {
+      "question_id": 393225003,
+      "question": "What is to the right of the soup?",
+      "pred": "Chopsticks",
+      "raw_answers": [
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "shrimp",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks spoon"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d726]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat is to the right of the soup? Answer the question using'"
+    },
+    {
+      "question_id": 393226000,
+      "question": "What is the man doing in the street?",
+      "pred": "Walking",
+      "raw_answers": [
+        "crossing it",
+        "walking",
+        "walking",
+        "crossing",
+        "crossing road",
+        "walking",
+        "crossing",
+        "walking",
+        "crossing",
+        "walking"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d726]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat is the man doing in the street? Answer the question us'"
+    },
+    {
+      "question_id": 393226001,
+      "question": "How many photo's can you see?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "4",
+        "4",
+        "4",
+        "1",
+        "1",
+        "4",
+        "1",
+        "1"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d726]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "\"\\nHow many photo's can you see? Answer the question using a s\""
+    },
+    {
+      "question_id": 393226002,
+      "question": "What does the truck on the left sell?",
+      "pred": "Ice cream",
+      "raw_answers": [
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream"
+      ],
+      "score": 1.0,
+      "seq_len": 608,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d727]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat does the truck on the left sell? Answer the question u'"
+    },
+    {
+      "question_id": 240301000,
+      "question": "Why is there a gap between the roof and wall?",
+      "pred": "Ventilation",
+      "raw_answers": [
+        "ventilation",
+        "provide air",
+        "to air out barn from stinky bovines",
+        "keep cow safe",
+        "airflow",
+        "to let sunlight in",
+        "yes",
+        "yes",
+        "for air",
+        "air"
+      ],
+      "score": 0.3333333333333333,
+      "seq_len": 609,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d728]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhy is there a gap between the roof and wall? Answer the qu'"
+    },
+    {
+      "question_id": 240301001,
+      "question": "Is it daylight in this picture?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 606,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d725]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nIs it daylight in this picture? Answer the question using a'"
+    },
+    {
+      "question_id": 240301002,
+      "question": "Why is the cow laying down?",
+      "pred": "Resting",
+      "raw_answers": [
+        "tired",
+        "tired",
+        "4",
+        "resting",
+        "tired",
+        "tired",
+        "resting",
+        "tired",
+        "it's tired",
+        "tired"
+      ],
+      "score": 0.6666666666666666,
+      "seq_len": 606,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d725]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhy is the cow laying down? Answer the question using a sin'"
+    },
+    {
+      "question_id": 131089000,
+      "question": "What color is the grass in this picture?",
+      "pred": "Green",
+      "raw_answers": [
+        "gray",
+        "green",
+        "green",
+        "black, white",
+        "green",
+        "gray",
+        "green",
+        "brown",
+        "gray",
+        "green"
+      ],
+      "score": 1.0,
+      "seq_len": 607,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d726]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nWhat color is the grass in this picture? Answer the questio'"
+    },
+    {
+      "question_id": 131089001,
+      "question": "Did the batter hit the ball?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "no",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 605,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d724]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nDid the batter hit the ball? Answer the question using a si'"
+    },
+    {
+      "question_id": 131089002,
+      "question": "How many are playing ball?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "boy"
+      ],
+      "score": 1.0,
+      "seq_len": 604,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d723]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nHow many are playing ball? Answer the question using a sing'"
+    },
+    {
+      "question_id": 131089003,
+      "question": "Is there a chain link fence in the image?",
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 0.0,
+      "seq_len": 609,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d728]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nIs there a chain link fence in the image? Answer the questi'"
+    },
+    {
+      "question_id": 131089004,
+      "question": "Is the boy playing baseball?",
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0,
+      "seq_len": 604,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d723]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nIs the boy playing baseball? Answer the question using a si'"
+    },
+    {
+      "question_id": 262162000,
+      "question": "Is that a folding chair?",
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 1.0,
+      "seq_len": 605,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d724]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nIs that a folding chair? Answer the question using a single'"
+    },
+    {
+      "question_id": 262162001,
+      "question": "How many beds?",
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "10",
+        "1",
+        "1",
+        "1"
+      ],
+      "score": 1.0,
+      "seq_len": 603,
+      "ordering": "[prefix\u00d75, img\u00d7576, suffix\u00d722]  \u2190 CORRECT",
+      "prefix_text": "'<s> USER: '",
+      "suffix_text": "'\\nHow many beds? Answer the question using a single word or p'"
+    }
+  ]
+}

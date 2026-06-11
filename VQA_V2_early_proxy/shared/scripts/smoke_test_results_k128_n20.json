@@ -1,0 +1,350 @@
+{
+  "k": 128,
+  "n_samples": 20,
+  "path_a_acc": 0.8166666666666668,
+  "path_d_acc": 0.7666666666666667,
+  "delta_pp": 5.000000000000004,
+  "status": "FAIL",
+  "path_d_results": [
+    {
+      "question_id": 262148000,
+      "pred": "Down",
+      "raw_answers": [
+        "down",
+        "down",
+        "at table",
+        "skateboard",
+        "down",
+        "table",
+        "down",
+        "down",
+        "down",
+        "down"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 262148001,
+      "pred": "Watching",
+      "raw_answers": [
+        "spectating",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching",
+        "watching"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 262148002,
+      "pred": "Skateboard",
+      "raw_answers": [
+        "table",
+        "table",
+        "table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "picnic table",
+        "skateboard",
+        "picnic table"
+      ],
+      "score": 0.3333333333333333
+    },
+    {
+      "question_id": 393225000,
+      "pred": "Foodie baker",
+      "raw_answers": [
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker",
+        "foodiebakercom",
+        "foodiebakercom",
+        "http://foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebakercom",
+        "foodiebaker"
+      ],
+      "score": 0.0
+    },
+    {
+      "question_id": 393225001,
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 0.0
+    },
+    {
+      "question_id": 393225002,
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 393225003,
+      "pred": "Chopsticks",
+      "raw_answers": [
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "shrimp",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks",
+        "chopsticks spoon"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 393226000,
+      "pred": "Walking",
+      "raw_answers": [
+        "crossing it",
+        "walking",
+        "walking",
+        "crossing",
+        "crossing road",
+        "walking",
+        "crossing",
+        "walking",
+        "crossing",
+        "walking"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 393226001,
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "4",
+        "4",
+        "4",
+        "1",
+        "1",
+        "4",
+        "1",
+        "1"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 393226002,
+      "pred": "Ice cream",
+      "raw_answers": [
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream",
+        "ice cream"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 240301000,
+      "pred": "Ventilation",
+      "raw_answers": [
+        "ventilation",
+        "provide air",
+        "to air out barn from stinky bovines",
+        "keep cow safe",
+        "airflow",
+        "to let sunlight in",
+        "yes",
+        "yes",
+        "for air",
+        "air"
+      ],
+      "score": 0.3333333333333333
+    },
+    {
+      "question_id": 240301001,
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 240301002,
+      "pred": "Resting",
+      "raw_answers": [
+        "tired",
+        "tired",
+        "4",
+        "resting",
+        "tired",
+        "tired",
+        "resting",
+        "tired",
+        "it's tired",
+        "tired"
+      ],
+      "score": 0.6666666666666666
+    },
+    {
+      "question_id": 131089000,
+      "pred": "Green",
+      "raw_answers": [
+        "gray",
+        "green",
+        "green",
+        "black, white",
+        "green",
+        "gray",
+        "green",
+        "brown",
+        "gray",
+        "green"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 131089001,
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "no",
+        "yes"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 131089002,
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "boy"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 131089003,
+      "pred": "Yes",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 0.0
+    },
+    {
+      "question_id": 131089004,
+      "pred": "Yes",
+      "raw_answers": [
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes",
+        "yes"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 262162000,
+      "pred": "No",
+      "raw_answers": [
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "score": 1.0
+    },
+    {
+      "question_id": 262162001,
+      "pred": "1",
+      "raw_answers": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "10",
+        "1",
+        "1",
+        "1"
+      ],
+      "score": 1.0
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+experiment_name: llava_dynamic_v2_150k_10k_fullvocab
+seed: 42
+
+dataset:
+  name: vqav2
+  data_root: ./data/vqav2
+  image_dir_train: ./data/vqav2/train2014
+  image_dir_val: ./data/vqav2/val2014
+  questions_train: ./data/vqav2/v2_OpenEnded_mscoco_train2014_questions.json
+  questions_val: ./data/vqav2/v2_OpenEnded_mscoco_val2014_questions.json
+  annotations_train: ./data/vqav2/v2_mscoco_train2014_annotations.json
+  annotations_val: ./data/vqav2/v2_mscoco_val2014_annotations.json
+  train_split: train
+  val_split: val
+
+  max_samples: 150000
+  max_val_samples: 10000
+  stratify: true
+
+  image_size: 336
+  image_aspect_ratio: "pad"
+  num_workers: 4
+
+  answer_mode: classification
+  answer_vocab_path: ./data/vqav2/answer_vocab_full.json
+  filter_unknown_answers: false
+
+model:
+  family: llava_style
+  pretrained_model_name_or_path: llava-hf/llava-1.5-7b-hf
+  processor_name: llava-hf/llava-1.5-7b-hf
+
+  vision_feature_layer: -2
+  vision_feature_select_strategy: default
+
+  freeze_vision_encoder: true
+  freeze_projector: true
+  freeze_llm: true
+
+  question_max_length: 64
+  generation_max_new_tokens: 10
+  do_sample: false
+
+  low_cpu_mem_usage: true
+  load_in_4bit: false
+  torch_dtype: float16
+  attn_implementation: eager
+  padding_side: left
+
+  use_answer_head: true
+  answer_head_type: mlp
+  answer_head_hidden_dim: 512
+  answer_head_dropout: 0.1
+  answer_head_train_dtype: float32
+  answer_vocab_size: null
+
+  # Optional: warm-start answer head from a trained static-K288 checkpoint
+  init_answer_head_from: null
+
+token_selection:
+  mode: dynamic
+  shared_dim: 512
+  scorer_hidden_dim: 256
+  budget_hidden_dim: 256
+  dropout: 0.1
+
+  min_keep_tokens: 64
+  max_keep_tokens: 432          # spans the locked static curve (K=64..432) for matched-avg-K comparison
+  num_visual_tokens: 576
+
+  train_selection_mode: soft
+  eval_selection_mode: hard
+
+  # Scoring: learned_only | cls_only | cls_prior
+  # cls_only = rank tokens by CLS-attention (identical to the locked static baseline);
+  # the dynamic contribution is the adaptive per-type K budget, NOT a learned ranker.
+  # This isolates the budget-allocation effect for a clean RQ1/RQ2 comparison.
+  scoring_mode: cls_only
+  cls_alpha: 0.3
+
+  soft_temperature: 0.10
+
+  # Budget prediction
+  budget_strategy: learned
+  fixed_keep_ratio: 0.5
+
+  question_feature_strategy: mean
+  question_type_emb_dim: 16
+
+training:
+  mode: train_dynamic_answer_head
+  batch_size: 1
+  eval_batch_size: 1
+  epochs: 8
+  learning_rate: 0.000005
+  weight_decay: 0.0001
+  grad_accum_steps: 2
+  cached_batch_size: 128
+  mixed_precision: none
+
+  # Loss weights
+  budget_loss_weight: 0.5         # gate's validated value: pulls per-type K to the targets
+  entropy_loss_weight: 0.005
+  budget_diversity_weight: 0.01   # inactive at batch_size=1 (std of a scalar = 0)
+  distillation_loss_weight: 0.1   # NOTE: not consumed by current wrapper forward() — no-op
+
+  # Budget loss type: target | upper_bound | question_type_target | none
+  budget_loss_type: question_type_target
+
+  # Per-qtype targets [yes_no, attribute, counting, spatial]
+  question_type_target_ratios: [0.38, 0.48, 0.58, 0.62]
+
+  # Per-qtype diversity strength targets (Week 3 extension)
+  question_type_diversity_targets: [0.10, 0.20, 0.40, 0.45]
+
+  target_keep_ratio: 0.50
+  enable_selector_grad_through_lm: false
+
+optimizer:
+  name: adamw
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.1
+  min_lr: 1.0e-6
+
+evaluation:
+  metric: vqa_accuracy
+  save_predictions: true
+  save_token_stats: true
+  compute_flops: true
+  # Use 2 * L * S^2 * H for all models (consistent with dense/static)
+  flops_method: analytical_attention
+  compute_fvcore_flops: false
+  compute_latency: false
+
+  generation:
+    run_at_end: true
+    max_new_tokens: 10
+    do_sample: false
+
+system:
+  use_cuda: true
+  device: cuda
+  num_gpus: 1
+  deterministic: false
+
+logging:
+  save_dir: VQA_V2/outputs
+  log_every_n_steps: 500
+  save_best_only: true
+  monitor: val_accuracy

@@ -1,0 +1,147 @@
+{
+  "experiment_name": "llava_dynamic_exp4_7type_lastfeat_alpha03_budget010_60k_10k",
+  "seed": 42,
+  "dataset": {
+    "name": "vqav2",
+    "data_root": "./data/vqav2",
+    "image_dir_train": "./data/vqav2/train2014",
+    "image_dir_val": "./data/vqav2/val2014",
+    "questions_train": "./data/vqav2/v2_OpenEnded_mscoco_train2014_questions.json",
+    "questions_val": "./data/vqav2/v2_OpenEnded_mscoco_val2014_questions.json",
+    "annotations_train": "./data/vqav2/v2_mscoco_train2014_annotations.json",
+    "annotations_val": "./data/vqav2/v2_mscoco_val2014_annotations.json",
+    "train_split": "train",
+    "val_split": "val",
+    "active_split": "train",
+    "max_samples": 60000,
+    "max_val_samples": 10000,
+    "image_size": 336,
+    "num_workers": 8,
+    "answer_mode": "classification",
+    "answer_vocab_path": "./data/vqav2/answer_vocab_top3500.json",
+    "max_answer_vocab_size": 3500,
+    "filter_unknown_answers": true
+  },
+  "model": {
+    "family": "llava_style",
+    "model_name": "llava_1_5_7b_hf",
+    "pretrained_model_name_or_path": "llava-hf/llava-1.5-7b-hf",
+    "processor_name": "llava-hf/llava-1.5-7b-hf",
+    "vision_encoder_name": "openai/clip-vit-large-patch14-336",
+    "llm_name": "lmsys/vicuna-7b-v1.5",
+    "tokenizer_name": "llava-hf/llava-1.5-7b-hf",
+    "projector_type": "mlp",
+    "vision_feature_layer": -2,
+    "vision_feature_select_strategy": "default",
+    "use_pretrained_backbone": true,
+    "freeze_vision_encoder": true,
+    "freeze_llm": true,
+    "freeze_projector": true,
+    "question_max_length": 64,
+    "generation_max_new_tokens": 8,
+    "do_sample": false,
+    "low_cpu_mem_usage": true,
+    "load_in_4bit": false,
+    "torch_dtype": "float16",
+    "attn_implementation": "eager",
+    "padding_side": "left",
+    "use_answer_head": true,
+    "answer_head_type": "mlp",
+    "answer_head_hidden_dim": 512,
+    "answer_head_dropout": 0.1,
+    "answer_head_train_dtype": "float32",
+    "answer_vocab_size": null,
+    "init_answer_head_from": "outputs/llava_static_clsattn_60k_10k_top3500_k288_20260425_052308/best_model.pt"
+  },
+  "token_selection": {
+    "mode": "dynamic_question_soft_hard",
+    "scoring_mode": "cls_prior",
+    "cls_alpha": 0.3,
+    "budget_strategy": "learned",
+    "train_selection_mode": "soft",
+    "eval_selection_mode": "hard",
+    "shared_dim": 512,
+    "scorer_hidden_dim": 256,
+    "budget_hidden_dim": 256,
+    "dropout": 0.1,
+    "min_keep_tokens": 48,
+    "max_keep_tokens": 576,
+    "soft_temperature": 0.1,
+    "question_feature_strategy": "last",
+    "question_type_emb_dim": 24,
+    "budget_loss_type": "question_type_target",
+    "report_token_stats": true,
+    "num_question_types": 7,
+    "question_type_target_ratios": [
+      0.22,
+      0.38,
+      0.52,
+      0.5,
+      0.68,
+      0.75,
+      0.42
+    ]
+  },
+  "training": {
+    "mode": "train_dynamic_answer_head",
+    "batch_size": 1,
+    "eval_batch_size": 1,
+    "epochs": 20,
+    "learning_rate": "5e-6",
+    "weight_decay": 0.0001,
+    "grad_accum_steps": 2,
+    "mixed_precision": "none",
+    "enable_selector_grad_through_lm": true,
+    "question_type_target_ratios": [
+      0.22,
+      0.38,
+      0.52,
+      0.5,
+      0.68,
+      0.75,
+      0.42
+    ],
+    "budget_loss_weight": 0.1,
+    "entropy_loss_weight": 0.003,
+    "budget_diversity_weight": 0.005
+  },
+  "optimizer": {
+    "name": "adamw",
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "scheduler": {
+    "name": "cosine",
+    "warmup_ratio": 0.1,
+    "min_lr": 1e-06
+  },
+  "evaluation": {
+    "metric": "vqa_accuracy",
+    "save_predictions": true,
+    "save_token_stats": true,
+    "compute_flops": true,
+    "flops_method": "analytical_attention",
+    "compute_fvcore_flops": false,
+    "compute_latency": true,
+    "latency": {
+      "num_warmup_steps": 5,
+      "num_measure_steps": 20,
+      "synchronize_cuda": true
+    }
+  },
+  "system": {
+    "use_cuda": true,
+    "device": "cuda",
+    "num_gpus": 1,
+    "deterministic": false
+  },
+  "logging": {
+    "save_dir": "outputs",
+    "log_every_n_steps": 1000,
+    "save_best_only": true,
+    "monitor": "val_accuracy"
+  }
+}

@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+venv/
+.env
+*.egg-info/
+
+# Large data — all datasets are local-only (downloadable / regenerable)
+data/
+*.zip
+*.tar
+*.tar.gz
+
+# Training outputs
+outputs/
+logs/
+wandb/
+runs/
+
+# VQAv2 outputs and caches (large, generated locally) — old + new path names
+vqa_v2/outputs/
+vqa_v2/logs/
+vqa_v2/feature_cache/
+vqa_v2/feature_cache_smoke/
+VQA_V2/outputs/
+VQA_V2/logs/
+VQA_V2/feature_cache/
+VQA_V2/feature_cache_smoke/
+
+# GQA experiment outputs (large, generated locally)
+GQA/outputs/
+VQA_V2_early_proxy/outputs/
+VQA_V2_early_proxy/logs/
+
+
+# Cloned external repos
+external/
+
+# Checkpoints / model weights
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Backup files
+*.bak
+
+# System
+.DS_Store
+
+# Editor / tooling config (local-only, never pushed)
+.vscode/
+.claude/
+
+# Private research material — local-only, never pushed (docs = internal reports/proposal,
+# literature = paper notes). They remain on disk and in local branch history.
+docs/
+literature/
