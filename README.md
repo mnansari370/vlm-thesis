@@ -4,29 +4,30 @@
 before building one?**
 
 This repository contains the complete experimental framework of my Master's thesis on visual token
-pruning in LLaVA-style Vision–Language Models. It implements a dynamic, question-conditioned pruning
-framework on a **fully frozen LLaVA-1.5-7B**, evaluates it honestly against tuned static baselines at
-matched compute on **five benchmark settings**, and contributes an **oracle-headroom diagnostic** that
+pruning in LLaVA-style Vision–Language Models. I implement a dynamic, question-conditioned pruning
+framework on a **fully frozen LLaVA-1.5-7B**, evaluate it honestly against tuned static baselines at
+matched compute on **five benchmark settings**, and contribute an **oracle-headroom diagnostic** that
 measures — before any method is built — how much room per-sample token budgeting actually has.
 
 ---
 
-## TL;DR — what this repo shows
+## TL;DR — what this repository shows
 
-1. **A working framework.** Question-conditioned token scoring (CLS-attention prior + learned scorer),
-   a learned per-sample budget controller, and a training-free confidence cascade — all on a frozen
-   backbone, only lightweight modules trained.
-2. **An honest negative, twice.** At *matched* average compute, dynamic budgeting **ties** tuned static
-   pruning — on VQAv2 (75.76% vs 75.71%, Δ = +0.05pp) and on GQA/TextVQA/POPE/ScienceQA, where the
-   confidence cascade traces *along* the static frontier and never above it.
+1. **A working framework.** Question-conditioned token scoring (a CLS-attention prior plus a learned
+   scorer), a learned per-sample budget controller, and a training-free confidence cascade — all on a
+   frozen backbone, with only lightweight modules trained.
+2. **An honest negative result, twice.** At *matched* average compute, dynamic budgeting **ties** tuned
+   static pruning — on VQAv2 (75.76% vs 75.71%, Δ = +0.05 pp) and on GQA/TextVQA/POPE/ScienceQA, where
+   the confidence cascade traces *along* the static frontier and never rises above it.
 3. **The reason, quantified.** The **oracle budget-sensitive band** — the fraction of samples whose
    correctness actually depends on the token budget — is structurally thin on every benchmark
-   (4.9–9.1%, always < 20%). Even a perfect, label-using budget allocator has almost nothing to win.
+   (4.9–9.1%, always below 20%). Even a perfect, label-using budget allocator has almost nothing to win.
 4. **A trustworthy pipeline.** The dense baseline reproduces published LLaVA-1.5-7B numbers within
-   ≤ 1.65pp on all four standard benchmarks, so the negatives are real, not evaluation artifacts.
+   ≤ 1.65 pp on all four standard benchmarks, so the negative results are real, not evaluation artifacts.
 
 > The actionable takeaway: *"give harder questions more tokens" sounds right but does not pay off on
-> current benchmarks* — difficulty is not token-need. The diagnostic tells you where it ever could.
+> current benchmarks* — difficulty is not the same as token-need. The diagnostic tells you where it
+> ever could.
 
 ---
 
@@ -56,9 +57,9 @@ any benchmark into:
 | **budget-sensitive band** | wrong at 144, correct at some larger K — the *only* samples any budget policy can win |
 | **never-correct** | wrong at every budget — no budgeting policy can recover them |
 
-The band upper-bounds the gain of *any* per-sample budgeting method. Thin band ⇒ don't bother;
-wide band ⇒ worth building. A method only counts as a win if it sits **above the static frontier at
-equal FLOPs**.
+The band upper-bounds the gain of *any* per-sample budgeting method. A thin band means "don't bother";
+a wide band means a dynamic budget is worth building. A method only counts as a win if it sits
+**above the static frontier at equal FLOPs**.
 
 ---
 
@@ -66,7 +67,7 @@ equal FLOPs**.
 
 ### 1. Pipeline validation (dense, official protocols)
 
-| Benchmark | Ours | Published | Offset |
+| Benchmark | This work | Published | Offset |
 |---|---|---|---|
 | GQA (testdev-balanced) | 61.42 | 62.0 | −0.58 |
 | TextVQA (val, OCR) | 57.65 | 58.2 | −0.55 |
@@ -83,12 +84,12 @@ equal FLOPs**.
 | ScienceQA-IMG | 64.30% | **7.73%** | 27.96% |
 | GQA | 58.15% | **9.13%** | 32.72% |
 
-The diagnostic *discriminates* (it orders benchmarks by available headroom), but no benchmark comes
-near the ~20% band at which per-sample budgeting could clearly pay.
+The diagnostic *discriminates* — it orders benchmarks by their available headroom — yet no benchmark
+comes anywhere near the ~20% band at which per-sample budgeting could clearly pay off.
 
 ### 3. Dynamic ties static at matched compute
 
-**VQAv2** (val 10K, open-ended generation, VQA consensus):
+**VQAv2** (val 10K, open-ended generation, VQA consensus scoring):
 
 | Model | avg K | LM FLOPs | Accuracy |
 |---|---|---|---|
@@ -96,9 +97,9 @@ near the ~20% band at which per-sample budgeting could clearly pay.
 | **Dynamic (type-adaptive budget)** | 264.3 | **1.530 T** | **75.76%** |
 | Static, matched K=265 | 265 | 1.534 T | 75.71% |
 
-Δ = +0.05pp at identical cost — a wash. The dynamic operating point lands *on* the static curve.
+Δ = +0.05 pp at identical cost — a wash. The dynamic operating point lands *on* the static curve.
 
-**GQA** (testdev-balanced) — confidence cascade vs the static frontier:
+**GQA** (testdev-balanced) — the confidence cascade versus the static frontier:
 
 | Setting | Accuracy | LM FLOPs |
 |---|---|---|
@@ -108,13 +109,13 @@ near the ~20% band at which per-sample budgeting could clearly pay.
 | Static K=432 | 61.53% | 2.402 T |
 | Dense (576) | 61.42% | 3.168 T |
 
-Sweeping τ moves smoothly between the static endpoints — along the frontier, never above it.
+Sweeping τ moves smoothly between the two static endpoints — along the frontier, never above it.
 For external calibration: published FastV is dominated by the static frontier (K=192: 52.7 vs 59.2),
-and VisionZip's merge lands on/below it at useful budgets.
+and VisionZip's token merging lands on or below it at useful budgets.
 
-### 4. Question-conditioned *selection* doesn't beat image saliency either
+### 4. Question-conditioned *selection* does not beat image saliency either
 
-At K=64 (selection headroom maximal), versus the CLS-attention selector:
+At K=64 (where selection headroom is largest), relative to the CLS-attention selector:
 
 | Benchmark | CLS − Random | CLIP-space Qcond − CLS | LM-attention Qcond − CLS |
 |---|---|---|---|
@@ -144,11 +145,11 @@ VQA_V2/                 Canonical VQAv2 track (trained modules, generation-proto
 ├── dense/  static/  dynamic/    model + configs per variant (dynamic also holds its trainer)
 └── shared/             datasets, generation evaluator, oracle/cascade analyses, caching, utils
 
-VQA_V2_early_proxy/     Retired first iteration (classification-head proxy) — kept for the
-                        ablation history; its numbers are not used for any claim.
+VQA_V2_early_proxy/     Retired first iteration (classification-head proxy) — kept only for the
+                        ablation history; its numbers back no claim.
 ```
 
-All ~120 modules run as `python -m <Track>.<path.to.module>` from the repo root.
+All ~120 modules run as `python -m <Track>.<path.to.module>` from the repository root.
 Datasets (`data/`) and experiment outputs (`outputs/`, `*/outputs/`) are local-only and git-ignored.
 
 ---
@@ -168,7 +169,7 @@ with exactly these versions.
 
 ## Data setup
 
-Place datasets under `data/` (none are shipped with the repo):
+Place the datasets under `data/` (none are shipped with this repository):
 
 | Dataset | Used for | Source |
 |---|---|---|
@@ -180,11 +181,11 @@ Place datasets under `data/` (none are shipped with the repo):
 
 ## Reproducing the results
 
-**GQA track** (training-free; all runs use the locked protocol — image padding, official prompts and
+**GQA track** (training-free; every run uses the locked protocol — image padding, official prompts and
 scorers, greedy decoding, `max_new_tokens=64`, batch size 1):
 
 ```bash
-# dense baselines (validate against published numbers first)
+# dense baselines (validate against the published numbers first)
 python -m GQA.dense.run_dense_testdev --image_pad
 python -m GQA.eval_runners.run_textvqa --method none --keep_k 576
 python -m GQA.eval_runners.run_pope    --method none --keep_k 576
@@ -193,11 +194,11 @@ python -m GQA.eval_runners.run_sqa     --method none --keep_k 576
 # static frontier (repeat for K ∈ {144, 192, 288, 432})
 python -m GQA.static.run_static_testdev --method cls_attn --keep_k 288
 
-# confidence cascade + the τ-sweep (sweep is CPU-only, reuses saved per-sample outputs)
+# confidence cascade + the τ-sweep (the sweep is CPU-only and reuses saved per-sample outputs)
 python -m GQA.dynamic.run_speculative_testdev --tau 0.55
 python -m GQA.dynamic.cascade_sweep
 
-# question-conditioned selection probes (the second negative)
+# question-conditioned selection probes (the second negative result)
 python -m GQA.static.run_clip_probe
 python -m GQA.static.run_qcond_probe
 ```
@@ -209,7 +210,7 @@ python -m GQA.static.run_qcond_probe
 python -m VQA_V2.dynamic.train_dynamic \
     --config VQA_V2/dynamic/llava_dynamic_150k_10k_fullvocab.yaml --output-dir VQA_V2/outputs/dynamic_run
 
-# canonical generation-protocol evaluation (any checkpoint type)
+# canonical generation-protocol evaluation (works with any checkpoint type)
 python -m VQA_V2.shared.evaluation.generate_and_score \
     --config VQA_V2/static/llava_static_clsattn_150k_10k_fullvocab_k288.yaml \
     --model-type static --output-path VQA_V2/outputs/static_k288_eval.json
@@ -239,20 +240,23 @@ proxy `2·T·n²·d` is available as a secondary diagnostic
 
 ## Honest-evaluation commitments
 
-This project follows the evaluation concerns raised by the recent token-pruning critique literature
-(Wen et al., *"Token Pruning in MLLMs: Are We Solving the Right Problem?"*, Findings of ACL 2025):
+This project adopts the evaluation safeguards motivated by the recent token-pruning critique
+literature (Wen et al., *"Token Pruning in MLLMs: Are We Solving the Right Problem?"*, Findings of
+ACL 2025):
 
 - every dynamic-vs-static comparison is made at **matched average compute** against a **tuned** static
   baseline that uses the *same* selection signal;
-- headline accuracy uses **official open-ended generation protocols** and official scorers — never
-  classification-head proxies;
-- the dense pipeline must reproduce published numbers before any pruning claim is interpreted;
-- random / spatial / feature-norm selection floors are reported alongside;
-- negative results are reported as found.
+- headline accuracy always comes from **official open-ended generation protocols** with official
+  scorers — never from classification-head proxies;
+- the dense pipeline must reproduce the published numbers before any pruning claim is interpreted;
+- random / spatial / feature-norm selection floors are reported alongside every result;
+- negative results are reported exactly as found.
 
 ## Author
 
 **Mo Nafees** — MSc thesis, 2026.
-Thesis: *Dynamic, Question-Conditioned Visual Token Pruning for Efficient Vision–Language Models*
-(paper in preparation). If you use the oracle-headroom diagnostic, a citation of the thesis/paper
-would be appreciated.
+
+This thesis is solo work: I designed, implemented, and ran all of the code, experiments, and analyses
+in this repository myself. The thesis, *Dynamic, Question-Conditioned Visual Token Pruning for
+Efficient Vision–Language Models*, has an accompanying paper in preparation. If you use the
+oracle-headroom diagnostic in your own work, please cite the thesis/paper.

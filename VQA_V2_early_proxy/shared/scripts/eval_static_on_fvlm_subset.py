@@ -11,8 +11,8 @@ The --override-aspect-ratio flag allows overriding the config value for ablation
 Usage (from repo root):
   # Uses preprocessing from config (now "pad" by default):
   CUDA_VISIBLE_DEVICES=0 conda run -n vlm_env python VQA_V2_early_proxy/shared/scripts/eval_static_on_fvlm_subset.py \\
-      --config vqa_v2/VQA_V2_early_proxy/static/llava_static_clsattn_150k_10k_fullvocab_k128.yaml \\
-      --output-path vqa_v2/outputs/static_k128_pad/generation_eval_fvlm_subset_10k.json
+      --config VQA_V2/static/llava_static_clsattn_150k_10k_fullvocab_k128.yaml \\
+      --output-path VQA_V2/outputs/static_k128_pad/generation_eval_fvlm_subset_10k.json
 
   # Force center-crop for ablation:
   CUDA_VISIBLE_DEVICES=0 conda run -n vlm_env python VQA_V2_early_proxy/shared/scripts/eval_static_on_fvlm_subset.py \\

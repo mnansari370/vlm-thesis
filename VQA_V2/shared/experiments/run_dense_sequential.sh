@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs cache_dense_val then cache_dense_train sequentially on GPU 1.
-# Usage: nohup bash vqa_v2/experiments/run_dense_sequential.sh > VQA_V2/logs/dense_sequential.log 2>&1 &
+# Usage: nohup bash VQA_V2/shared/experiments/run_dense_sequential.sh > VQA_V2/logs/dense_sequential.log 2>&1 &
 set -euo pipefail
 
 PYTHON=/home/nafees/miniconda3/envs/vlm_env/bin/python

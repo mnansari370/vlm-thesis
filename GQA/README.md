@@ -22,9 +22,6 @@ GQA/
     run_speculative_testdev.py, run_pope_speculative.py, cascade_sweep.py
   eval_runners/  per-benchmark eval entrypoints
     run_textvqa.py, run_pope.py, run_sqa.py
-  analysis/      no-GPU regeneration of figures/tables from saved ../outputs/
-    analyze_frontier.py, analyze_textvqa.py, analyze_pope.py
-    build_figures.py, build_master_table.py, build_latex.py, build_results.py, build_oracle.py, gather_week1.py
   shared/        shared building blocks (imported everywhere; the old `common/`)
     static.py            StaticPrunedLlava — physical token removal (CLS-Attn/random/spatial/L2)
     flops.py             FastV Eq.5 FLOPs, per-benchmark n_text constants
@@ -42,10 +39,12 @@ Datasets live in the top-level `../data/`; experiment outputs in `../outputs/` (
 
 ```bash
 python -m GQA.dynamic.cascade_sweep
-python -m GQA.analysis.build_master_table
-python -m GQA.analysis.build_figures      # F1-F5 + tables.md
-python -m GQA.analysis.build_latex        # tables -> paper/ + thesis/
 ```
+
+The figure/table generators (the former `GQA/analysis/`: analyze_frontier, build_figures,
+build_master_table, build_latex, …) were removed in the 2026-06-11 cleanup; frozen outputs live in
+`../outputs/results_frozen/` and `../docs/figs/`. Restore the generators first if you need to
+re-render: `git checkout pre-writeup-deletion -- GQA/analysis figs`.
 
 GPU runs (only if re-deriving from scratch): `GQA.dense.run_dense_testdev`,
 `GQA.static.run_static_testdev`, `GQA.eval_runners.run_{textvqa,pope,sqa}` — all bs=1.

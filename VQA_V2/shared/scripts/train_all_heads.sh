@@ -23,7 +23,7 @@ run_head() {
     echo "  output: $OUT" | tee -a $LOG
 
     CUDA_VISIBLE_DEVICES=0 conda run -n vlm_env python \
-        vqa_v2/training/cached/train_cached.py \
+        -m VQA_V2.shared.training.cached.train_cached \
         --train-cache "$TRAIN_CACHE" \
         --val-cache   "$VAL_CACHE" \
         --config      "$CONFIG" \

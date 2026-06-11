@@ -51,7 +51,7 @@ echo "================ GPU INFO ================"
 nvidia-smi || true
 echo "=========================================="
 
-python -u -m training.dynamic.train_vqa --config "${CONFIG}"
+python -u -m VQA_V2_early_proxy.dynamic.train_vqa --config "${CONFIG}"
 
 echo "============================================================"
 echo "Dynamic-pruning job finished"

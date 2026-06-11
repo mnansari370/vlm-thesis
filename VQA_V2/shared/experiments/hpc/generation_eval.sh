@@ -11,12 +11,12 @@
 
 # Usage:
 #   sbatch --job-name=vqa2_gen_eval_dense \
-#          vqa_v2/experiments/hpc/generation_eval.sh dense \
+#          VQA_V2/shared/experiments/hpc/generation_eval.sh dense \
 #          VQA_V2/outputs/dense_v1/best_model.pt \
 #          VQA_V2/outputs/dense_v1/generation_eval_full.json
 #
 #   sbatch --job-name=vqa2_gen_eval_static_k288 \
-#          vqa_v2/experiments/hpc/generation_eval.sh static \
+#          VQA_V2/shared/experiments/hpc/generation_eval.sh static \
 #          VQA_V2/outputs/static_k288_v1/best_model.pt \
 #          VQA_V2/outputs/static_k288_v1/generation_eval_full.json \
 #          288

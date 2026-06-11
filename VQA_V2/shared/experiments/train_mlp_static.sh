@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: bash vqa_v2/experiments/train_mlp_static.sh 288
+# Usage: bash VQA_V2/shared/experiments/train_mlp_static.sh 288
 # Requires: feature cache at VQA_V2/feature_cache/static_k${K}/{train,val}/
 K="${1:?Usage: $0 <K>}"
 

@@ -6,7 +6,7 @@
 # Phase C: Static MLP training + gen eval 1K per K (auto-triggers as each HPC train cache lands)
 #
 # Run in background:
-#   nohup bash vqa_v2/experiments/vonasah_pipeline.sh \
+#   nohup bash VQA_V2/shared/experiments/vonasah_pipeline.sh \
 #       > VQA_V2/logs/vonasah_pipeline.log 2>&1 &
 #
 # Monitor:

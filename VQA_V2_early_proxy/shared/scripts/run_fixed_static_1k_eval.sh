@@ -2,10 +2,10 @@
 # Phase 1 Section 4.3 — Corrected static generation eval (1K val2014)
 # Runs all 6 K values sequentially on GPU1 after the ordering fix.
 # Skip-classification so no checkpoint is needed.
-# Results written to vqa_v2/outputs/static_k{K}_fixed/generation_eval_1k.json
+# Results written to VQA_V2/outputs/static_k{K}_fixed/generation_eval_1k.json
 #
 # Usage (from repo root):
-#   CUDA_VISIBLE_DEVICES=1 bash scripts/run_fixed_static_1k_eval.sh
+#   CUDA_VISIBLE_DEVICES=1 bash VQA_V2_early_proxy/shared/scripts/run_fixed_static_1k_eval.sh
 
 set -euo pipefail
 
@@ -16,8 +16,8 @@ MAX_SAMPLES=1000
 KS=(64 128 144 192 288 432)
 
 for K in "${KS[@]}"; do
-    CONFIG="vqa_v2/VQA_V2_early_proxy/static/llava_static_clsattn_150k_10k_fullvocab_k${K}.yaml"
-    OUTPUT_DIR="vqa_v2/outputs/static_k${K}_fixed"
+    CONFIG="VQA_V2/static/llava_static_clsattn_150k_10k_fullvocab_k${K}.yaml"
+    OUTPUT_DIR="VQA_V2/outputs/static_k${K}_fixed"
     OUTPUT_PATH="${OUTPUT_DIR}/generation_eval_1k.json"
 
     mkdir -p "${OUTPUT_DIR}"
@@ -28,7 +28,7 @@ for K in "${KS[@]}"; do
     echo "=============================="
 
     CUDA_VISIBLE_DEVICES="${GPU}" conda run -n "${EVAL_ENV}" \
-        python -m vqa_v2.evaluation.generate_and_score \
+        python -m VQA_V2.shared.evaluation.generate_and_score \
             --config "${CONFIG}" \
             --model-type static \
             --output-path "${OUTPUT_PATH}" \
@@ -50,7 +50,7 @@ import json
 
 results = []
 for k in [64, 128, 144, 192, 288, 432]:
-    path = f'vqa_v2/outputs/static_k{k}_fixed/generation_eval_1k.json'
+    path = f'VQA_V2/outputs/static_k{k}_fixed/generation_eval_1k.json'
     try:
         d = json.load(open(path))
         acc = d['generation']['vqa_accuracy']

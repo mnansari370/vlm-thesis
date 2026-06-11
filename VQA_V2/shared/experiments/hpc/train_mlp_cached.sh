@@ -11,10 +11,10 @@
 
 # Usage:
 #   sbatch --job-name=vqa2_mlp_dense \
-#          vqa_v2/experiments/hpc/train_mlp_cached.sh dense
+#          VQA_V2/shared/experiments/hpc/train_mlp_cached.sh dense
 #
 #   sbatch --job-name=vqa2_mlp_static_k288 \
-#          vqa_v2/experiments/hpc/train_mlp_cached.sh static 288
+#          VQA_V2/shared/experiments/hpc/train_mlp_cached.sh static 288
 
 set -euo pipefail
 

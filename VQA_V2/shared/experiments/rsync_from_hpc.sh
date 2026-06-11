@@ -3,11 +3,11 @@
 # Run this on vonasah after an HPC cache job finishes.
 #
 # Usage:
-#   bash vqa_v2/experiments/rsync_from_hpc.sh dense
-#   bash vqa_v2/experiments/rsync_from_hpc.sh static 288
+#   bash VQA_V2/shared/experiments/rsync_from_hpc.sh dense
+#   bash VQA_V2/shared/experiments/rsync_from_hpc.sh static 288
 #
 # Or pull all at once (slower, skips already-synced):
-#   bash vqa_v2/experiments/rsync_from_hpc.sh all
+#   bash VQA_V2/shared/experiments/rsync_from_hpc.sh all
 
 set -euo pipefail
 

@@ -11,10 +11,10 @@
 
 # Usage:
 #   sbatch --job-name=vqa2_cache_dense_train \
-#          vqa_v2/experiments/hpc/cache_features.sh dense train
+#          VQA_V2/shared/experiments/hpc/cache_features.sh dense train
 #
 #   sbatch --job-name=vqa2_cache_static_k288_train \
-#          vqa_v2/experiments/hpc/cache_features.sh static train 288
+#          VQA_V2/shared/experiments/hpc/cache_features.sh static train 288
 
 set -euo pipefail
 

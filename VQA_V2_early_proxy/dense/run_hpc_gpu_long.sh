@@ -56,7 +56,7 @@ echo "=========================================="
 # uncomment the next line once:
 # pip install fvcore
 
-python -u -m training.dense.train_vqa --config "${CONFIG}"
+python -u -m VQA_V2_early_proxy.dense.train_vqa --config "${CONFIG}"
 
 echo "============================================================"
 echo "Dense job finished"
