@@ -1,0 +1,11 @@
+# v2 local-only artifacts — never commit these (large / regenerable / private)
+outputs/
+feature_cache/
+attribution_cache/
+logs/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+__pycache__/
+*.pyc
