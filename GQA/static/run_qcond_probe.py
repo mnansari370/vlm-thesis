@@ -53,11 +53,11 @@ def sample_fields(name, b):
 
 def score_cell(name, recs):
     if name.startswith("textvqa"):
-        from GQA.shared.textvqa_score import score_textvqa
+        from src.metrics.textvqa_score import score_textvqa
         r = score_textvqa(recs)
         return r["accuracy_pct"]
     else:
-        from GQA.shared.official_score import is_correct
+        from src.metrics.official_score import is_correct
         c = sum(1 for x in recs if is_correct(x["pred_answer"], x["gold"]))
         return round(c / len(recs) * 100, 2)
 

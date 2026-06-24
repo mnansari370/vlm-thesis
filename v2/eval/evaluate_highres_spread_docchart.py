@@ -17,8 +17,8 @@ import argparse, json, os, sys, time
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from datasets import load_dataset
 from v2.eval.evaluate_textvqa_highres_kcurve import HighResPruner
-from v2.shared.docvqa_score import anls
-from v2.shared.chartqa_score import relaxed_correct
+from src.metrics.docvqa_score import anls
+from src.metrics.chartqa_score import relaxed_correct
 from v2.shared.flops import fastv_full_flops
 
 LADDER = [64, 128, 256, 384, 576, 864, 1152, 1728]

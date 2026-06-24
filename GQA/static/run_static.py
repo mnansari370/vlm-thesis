@@ -62,7 +62,7 @@ from torch.utils.data import DataLoader
 from GQA.shared.dataset import GQAValDataset, collate_val
 from GQA.shared.static import SPATIAL_INDICES, StaticPrunedLlava
 from GQA.shared.flops import flops_row, print_flops_table
-from GQA.shared.metrics import (
+from src.metrics.metrics import (
     compute_accuracy,
     gqa_exact_match,
     print_accuracy_table,

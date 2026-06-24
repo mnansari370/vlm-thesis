@@ -24,7 +24,7 @@ import torch
 from PIL import Image
 
 from v2.eval.evaluate_textvqa_highres_kcurve import HighResPruner, TEXTVQA_ANN, TEXTVQA_IMG, TEXTVQA_INSTR
-from v2.shared.textvqa_score import score_textvqa
+from src.metrics.textvqa_score import score_textvqa
 
 BLIND_REF = {64: 34.80, 128: 44.20, 256: 54.67}   # CLS-attn baseline to beat
 

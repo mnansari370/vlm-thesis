@@ -16,8 +16,8 @@ import torch
 from datasets import load_dataset
 from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
 from qwen_vl_utils import process_vision_info
-from v2.shared.docvqa_score import anls
-from v2.shared.chartqa_score import relaxed_correct
+from src.metrics.docvqa_score import anls
+from src.metrics.chartqa_score import relaxed_correct
 
 MODEL = "Qwen/Qwen2.5-VL-7B-Instruct"
 INSTR = "Answer the question using a single word or phrase."

@@ -10,8 +10,8 @@ import argparse, os, sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from datasets import load_dataset
 from v2.eval.evaluate_textvqa_highres_kcurve import HighResPruner
-from v2.shared.docvqa_score import score_docvqa
-from v2.shared.chartqa_score import score_chartqa
+from src.metrics.docvqa_score import score_docvqa
+from src.metrics.chartqa_score import score_chartqa
 
 
 def main():
@@ -51,13 +51,13 @@ def main():
         ntok = len(p.proc.tokenizer(pred, add_special_tokens=False).input_ids)
         lens.append(ntok); truncs += int(ntok >= args.max_new_tokens)
         if args.dataset == "textvqa":
-            from v2.shared.textvqa_score import score_textvqa  # noqa
+            from src.metrics.textvqa_score import score_textvqa  # noqa
             preds.append({"question_id": ex["image_id"], "question": q.strip(), "pred_answer": pred})
         else:
             preds.append({"pred_answer": pred, **gold})
 
     if args.dataset == "textvqa":
-        from v2.shared.textvqa_score import score_textvqa
+        from src.metrics.textvqa_score import score_textvqa
         acc = score_textvqa(preds)["accuracy_pct"]; metric = "soft"
     elif args.dataset == "docvqa":
         acc = scorer(preds); metric = "ANLS"

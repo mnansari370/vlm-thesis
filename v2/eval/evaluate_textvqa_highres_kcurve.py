@@ -43,7 +43,7 @@ import torch
 from PIL import Image
 from transformers import LlavaNextForConditionalGeneration, LlavaNextProcessor
 
-from v2.shared.textvqa_score import score_textvqa
+from src.metrics.textvqa_score import score_textvqa
 
 MODEL = "llava-hf/llava-v1.6-vicuna-7b-hf"
 TEXTVQA_ANN = "data/textvqa/TextVQA_0.5.1_val.json"

@@ -31,7 +31,7 @@ import torch
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
-from GQA.shared.textvqa_score import score_textvqa, print_textvqa
+from src.metrics.textvqa_score import score_textvqa, print_textvqa
 from GQA.shared.static import StaticPrunedLlava
 from src.utils.logger import make_output_dir
 

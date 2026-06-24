@@ -13,12 +13,12 @@ Reference:
   - Published LLaVA-1.5-7B GQA testdev_balanced: 62.0%
 
 Usage (rescore saved predictions):
-    python -m GQA.shared.official_score \\
+    python -m src.metrics.official_score \\
         --predictions outputs/paper_static_cls_attn_k288_*/predictions.json \\
         --questions   data/gqa/val_balanced_questions.json
 
 Usage (score testdev format):
-    python -m GQA.shared.official_score \\
+    python -m src.metrics.official_score \\
         --predictions outputs/testdev_dense_*/testdev_balanced_predictions.json \\
         --questions   data/gqa/testdev_balanced_questions.json \\
         --format testdev

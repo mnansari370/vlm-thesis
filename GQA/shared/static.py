@@ -69,7 +69,7 @@ import torch
 import torch.nn as nn
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 
-from GQA.shared.metrics import extract_short_answer
+from src.metrics.metrics import extract_short_answer
 
 
 MODEL_NAME    = "llava-hf/llava-1.5-7b-hf"

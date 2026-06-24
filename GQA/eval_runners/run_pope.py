@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
-from GQA.shared.pope_score import score_subset
+from src.metrics.pope_score import score_subset
 from GQA.shared.static import StaticPrunedLlava
 from GQA.shared.flops import flops_row, N_TEXT_POPE
 from src.utils.logger import make_output_dir

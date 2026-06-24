@@ -149,5 +149,5 @@ class VisionZipLlava(StaticPrunedLlava):
         texts = self.processor.tokenizer.batch_decode(out, skip_special_tokens=True)
         if self.honest:
             return [t.strip().rstrip(".").lower() for t in texts]
-        from GQA.shared.metrics import extract_short_answer
+        from src.metrics.metrics import extract_short_answer
         return [extract_short_answer(t, q) for t, q in zip(texts, questions)]

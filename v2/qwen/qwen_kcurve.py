@@ -15,8 +15,8 @@ import argparse, json, os, sys, time
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from datasets import load_dataset
 from v2.qwen.qwen_pruner import QwenPruner
-from v2.shared.docvqa_score import anls
-from v2.shared.chartqa_score import relaxed_correct
+from src.metrics.docvqa_score import anls
+from src.metrics.chartqa_score import relaxed_correct
 
 DENSE_REF = {"docvqa": 95.7, "chartqa": 87.3}
 

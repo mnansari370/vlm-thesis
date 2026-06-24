@@ -35,7 +35,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from PIL import Image
 
 from v2.model.elastic_wrapper import ElasticPrunedLlava
-from v2.shared.textvqa_score import score_textvqa
+from src.metrics.textvqa_score import score_textvqa
 
 TEXTVQA_ANN = "data/textvqa/TextVQA_0.5.1_val.json"
 TEXTVQA_IMG = "data/textvqa/train_images"   # TextVQA val images live in the OpenImages pool

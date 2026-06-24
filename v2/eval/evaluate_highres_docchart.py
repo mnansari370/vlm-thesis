@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from datasets import load_dataset
 
 from v2.eval.evaluate_textvqa_highres_kcurve import HighResPruner
-from v2.shared.chartqa_score import score_chartqa
-from v2.shared.docvqa_score import score_docvqa
+from src.metrics.chartqa_score import score_chartqa
+from src.metrics.docvqa_score import score_docvqa
 
 QC_LAYER = 16
 

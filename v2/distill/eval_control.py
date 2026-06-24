@@ -33,7 +33,7 @@ import torch
 from v2.qwen.qwen_pruner import QwenPruner
 from v2.distill.student_selector import CheapQCSelector
 from v2.distill.docvqa_data import load_docvqa
-from v2.shared.docvqa_score import anls
+from src.metrics.docvqa_score import anls
 
 
 @torch.no_grad()

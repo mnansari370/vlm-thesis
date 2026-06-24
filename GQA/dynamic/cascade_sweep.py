@@ -11,7 +11,7 @@ Usage: python -m GQA.dynamic.cascade_sweep
 
 import glob, json, os, sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from GQA.shared.official_score import is_correct
+from src.metrics.official_score import is_correct
 from GQA.shared.flops import (flops_row, N_TEXT_TESTDEV, N_TEXT_TEXTVQA_OCR,
                              N_TEXT_TEXTVQA_NOOCR, N_TEXT_POPE, N_TEXT_SQA)
 

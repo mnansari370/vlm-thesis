@@ -37,7 +37,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from PIL import Image
 
 from v2.eval.evaluate_textvqa_highres_kcurve import HighResPruner, TEXTVQA_ANN, TEXTVQA_IMG
-from v2.shared.textvqa_score import score_textvqa
+from src.metrics.textvqa_score import score_textvqa
 
 LADDER = [64, 128, 256, 384, 576, 864, 1152, 1728]   # + "full" appended below
 THRESH = 0.5                                          # binary-correct threshold (VQA soft)

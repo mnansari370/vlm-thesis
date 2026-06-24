@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import torch
 from torch.utils.data import DataLoader
 
-from GQA.shared.official_score import score_val_format, print_result
+from src.metrics.official_score import score_val_format, print_result
 from GQA.dense.run_dense_testdev import GQATestdevDataset, collate
 from GQA.static.visionzip import VisionZipLlava
 from GQA.shared.flops import flops_row_testdev

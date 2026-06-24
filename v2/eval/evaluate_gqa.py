@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from PIL import Image
 
 from v2.model.elastic_wrapper import ElasticPrunedLlava
-from v2.shared.official_score import is_correct
-from v2.shared.metrics import extract_short_answer
+from src.metrics.official_score import is_correct
+from src.metrics.metrics import extract_short_answer
 
 GQA_Q = "data/gqa/testdev_balanced_questions.json"
 GQA_IMG = "data/gqa/images/images"

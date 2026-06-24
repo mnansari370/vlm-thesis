@@ -13,7 +13,7 @@ from typing import Any
 from PIL import Image
 from torch.utils.data import Dataset
 
-from GQA.shared.metrics import get_semantic_type
+from src.metrics.metrics import get_semantic_type
 
 
 class GQAValDataset(Dataset):

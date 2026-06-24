@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import torch
 from datasets import load_dataset
 from v2.qwen.qwen_pruner import QwenPruner
-from v2.shared.docvqa_score import anls
+from src.metrics.docvqa_score import anls
 
 LADDER = [32, 64, 128, 256, 512, 768]
 

@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from torch.utils.data import DataLoader
 
-from GQA.shared.pope_score import score_subset
+from src.metrics.pope_score import score_subset
 from GQA.eval_runners.run_pope import POPESubset, collate, SUBSETS, COCO_DIR, IMAGE_DIR, DENSE_REF_ACC
 from GQA.shared.static import StaticPrunedLlava
 from GQA.shared.flops import flops_row, N_TEXT_POPE

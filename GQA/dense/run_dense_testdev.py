@@ -38,7 +38,7 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 
-from GQA.shared.official_score import is_correct, score_testdev_format, print_result
+from src.metrics.official_score import is_correct, score_testdev_format, print_result
 from src.utils.logger import make_output_dir
 
 
@@ -277,7 +277,7 @@ def main():
     elapsed_h = (time.time() - t0) / 3600
 
     # ── Score with canonical scorer ───────────────────────────────────────────
-    from GQA.shared.official_score import score_val_format
+    from src.metrics.official_score import score_val_format
     scored = score_val_format(results, {})
     print_result(scored,
                  label=f"testdev_balanced  image_pad={args.image_pad}",
