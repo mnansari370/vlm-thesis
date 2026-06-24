@@ -61,3 +61,6 @@ external/
 # literature = paper notes). They remain on disk and in local branch history.
 docs/
 literature/
+
+# Archived/superseded internal material (Phase-1 docs cleanup) — local-only, never pushed
+archive/
