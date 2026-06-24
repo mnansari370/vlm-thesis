@@ -1,5 +1,5 @@
 """
-v2/distill/eval_gate.py — Step 3: the PILOT GO/NO-GO gate.
+Step 3: the PILOT GO/NO-GO gate.
 
 Question: can the cheap student (no decoder forward) recover most of the mid-layer
 TEACHER's downstream selection accuracy at K=128 on a held-out set?

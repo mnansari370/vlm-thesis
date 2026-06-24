@@ -19,7 +19,7 @@ This stage uses the FIXED CLS selector (no learned question-conditioned selector
 is Stage 2). It exists to (a) remove v1's "model collapses below K=144" wall and (b) provide
 the dense ceiling + the entire static frontier + the pilot measurement from ONE model.
 
-NOTE: self-contained — does not import from GQA/ or VQA_V2/ (v1 stays frozen).
+NOTE: self-contained — self-contained, no cross-track imports (v1 stays frozen).
 """
 
 import random

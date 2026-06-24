@@ -4,7 +4,7 @@ Task 3 — Cascade frontier: sweep tau for the frozen cascade (K1=144 -> K2=288 
 For each benchmark, joins per-sample (by dataset order/index): K1 confidence, K1 score, K2 score.
 cascade_score(tau) = K1 if conf>=tau else K2 ; rerun(tau)=mean(conf<tau);
 honest cascade FLOPs = f(144)+rerun*f(288). Reports acc/avg_K/rerun/FLOPs/retention per tau.
-All CPU (no GPU). Score = VQA soft-acc (TextVQA) or binary correct (GQA/POPE/SQA).
+All CPU (no GPU). Score = VQA soft-acc (TextVQA) or binary correct (GQA, POPE, SQA).
 
 Usage: python -m src.analysis.cascade_sweep
 """

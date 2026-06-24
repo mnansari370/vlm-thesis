@@ -15,7 +15,7 @@ Decoding (honest — matches LLaVA's model_vqa_loader.py):
     greedy (do_sample=False, temperature=0), max_new_tokens=64,
     NO repetition_penalty, NO min_new_tokens, natural EOS stop.
 
-Scoring: GQA/shared/official_score.py (canonical, used everywhere in this project).
+Scoring: src/metrics/official_score.py (canonical, used everywhere in this project).
 
 Published reference: LLaVA-1.5-7B → 62.0% on testdev_balanced (Table 1, LLaVA-1.5 paper)
 

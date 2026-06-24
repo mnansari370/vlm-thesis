@@ -8,7 +8,7 @@
 # so this finishes the remaining COCO+VG in ~1h instead of ~18h.
 #
 # Fire detached:
-#   setsid nohup bash v2/data_setup/download_fast.sh > results/thesis_main/highres/download_fast.log 2>&1 < /dev/null &
+#   setsid nohup bash scripts/data/download_fast.sh > results/thesis_main/highres/download_fast.log 2>&1 < /dev/null &
 #
 # Resumable + idempotent (.done_coco / .done_vg markers; aria2c --continue).
 # ============================================================================

@@ -7,9 +7,9 @@ over 150K samples runs in under 30 minutes.
 
 Usage:
     python -m src.training.train_cached \
-        --train-cache VQA_V2/feature_cache/dense/train \
-        --val-cache   VQA_V2/feature_cache/dense/val \
-        --config      VQA_V2/dense/llava_dense_150k_10k_fullvocab.yaml \
+        --train-cache feature_cache/dense/train \
+        --val-cache   feature_cache/dense/val \
+        --config      configs/dense/llava_dense_150k_10k_fullvocab.yaml \
         --output-dir  results/thesis_main/vqav2/dense_cached_v1
 """
 

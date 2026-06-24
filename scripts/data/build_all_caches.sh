@@ -4,7 +4,7 @@
 # Usage: bash scripts/data/build_all_caches.sh
 set -e
 
-CACHE_DIR=VQA_V2/feature_cache
+CACHE_DIR=feature_cache
 LOG0=/tmp/cache_gpu0_rest.log
 LOG1=/tmp/cache_gpu1_rest.log
 

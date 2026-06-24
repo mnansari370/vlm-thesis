@@ -1,5 +1,5 @@
 """
-Generate the 4 paper figures (Path A) from measured data into v2/analysis/figures/.
+Generate the 4 paper figures (Path A) from measured data into results/thesis_main/highres/figures/.
 All numbers are the n=300 frozen-LLaVA results from FINDINGS.md; effect sizes are large
 and stable, so the figures are robust to the n=1000 stability check.
 """

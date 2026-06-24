@@ -1,6 +1,6 @@
 """
 LLaVA-1.6 (high-res) GQA pruning curve — the high-res half of the GQA resolution contrast.
-Mirrors v2/eval/evaluate_gqa.py (LLaVA-1.5) EXACTLY for comparability:
+Mirrors src/evaluation/gqa/evaluate_gqa.py (LLaVA-1.5) EXACTLY for comparability:
   - same GQA testdev_balanced, same first-N qids (deterministic)
   - same STRICT exact-match scorer (is_correct) + short-answer extract
   - same instruction "Answer the question using a single word or phrase."

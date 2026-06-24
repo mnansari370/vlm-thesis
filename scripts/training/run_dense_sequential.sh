@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs cache_dense_val then cache_dense_train sequentially on GPU 1.
-# Usage: nohup bash scripts/training/run_dense_sequential.sh > VQA_V2/logs/dense_sequential.log 2>&1 &
+# Usage: nohup bash scripts/training/run_dense_sequential.sh > logs/dense_sequential.log 2>&1 &
 set -euo pipefail
 
 PYTHON=/home/nafees/miniconda3/envs/vlm_env/bin/python
@@ -20,7 +20,7 @@ ${PYTHON} -u scripts/data/cache_features.py \
     --model-type dense \
     --split val \
     --config configs/dense/llava_dense_150k_10k_fullvocab.yaml \
-    --cache-dir VQA_V2/feature_cache \
+    --cache-dir feature_cache \
     --log-every 100
 echo "cache_dense_val done: $(date)"
 
@@ -30,7 +30,7 @@ ${PYTHON} -u scripts/data/cache_features.py \
     --model-type dense \
     --split train \
     --config configs/dense/llava_dense_150k_10k_fullvocab.yaml \
-    --cache-dir VQA_V2/feature_cache \
+    --cache-dir feature_cache \
     --log-every 500
 echo "cache_dense_train done: $(date)"
 

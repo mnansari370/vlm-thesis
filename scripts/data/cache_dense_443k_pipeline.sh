@@ -14,7 +14,7 @@ export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
-CACHE_DIR="VQA_V2/feature_cache/dense_443k"
+CACHE_DIR="feature_cache/dense_443k"
 CONFIG="configs/dense/llava_dense_443k_10k_fullvocab.yaml"
 OUTPUT_DIR="results/dense_443k_v1"
 
@@ -56,7 +56,7 @@ save_json('${OUTPUT_DIR}/config.json', cfg)
 
 device = torch.device('cuda')
 train_ds = CachedFeatureDataset('${CACHE_DIR}/train')
-val_ds   = CachedFeatureDataset('VQA_V2/feature_cache/dense/val')   # 10K val from 150K run
+val_ds   = CachedFeatureDataset('feature_cache/dense/val')   # 10K val from 150K run
 id_to_answer = load_id_to_answer(cfg)
 vocab_size = len(id_to_answer)
 print(f'Vocab={vocab_size}  train={len(train_ds)}  val={len(val_ds)}', flush=True)
@@ -91,7 +91,7 @@ save_json('${OUTPUT_DIR}/metrics.json', {
     'best_epoch': best_epoch, 'best_val_vqa_accuracy': best_acc, 'history': history
 })
 print(f'Best: epoch={best_epoch}  val_cls={best_acc*100:.2f}%', flush=True)
-" 2>&1 | tee VQA_V2/logs/dense_443k_mlp.log
+" 2>&1 | tee logs/dense_443k_mlp.log
 log "=== MLP training done ==="
 
 # ── Step 3: Generation eval on 1K (quick sanity check) ─────────────────────
@@ -104,7 +104,7 @@ ${PYTHON} -u -m VQA_V2.shared.evaluation.generate_and_score \
     --max-samples 1000 \
     --skip-classification \
     --log-every 200 \
-    2>&1 | tee VQA_V2/logs/dense_443k_gen_1k.log
+    2>&1 | tee logs/dense_443k_gen_1k.log
 
 ${PYTHON} -c "
 import json
@@ -122,7 +122,7 @@ ${PYTHON} -u -m VQA_V2.shared.evaluation.generate_and_score \
     --output-path "${OUTPUT_DIR}/generation_eval_10k.json" \
     --skip-classification \
     --log-every 200 \
-    2>&1 | tee VQA_V2/logs/dense_443k_gen_10k.log
+    2>&1 | tee logs/dense_443k_gen_10k.log
 
 ${PYTHON} -c "
 import json

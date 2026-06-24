@@ -3,7 +3,7 @@
 # download_mix.sh — overnight, resumable download of the LLaVA-665K training data.
 #
 # Fire-and-forget. Designed to run unattended (e.g. before sleeping):
-#     nohup bash v2/data_setup/download_mix.sh > /tmp/v2_download.log 2>&1 &
+#     nohup bash scripts/data/download_mix.sh > /tmp/v2_download.log 2>&1 &
 #     tail -f /tmp/v2_download.log        # to watch
 #
 # Safety / design:

@@ -1,4 +1,4 @@
-"""Generate the 4 paper figures for the Qwen2.5-VL study into v2/qwen/figures/.
+"""Generate the 4 paper figures for the Qwen2.5-VL study into results/thesis_main/highres/figures/.
 Numbers are the measured results from FINDINGS_qwen.md (hardcoded for robustness)."""
 import os, sys
 import matplotlib

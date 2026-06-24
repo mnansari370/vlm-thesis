@@ -36,7 +36,7 @@ echo "============================================================"
 [ -d "${PROJECT_ROOT}" ] || { echo "Project root not found: ${PROJECT_ROOT}"; exit 1; }
 cd "${PROJECT_ROOT}"
 
-mkdir -p VQA_V2/logs VQA_V2/feature_cache
+mkdir -p logs feature_cache
 
 source "${HOME}/miniconda3/etc/profile.d/conda.sh"
 conda activate vlm_env
@@ -54,7 +54,7 @@ if [ "${MODEL_TYPE}" = "dense" ]; then
         --model-type dense \
         --split "${SPLIT}" \
         --config "${CONFIG}" \
-        --cache-dir VQA_V2/feature_cache \
+        --cache-dir feature_cache \
         --log-every 500
 
 elif [ "${MODEL_TYPE}" = "static" ]; then
@@ -65,7 +65,7 @@ elif [ "${MODEL_TYPE}" = "static" ]; then
         --keep-tokens "${KEEP_TOKENS}" \
         --split "${SPLIT}" \
         --config "${CONFIG}" \
-        --cache-dir VQA_V2/feature_cache \
+        --cache-dir feature_cache \
         --log-every 500
 else
     echo "Unknown model_type: ${MODEL_TYPE}"; exit 1

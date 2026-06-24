@@ -37,14 +37,14 @@ nvidia-smi || true
 mkdir -p results
 
 if [ "${MODEL_TYPE}" = "dense" ]; then
-    TRAIN_CACHE="VQA_V2/feature_cache/dense/train"
-    VAL_CACHE="VQA_V2/feature_cache/dense/val"
+    TRAIN_CACHE="feature_cache/dense/train"
+    VAL_CACHE="feature_cache/dense/val"
     CONFIG="configs/dense/llava_dense_150k_10k_fullvocab.yaml"
     OUTPUT_DIR="results/dense_v1"
 elif [ "${MODEL_TYPE}" = "static" ]; then
     [ -n "${KEEP_TOKENS}" ] || { echo "keep_tokens required for static"; exit 1; }
-    TRAIN_CACHE="VQA_V2/feature_cache/static_k${KEEP_TOKENS}/train"
-    VAL_CACHE="VQA_V2/feature_cache/static_k${KEEP_TOKENS}/val"
+    TRAIN_CACHE="feature_cache/static_k${KEEP_TOKENS}/train"
+    VAL_CACHE="feature_cache/static_k${KEEP_TOKENS}/val"
     CONFIG="configs/static/llava_static_clsattn_150k_10k_fullvocab_k${KEEP_TOKENS}.yaml"
     OUTPUT_DIR="results/static_k${KEEP_TOKENS}_v1"
 else

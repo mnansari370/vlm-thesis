@@ -13,7 +13,7 @@ confidence threshold to trace the realizable accuracy-vs-avg-K frontier.
 
 Usage:
     CUDA_VISIBLE_DEVICES=0 python -m src.evaluation.vqa.cascade_pass \\
-        --config VQA_V2/static/llava_static_clsattn_150k_10k_fullvocab_k64.yaml \\
+        --config configs/static/llava_static_clsattn_150k_10k_fullvocab_k64.yaml \\
         --keep-tokens 64 --output-path results/thesis_main/vqav2/cascade/base_k64.json
 """
 

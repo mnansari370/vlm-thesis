@@ -14,7 +14,7 @@ export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
 for K in 288 192 64; do
-    CACHE_DIR="VQA_V2/feature_cache/static_443k_k${K}"
+    CACHE_DIR="feature_cache/static_443k_k${K}"
     CONFIG="configs/static/llava_static_clsattn_443k_10k_fullvocab_k${K}.yaml"
     OUTPUT_DIR="results/static_443k_k${K}_v1"
 
@@ -38,7 +38,7 @@ for K in 288 192 64; do
     mkdir -p "${OUTPUT_DIR}"
     ${PYTHON} -u -m VQA_V2.shared.training.cached.train_cached \
         --train-cache "${CACHE_DIR}/train" \
-        --val-cache   "VQA_V2/feature_cache/static_k${K}/val" \
+        --val-cache   "feature_cache/static_k${K}/val" \
         --config      "${CONFIG}" \
         --output-dir  "${OUTPUT_DIR}" \
         --batch-size 128 --eval-batch-size 256 --log-every 500

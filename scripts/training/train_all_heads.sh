@@ -5,7 +5,7 @@
 # Outputs: results/{dense,static_k*}_head_v1/
 set -e
 
-CACHE_DIR=/home/nafees/vlm-thesis/VQA_V2/feature_cache
+CACHE_DIR=/home/nafees/vlm-thesis/feature_cache
 OUT_DIR=/home/nafees/vlm-thesis/results
 LOG=/tmp/train_all_heads.log
 cd /home/nafees/vlm-thesis

@@ -7,16 +7,16 @@
 #
 # Run in background:
 #   nohup bash scripts/training/vonasah_pipeline.sh \
-#       > VQA_V2/logs/vonasah_pipeline.log 2>&1 &
+#       > logs/vonasah_pipeline.log 2>&1 &
 #
 # Monitor:
-#   tail -f VQA_V2/logs/vonasah_pipeline.log
+#   tail -f logs/vonasah_pipeline.log
 
 set -euo pipefail
 
 PYTHON=/home/nafees/miniconda3/envs/vlm_env/bin/python
 PROJECT_ROOT="${HOME}/vlm-thesis"
-CACHE_DIR="${PROJECT_ROOT}/VQA_V2/feature_cache"
+CACHE_DIR="${PROJECT_ROOT}/feature_cache"
 
 cd "${PROJECT_ROOT}"
 export CUDA_VISIBLE_DEVICES=1

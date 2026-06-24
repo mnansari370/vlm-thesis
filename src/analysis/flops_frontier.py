@@ -1,7 +1,7 @@
 """
 Path-A Finding 4: the HONEST accuracy-vs-FLOPs frontier for high-res token pruning.
 
-Uses the v1 FLOPs convention (v2/shared/flops.py): prune-before-LLM = all T=32 layers
+Uses the v1 FLOPs convention (src/analysis/flops.py): prune-before-LLM = all T=32 layers
 see (K + n_text) tokens [fastv_full_flops]; faithful FastV = 3 layers see full, 29 see K
 [fastv_layered_flops]. Same Vicuna-7B arch as LLaVA-1.6 (T=32, d=4096, m=11008), so the
 formulas apply with the high-res dense token count.

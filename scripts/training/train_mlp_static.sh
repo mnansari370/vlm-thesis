@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: bash scripts/training/train_mlp_static.sh 288
-# Requires: feature cache at VQA_V2/feature_cache/static_k${K}/{train,val}/
+# Requires: feature cache at feature_cache/static_k${K}/{train,val}/
 K="${1:?Usage: $0 <K>}"
 
 set -euo pipefail
@@ -12,8 +12,8 @@ export PYTHONNOUSERSITE=1 TOKENIZERS_PARALLELISM=false PYTHONUNBUFFERED=1
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 
 python -u -m VQA_V2.shared.training.cached.train_cached \
-    --train-cache VQA_V2/feature_cache/static_k${K}/train \
-    --val-cache   VQA_V2/feature_cache/static_k${K}/val \
+    --train-cache feature_cache/static_k${K}/train \
+    --val-cache   feature_cache/static_k${K}/val \
     --config      configs/static/llava_static_clsattn_150k_10k_fullvocab_k${K}.yaml \
     --output-dir  results/static_k${K}_v1 \
     --batch-size 128 \

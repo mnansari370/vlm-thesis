@@ -10,7 +10,7 @@ measurement — all from one model.
 
 Usage (after the data download finishes):
     CUDA_VISIBLE_DEVICES=0 python -m src.training.train_stage1 \
-        --config v2/configs/stage1_elastic.yaml \
+        --config configs/stage1_elastic.yaml \
         --output-dir results/archived/stage1_elastic_run
 
 Quick subset run:

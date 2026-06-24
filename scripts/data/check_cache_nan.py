@@ -4,11 +4,11 @@ NaN/Inf diagnostic for feature cache directories.
 Usage (run from repo root):
     # Check a single split:
     conda run -n vlm_env python scripts/data/check_cache_nan.py \
-        --cache-dir VQA_V2/feature_cache/static_k288/train
+        --cache-dir feature_cache/static_k288/train
 
     # Check all splits under a cache root:
     conda run -n vlm_env python scripts/data/check_cache_nan.py \
-        --cache-root VQA_V2/feature_cache
+        --cache-root feature_cache
 
 Exit code 0 = all clean; exit code 1 = NaN/Inf found (do not use cache).
 """

@@ -9,7 +9,7 @@ GPU smoke test for elastic_wrapper.py — ONE fake batch, no training data, no d
   5. A frozen param (vision tower) stays frozen (no grad).
 
 Run (one GPU):
-    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python v2/model/test_elastic_wrapper.py
+    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python src/models/elastic/test_elastic_wrapper.py
 """
 
 import os

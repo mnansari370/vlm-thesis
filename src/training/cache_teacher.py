@@ -1,5 +1,5 @@
 """
-v2/distill/cache_teacher.py — Step 1 of the cheap-selector distillation pilot.
+Step 1 of the cheap-selector distillation pilot.
 
 Cache the mid-layer (L16) question->visual attention "TEACHER" importance map for each
 DocVQA sample. This map is the EXPENSIVE signal: it needs a full Qwen2.5-VL forward

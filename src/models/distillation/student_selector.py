@@ -1,5 +1,5 @@
 """
-v2/distill/student_selector.py — the CHEAP question-conditioned selector (the student).
+the CHEAP question-conditioned selector (the student).
 
 A small cross-attention head that scores each visual token by question-relevance using
 ONLY pre-LLM information:

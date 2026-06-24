@@ -22,6 +22,7 @@ outputs/
 logs/
 wandb/
 runs/
+feature_cache/
 
 # Migrated results (large, local-only) — track only the top-level index docs
 /results/*

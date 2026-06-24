@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Can run on dev GPU (~30 min) or Slurm short-queue.
-# Requires: feature cache at VQA_V2/feature_cache/dense/{train,val}/
+# Requires: feature cache at feature_cache/dense/{train,val}/
 #
 # Slurm header (uncomment to submit):
 ##SBATCH --job-name=vqa2_mlp_dense
@@ -10,8 +10,8 @@
 ##SBATCH --gpus=1
 ##SBATCH --cpus-per-task=8
 ##SBATCH --time=0-02:00:00
-##SBATCH --output=VQA_V2/logs/%x_%j.out
-##SBATCH --error=VQA_V2/logs/%x_%j.err
+##SBATCH --output=logs/%x_%j.out
+##SBATCH --error=logs/%x_%j.err
 
 set -euo pipefail
 PROJECT_ROOT="${HOME}/vlm-thesis"
@@ -23,8 +23,8 @@ export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 
 RUN_ID="${1:-dense_v1}"
 python -u -m VQA_V2.shared.training.cached.train_cached \
-    --train-cache VQA_V2/feature_cache/dense/train \
-    --val-cache   VQA_V2/feature_cache/dense/val \
+    --train-cache feature_cache/dense/train \
+    --val-cache   feature_cache/dense/val \
     --config      configs/dense/llava_dense_150k_10k_fullvocab.yaml \
     --output-dir  results/${RUN_ID} \
     --batch-size 128 \

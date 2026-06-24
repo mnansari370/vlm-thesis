@@ -12,7 +12,7 @@ export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
 for K in 288 192 64; do
-    CACHE_DIR="VQA_V2/feature_cache/static_k${K}/train"
+    CACHE_DIR="feature_cache/static_k${K}/train"
     if [ -f "${CACHE_DIR}/pooled_features.npy" ]; then
         log "K=${K} train already cached — skipping"
         continue
@@ -23,14 +23,14 @@ for K in 288 192 64; do
         --keep-tokens "${K}" \
         --split train \
         --config "configs/static/llava_static_clsattn_150k_10k_fullvocab_k${K}.yaml" \
-        --cache-dir VQA_V2/feature_cache \
+        --cache-dir feature_cache \
         --log-every 1000
     log "=== K=${K} train cache done ==="
 
     log "--- Running MLP training for K=${K} ---"
     ${PYTHON} -u -m VQA_V2.shared.training.cached.train_cached \
-        --train-cache "VQA_V2/feature_cache/static_k${K}/train" \
-        --val-cache   "VQA_V2/feature_cache/static_k${K}/val" \
+        --train-cache "feature_cache/static_k${K}/train" \
+        --val-cache   "feature_cache/static_k${K}/val" \
         --config      "configs/static/llava_static_clsattn_150k_10k_fullvocab_k${K}.yaml" \
         --output-dir  "results/static_k${K}_v1" \
         --batch-size 128 --eval-batch-size 256 --log-every 300

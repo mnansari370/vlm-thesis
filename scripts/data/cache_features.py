@@ -25,14 +25,14 @@ Usage (run from repo root):
         --model-type dense \
         --split train \
         --config configs/dense/llava_dense_150k_10k_fullvocab.yaml \
-        --cache-dir VQA_V2/feature_cache
+        --cache-dir feature_cache
 
     python scripts/data/cache_features.py \
         --model-type static \
         --keep-tokens 288 \
         --split train \
         --config configs/static/llava_static_clsattn_150k_10k_fullvocab_k288.yaml \
-        --cache-dir VQA_V2/feature_cache
+        --cache-dir feature_cache
 """
 
 import argparse
@@ -292,7 +292,7 @@ def main():
     parser.add_argument("--split", required=True, choices=["train", "val"])
     parser.add_argument("--keep-tokens", type=int, default=None,
                         help="Required for --model-type static. Number of tokens to keep.")
-    parser.add_argument("--cache-dir", default="VQA_V2/feature_cache")
+    parser.add_argument("--cache-dir", default="feature_cache")
     parser.add_argument("--log-every", type=int, default=200)
     parser.add_argument("--max-samples", type=int, default=None,
                         help="Override dataset size (train or val) for smoke tests.")

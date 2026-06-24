@@ -11,7 +11,7 @@ section; the classification numbers are the retired early proxy
 
 Usage:
     python -m src.evaluation.vqa.generate_and_score \
-        --config VQA_V2/dense/llava_dense_150k_10k_fullvocab.yaml \
+        --config configs/dense/llava_dense_150k_10k_fullvocab.yaml \
         --checkpoint results/thesis_main/vqav2/<run>/best_model.pt \
         --model-type dense \
         --output-path results/thesis_main/vqav2/<run>/generation_eval.json \

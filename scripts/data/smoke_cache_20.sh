@@ -5,7 +5,7 @@
 set -e
 
 GPU=${1:-0}
-SMOKE_CACHE_DIR=VQA_V2/feature_cache_smoke_k288
+SMOKE_CACHE_DIR=feature_cache_smoke_k288
 CONFIG=configs/static/llava_static_clsattn_150k_10k_fullvocab_k288.yaml
 
 echo "[Smoke] GPU=${GPU}  cache_dir=${SMOKE_CACHE_DIR}"

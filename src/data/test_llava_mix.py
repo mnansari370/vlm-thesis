@@ -2,7 +2,7 @@
 Offline unit test for mix_dataset.py — builds tiny synthetic fixtures in a temp dir
 (no download, no real images). Run from repo root:
 
-    /home/nafees/miniconda3/envs/vlm_env/bin/python v2/data_setup/test_mix_dataset.py
+    /home/nafees/miniconda3/envs/vlm_env/bin/python src/data/test_llava_mix.py
 or  python -m src.data.test_llava_mix
 """
 

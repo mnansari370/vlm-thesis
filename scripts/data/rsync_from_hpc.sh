@@ -15,7 +15,7 @@ HPC_USER="nmo"
 HPC_HOST="access-iris.uni.lu"
 HPC_PORT="8022"
 HPC_SCRATCH="/scratch/users/nmo/vlm-thesis/vqa_v2_cache"
-LOCAL_CACHE="/home/nafees/vlm-thesis/VQA_V2/feature_cache"
+LOCAL_CACHE="/home/nafees/vlm-thesis/feature_cache"
 
 MODEL_TYPE="${1:?Usage: $0 <dense|static|all> [keep_tokens]}"
 KEEP_TOKENS="${2:-}"
@@ -57,4 +57,4 @@ fi
 
 echo ""
 echo "Done. The vonasah pipeline will auto-detect the cache and start MLP training."
-echo "Check progress: tail -f VQA_V2/logs/vonasah_pipeline.log"
+echo "Check progress: tail -f logs/vonasah_pipeline.log"

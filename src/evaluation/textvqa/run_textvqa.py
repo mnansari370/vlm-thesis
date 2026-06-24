@@ -7,7 +7,7 @@ Prompt (with OCR, the LLaVA-1.5 published setting):
 (--use_ocr off drops the "Reference OCR token:" line — the no-OCR / visual-only setting.)
 
 Protocol: image_pad=True · greedy · max_new_tokens=64 · no min_new_tokens · no
-repetition_penalty · bs=1. Scoring: GQA/shared/textvqa_score.py (official VQA soft-acc).
+repetition_penalty · bs=1. Scoring: src/metrics/textvqa_score.py (official VQA soft-acc).
 
 Reuses StaticPrunedLlava with append_suffix=False (TextVQA prompts already contain
 the instruction). Saves per-sample soft-acc (for the C0.4 oracle headroom).

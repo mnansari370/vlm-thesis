@@ -1,5 +1,5 @@
 """
-v2/distill/train_student.py — Step 2: distill the cheap student from the cached teacher.
+Step 2: distill the cheap student from the cached teacher.
 
 Loads the cached L16 teacher maps (cache_teacher.py), recomputes the cheap pre-LLM
 features on the fly (QwenPruner._encode = ViT + merger + embed; NO decoder), and trains

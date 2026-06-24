@@ -5,7 +5,7 @@
 set -e
 
 GPU=${1:-0}
-CACHE_DIR=VQA_V2/feature_cache
+CACHE_DIR=feature_cache
 CONFIG=configs/static/llava_static_clsattn_150k_10k_fullvocab_k288.yaml
 LOG=/tmp/cache_k288_full.log
 

@@ -11,7 +11,7 @@ Verify gradient checkpointing (GC) in the elastic wrapper — TWO things:
       (Recall: bs=4 WITHOUT GC hit 47/49 GB — near OOM.)
 
 Run (one GPU):
-    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python v2/model/test_grad_checkpointing.py
+    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python src/models/elastic/test_grad_checkpointing.py
 """
 
 import os

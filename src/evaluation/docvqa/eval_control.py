@@ -1,5 +1,5 @@
 """
-v2/distill/eval_control.py — the decisive cheap control: is the STUDENT genuinely
+the decisive cheap control: is the STUDENT genuinely
 question-conditioned, or did it just learn a better blind saliency prior?
 
 Per held-out sample (DocVQA val, disjoint from train), at K=128:

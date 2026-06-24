@@ -9,7 +9,7 @@ samples (tempdir, fake images, no download) at fixed K=64 for ~40 steps, and ass
      and finite, and reloads as well-formed tensors.
 
 Run (one GPU):
-    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python v2/training/test_train_stage1.py
+    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python src/training/test_train_stage1.py
 """
 
 import json

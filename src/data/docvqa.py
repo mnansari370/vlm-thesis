@@ -1,5 +1,5 @@
 """
-v2/distill/docvqa_data.py — unified DocVQA loader.
+unified DocVQA loader.
 
 The locally-cached `lmms-lab/DocVQA` builder only exposes validation+test (the repo declares
 those splits even though train-*.parquet physically exist). So:

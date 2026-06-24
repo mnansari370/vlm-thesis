@@ -6,8 +6,8 @@
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=8
 #SBATCH --time=0-04:00:00
-#SBATCH --output=VQA_V2/logs/%x_%j.out
-#SBATCH --error=VQA_V2/logs/%x_%j.err
+#SBATCH --output=logs/%x_%j.out
+#SBATCH --error=logs/%x_%j.err
 
 set -euo pipefail
 PROJECT_ROOT="${HOME}/vlm-thesis"
@@ -23,7 +23,7 @@ python -u scripts/data/cache_features.py \
     --keep-tokens 432 \
     --split val \
     --config configs/static/llava_static_clsattn_150k_10k_fullvocab_k432.yaml \
-    --cache-dir VQA_V2/feature_cache \
+    --cache-dir feature_cache \
     --log-every 100
 
 echo "=== Done: $(date) ==="

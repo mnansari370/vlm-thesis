@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Detached launcher for the full Stage-1 elastic run.
 # Uses setsid so it survives SSH / laptop disconnect (runs independently on vonasah).
-#   bash v2/training/launch_stage1_full.sh
+#   bash scripts/training/launch_stage1_full.sh
 # Watch:    tail -f results/archived/stage1_full.log
 # Stop:     pkill -9 -f "train_stage[1]"
 #
@@ -18,7 +18,7 @@ setsid bash -c "
   export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
   export CUDA_VISIBLE_DEVICES=0
   exec '$PY' -u -m v2.training.train_stage1 \
-    --config v2/configs/stage1_elastic.yaml \
+    --config configs/stage1_elastic.yaml \
     --output-dir results/archived/stage1_full --log-every 20 >> '$LOG' 2>&1
 " < /dev/null &
 

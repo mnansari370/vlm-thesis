@@ -7,7 +7,7 @@ answers on a few REAL GQA testdev samples. Verifies:
   3. it works at both high K (576) and low K (64).
 
 Run (one GPU):
-    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python v2/eval/test_generate.py
+    CUDA_VISIBLE_DEVICES=0 /home/nafees/miniconda3/envs/vlm_env/bin/python src/evaluation/test_generate.py
 """
 
 import json

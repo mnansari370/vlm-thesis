@@ -20,7 +20,7 @@ Each epoch reports:
 
 Usage (smoke):
     CUDA_VISIBLE_DEVICES=1 python -m src.training.train_dynamic \\
-        --config VQA_V2/dynamic/llava_dynamic_150k_10k_fullvocab.yaml \\
+        --config configs/dynamic_budget/llava_dynamic_150k_10k_fullvocab.yaml \\
         --output-dir results/thesis_main/vqav2/dynamic_smoke \\
         --max-train 300 --max-val 200 --epochs 2 --gen-eval-samples 100
 

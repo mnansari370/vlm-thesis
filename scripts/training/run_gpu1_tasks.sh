@@ -19,7 +19,7 @@ export PYTHONUNBUFFERED=1
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
-mkdir -p VQA_V2/logs results
+mkdir -p logs results
 
 # ─── Task 1: Dense MLP retrain with 30 epochs ──────────────────────────────
 log "=== Task 1: Dense MLP retrain (30 epochs) ==="
@@ -45,8 +45,8 @@ os.makedirs('results/dense_v1_30ep', exist_ok=True)
 save_json('results/dense_v1_30ep/config.json', cfg)
 
 device = torch.device('cuda')
-train_ds = CachedFeatureDataset('VQA_V2/feature_cache/dense/train')
-val_ds   = CachedFeatureDataset('VQA_V2/feature_cache/dense/val')
+train_ds = CachedFeatureDataset('feature_cache/dense/train')
+val_ds   = CachedFeatureDataset('feature_cache/dense/val')
 id_to_answer = load_id_to_answer(cfg)
 vocab_size = len(id_to_answer)
 print(f'Vocab={vocab_size}, train={len(train_ds)}, val={len(val_ds)}', flush=True)
@@ -79,7 +79,7 @@ save_json('results/dense_v1_30ep/metrics.json', {
     'best_epoch': best_epoch, 'best_val_vqa_accuracy': best_acc, 'history': history
 })
 print(f'Best: epoch={best_epoch} val_vqa={best_acc:.4f}', flush=True)
-" 2>&1 | tee VQA_V2/logs/dense_mlp_30ep.log
+" 2>&1 | tee logs/dense_mlp_30ep.log
 
 log "=== Task 1 done ==="
 
@@ -94,7 +94,7 @@ ${PYTHON} -u -m VQA_V2.shared.evaluation.generate_and_score \
     --max-samples 1000 \
     --skip-classification \
     --log-every 200 \
-    2>&1 | tee VQA_V2/logs/gen_eval_dense_30ep_1k.log
+    2>&1 | tee logs/gen_eval_dense_30ep_1k.log
 
 log "=== Task 2 done ==="
 
@@ -112,7 +112,7 @@ for K in 64 128 144 192 288 432; do
         --max-samples 1000 \
         --skip-classification \
         --log-every 200 \
-        2>&1 | tee "VQA_V2/logs/gen_eval_static_k${K}_zeroshot.log"
+        2>&1 | tee "logs/gen_eval_static_k${K}_zeroshot.log"
 
     # Print the accuracy
     ${PYTHON} -c "

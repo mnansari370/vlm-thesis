@@ -9,8 +9,8 @@ python -m src.evaluation.gqa.run_static_testdev --help # static frontier (L2/L3)
 python -m src.training.train_student --help            # distilled selector (L11/L12)
 ```
 
-The method subfolders here (`diagnostic_foundation/`, `static_pruning/`, `dynamic_budget/`,
-`question_conditioned_selection/`, `distillation/`, `ablations/`) are kept as a curated index of which
-`src.*` entrypoints + `configs/*` belong to each thesis section. The historical track folders they
-replaced (`GQA/`, `VQA_V2/`, `v2/`) no longer exist. See `docs/THESIS_MASTER_PLAN.md` for the mapping of
-experiments to chapters.
+This folder is a thin index, not a code location: every experiment is an `src.*` module run via
+`python -m`, with its config in `configs/` and its results under `results/`. The mapping of experiments
+to thesis sections lives in `docs/THESIS_MASTER_PLAN.md`; the exact evidence paths are in
+`docs/THESIS_EVIDENCE_LEDGER.md`. The historical track folders this replaced (`GQA/`, `VQA_V2/`, `v2/`)
+no longer exist.
