@@ -25,7 +25,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from GQA.static.question_cond import QuestionCondLlava
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 
 def build_dataset(name, max_samples):

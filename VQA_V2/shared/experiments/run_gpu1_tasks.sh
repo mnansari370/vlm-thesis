@@ -29,8 +29,8 @@ import sys, math, json, os, torch, torch.nn as nn
 from torch.utils.data import DataLoader
 sys.path.insert(0, '.')
 
-from VQA_V2.shared.utils.config import load_config
-from VQA_V2.shared.utils.seed import set_seed
+from src.utils.config import load_config
+from src.utils.seed import set_seed
 from VQA_V2.shared.training.cached.train_cached import (
     CachedFeatureDataset, cached_collate, build_answer_head,
     build_optimizer, build_scheduler, train_one_epoch, validate,

@@ -39,7 +39,7 @@ from torch.utils.data import DataLoader, Dataset
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 
 from GQA.shared.official_score import is_correct, score_testdev_format, print_result
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 
 MODEL_NAME   = "llava-hf/llava-1.5-7b-hf"

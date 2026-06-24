@@ -45,8 +45,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from VQA_V2.dynamic.llava_wrapper import LlavaDynamicVQAModel
 from VQA_V2.shared.datasets import VQACollator, build_vqav2_dataset
 from VQA_V2.shared.evaluation.generate_and_score import run_generation_eval, compute_mean_accuracy
-from VQA_V2.shared.utils.config import load_config
-from VQA_V2.shared.utils.seed import set_seed
+from src.utils.config import load_config
+from src.utils.seed import set_seed
 
 
 QTYPE_NAMES = {0: "yes/no", 1: "attribute", 2: "counting", 3: "spatial"}

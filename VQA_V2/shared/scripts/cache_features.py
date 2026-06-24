@@ -50,8 +50,8 @@ from torch.utils.data import DataLoader
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
 
 from VQA_V2.shared.datasets import VQACollator, build_vqav2_dataset
-from VQA_V2.shared.utils.config import load_config
-from VQA_V2.shared.utils.seed import set_seed
+from src.utils.config import load_config
+from src.utils.seed import set_seed
 
 
 NUM_LAYERS = 32

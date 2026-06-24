@@ -28,7 +28,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from GQA.shared.static import StaticPrunedLlava
 from GQA.shared.flops import flops_row
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 PARQUET = "data/scienceqa/sqa_img_test.parquet"
 OPTIONS = ["A", "B", "C", "D", "E"]

@@ -40,8 +40,8 @@ from VQA_V2.dynamic.llava_wrapper import LlavaDynamicVQAModel
 from VQA_V2.dynamic.budget_controller import BudgetController
 from VQA_V2.shared.datasets.vqav2 import build_vqav2_dataset
 from VQA_V2.shared.datasets.vqav2_answers import normalize_answer
-from VQA_V2.shared.utils.config import load_config
-from VQA_V2.shared.utils.seed import set_seed
+from src.utils.config import load_config
+from src.utils.seed import set_seed
 
 
 QTYPE_NAMES = {0: "yes/no", 1: "attribute", 2: "counting", 3: "spatial"}

@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader, Dataset
 from GQA.shared.pope_score import score_subset
 from GQA.shared.static import StaticPrunedLlava
 from GQA.shared.flops import flops_row, N_TEXT_POPE
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 COCO_DIR = "data/pope/coco"
 IMAGE_DIR = "data/vqav2/val2014"

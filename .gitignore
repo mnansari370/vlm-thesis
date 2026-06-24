@@ -10,8 +10,9 @@ venv/
 .env
 *.egg-info/
 
-# Large data — all datasets are local-only (downloadable / regenerable)
-data/
+# Large data — all datasets are local-only (downloadable / regenerable).
+# Anchored to repo root so it ignores ONLY the top-level data/ dir, not src/data/ or scripts/data/.
+/data/
 *.zip
 *.tar
 *.tar.gz

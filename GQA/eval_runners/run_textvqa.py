@@ -33,7 +33,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from GQA.shared.textvqa_score import score_textvqa, print_textvqa
 from GQA.shared.static import StaticPrunedLlava
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 JSONL = "data/textvqa/llava_textvqa_val_v051_ocr.jsonl"
 IMAGE_DIR = "data/textvqa/train_images"

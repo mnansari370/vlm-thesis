@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from torch.utils.data import DataLoader
 
 from GQA.static.clip_select import CLIPSpaceLlava
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 FUSION_MIXES = [0.25, 0.5, 0.75]
 

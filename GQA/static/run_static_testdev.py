@@ -37,7 +37,7 @@ from GQA.shared.official_score import score_val_format, print_result
 from GQA.dense.run_dense_testdev import GQATestdevDataset, collate
 from GQA.shared.static import StaticPrunedLlava
 from GQA.shared.flops import flops_row_testdev
-from GQA.shared.utils.logger import make_output_dir
+from src.utils.logger import make_output_dir
 
 
 QUESTIONS = "data/gqa/testdev_balanced_questions.json"
