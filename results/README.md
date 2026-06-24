@@ -1,18 +1,21 @@
-# `results/` — future home for experiment results (SCAFFOLD ONLY)
+# `results/` — experiment results
 
-> **Empty scaffold. No results have been moved here.** All result files still live in their current
-> locations and are referenced by `docs/THESIS_EVIDENCE_LEDGER.md`:
-> `outputs/` (GQA-track), `VQA_V2/outputs/`, `v2/outputs/`.
-
-Target layout (filled during Phase 3E migration, only **with** the matching code-path + ledger updates):
+All experiment results from the three historical tracks now live here (migrated 2026-06-24). The contents
+are **git-ignored** (large, regenerable); only this `README.md` and `INDEX.md` are tracked. The
+authoritative paths for every thesis/paper number are in `docs/THESIS_EVIDENCE_LEDGER.md`.
 
 ```
 results/
-  thesis_main/        # L1–L12, E1–E5 headline evidence
-  appendix/           # ablations, frontier, probe detail
-  paper_candidates/   # qwen_budget_data_*, raw inputs for the L10 recompute
-  archived/           # superseded result sets (pointer to ../archive/ where applicable)
+  thesis_main/      L1–L12, E1–E5 headline evidence, by track:
+    gqa/              frozen GQA-track results (was outputs/)
+    vqav2/            frozen VQAv2 budget track (was VQA_V2/outputs/)
+    highres/          high-res / Qwen selection + distillation (was v2/outputs/)
+  paper_candidates/ qwen_budget_data_*.json — raw inputs for the L10 recompute
+  archived/         superseded result sets (e.g. elastic Stage-1 checkpoints)
+  appendix/         supporting/secondary result sets
 ```
 
-**Until migration runs, do not look here for evidence — use `docs/THESIS_EVIDENCE_LEDGER.md` paths.**
-See `INDEX.md` and `docs/METHOD_BASED_MIGRATION_PLAN.md`.
+The `thesis_main/{gqa,vqav2,highres}` split preserves each track's internal layout so the ledger paths and
+the reader scripts in `src/` map by a simple prefix. **Main vs appendix classification is carried by the
+ledger's Placement column, not by physical folder.** See `INDEX.md` and
+`docs/FINAL_REPOSITORY_CLEANUP_REPORT.md`.

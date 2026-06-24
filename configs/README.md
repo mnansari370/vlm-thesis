@@ -1,13 +1,14 @@
-# `configs/` — future method-based configs (SCAFFOLD ONLY)
-
-> **Empty scaffold.** The active YAML configs still live with the historical code (`VQA_V2/{dense,dynamic,
-> static}/*.yaml`, `v2/configs/stage1_elastic.yaml`). Nothing has been moved here yet.
-
-Target layout (filled during Phase 3E migration):
+# `configs/` — method-based YAML configs
 
 ```
-configs/{dense, static, dynamic_budget, question_conditioned_selection, distillation, evaluation}/
+configs/
+  dense/            full-576-token baselines (LLaVA-1.5 VQAv2)
+  static/           CLS-attention top-K pruning, per-K configs (the static frontier)
+  dynamic_budget/   question-conditioned scorer + budget controller / gate
+  stage1_elastic.yaml   elastic-LoRA Stage-1 backbone (high-res track)
 ```
 
-Do not point any run at these folders until the migration is executed. Dataset paths (`data/...`) will
-**not** change — `data/` stays flat. See `docs/METHOD_BASED_MIGRATION_PLAN.md`.
+Dataset paths inside the configs point at the git-ignored, flat `data/` tree (unchanged by the migration).
+Output directories were repointed from the old `*/outputs/` to `results/`. These configs were moved out of
+the historical `VQA_V2/{dense,dynamic,static}/` and `v2/configs/` folders (2026-06-24). See
+`docs/FINAL_REPOSITORY_CLEANUP_REPORT.md`.

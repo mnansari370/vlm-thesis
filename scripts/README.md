@@ -1,13 +1,14 @@
-# `scripts/` — future runnable entrypoints / launchers (SCAFFOLD ONLY)
+# `scripts/` — runnable launchers
 
-> **Empty scaffold.** The active shell scripts still live under `VQA_V2/shared/experiments/`,
-> `v2/training/`, and `v2/distill/`. Nothing has been moved here yet.
-
-Target layout (filled during Phase 3E migration):
+Shell launchers for data prep and training, organized by purpose:
 
 ```
-scripts/{data, evaluation, analysis, training, migration}/
+scripts/
+  data/       dataset download / feature caching / vocab building (*.py and *.sh)
+  training/   training & evaluation run launchers (*.sh)
 ```
 
-`scripts/migration/` is reserved for the migration helper scripts when Phase 3E runs.
-See `docs/METHOD_BASED_MIGRATION_PLAN.md`.
+These are convenience launchers; the importable code they call lives in `src/`. Some legacy `.sh`
+launchers (HPC/run helpers carried over from the historical tracks) still reference the old run layout
+internally and should be reviewed before re-running — they are not needed for the lightweight checks or
+for any thesis/paper evidence. See `docs/FINAL_REPOSITORY_CLEANUP_REPORT.md`.

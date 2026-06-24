@@ -23,6 +23,11 @@ logs/
 wandb/
 runs/
 
+# Migrated results (large, local-only) — track only the top-level index docs
+/results/*
+!/results/README.md
+!/results/INDEX.md
+
 # VQAv2 outputs and caches (large, generated locally) — old + new path names
 vqa_v2/outputs/
 vqa_v2/logs/

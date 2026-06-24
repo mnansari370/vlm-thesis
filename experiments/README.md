@@ -1,18 +1,16 @@
-# `experiments/` — future per-method experiment entrypoints (SCAFFOLD ONLY)
+# `experiments/` — per-method experiment entrypoints
 
-> **Empty scaffold.** The active experiments still live inside the historical folders (`GQA/`, `VQA_V2/`,
-> `v2/`). Nothing has been moved here yet.
-
-Target layout (filled during Phase 3E migration):
+The runnable experiment/evaluation code now lives under **`src/`** (organized by method), and is invoked
+from the repo root, e.g.:
 
 ```
-experiments/
-  diagnostic_foundation/             # the frozen low-res diagnostic (the "v1" work, by function)
-  dense_baselines/  static_pruning/  dynamic_budget/
-  question_conditioned_selection/    # frozen probes (negative) + mid-layer selector (positive)
-  distillation/                      # the cheap student
-  ablations/
+python -m src.evaluation.docvqa.qwen_kcurve --help     # selection K-curve (L5)
+python -m src.evaluation.gqa.run_static_testdev --help # static frontier (L2/L3)
+python -m src.training.train_student --help            # distilled selector (L11/L12)
 ```
 
-`diagnostic_foundation/` is where the historical "v1" experiments land — named by their role, not "v1".
-See `docs/METHOD_BASED_MIGRATION_PLAN.md`.
+The method subfolders here (`diagnostic_foundation/`, `static_pruning/`, `dynamic_budget/`,
+`question_conditioned_selection/`, `distillation/`, `ablations/`) are kept as a curated index of which
+`src.*` entrypoints + `configs/*` belong to each thesis section. The historical track folders they
+replaced (`GQA/`, `VQA_V2/`, `v2/`) no longer exist. See `docs/THESIS_MASTER_PLAN.md` for the mapping of
+experiments to chapters.
