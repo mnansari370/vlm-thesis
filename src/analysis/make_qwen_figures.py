@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-OUT = os.path.join(os.path.dirname(__file__), "figures")
+OUT = "results/thesis_main/highres/figures"
 os.makedirs(OUT, exist_ok=True)
 plt.rcParams.update({"font.size": 11, "figure.dpi": 130, "axes.grid": True,
                      "grid.alpha": 0.3, "axes.axisbelow": True})
