@@ -38,9 +38,10 @@ as ±50% because that harness does not exist yet.*
 - **Method-vs-method comparisons are PAIRED** (all methods run the *same* sample IDs), so the precision that
   matters for "does WHICH beat static at the same budget" is the **per-sample disagreement rate**, not the
   marginal CI above — that paired power is already strong at 10k. **The larger subset mainly buys (a) a tighter
-  *absolute* dense number and (b) reliable *per-question-type* breakdowns** (yes/no / attribute / counting /
-  spatial), where counting/spatial cells are thin at 10k. If per-type tables matter, lean ≥25k; if only the
-  overall number matters, 20k is already plenty.
+  *absolute* dense number and (b) reliable per-stratum breakdowns** — the official `answer_type` strata
+  (`yes/no` / `number` / `other`), where the `number` stratum (smallest, ~13%) is thin at 10k (optionally also
+  the question-type heuristic, for analysis only). If per-type tables matter, lean ≥25k; if only the overall
+  number matters, 20k is already plenty.
 
 ### 1.3 Estimated runtime per dense run (one model, one pass, bs=1, mnt=64)
 | Subset | LLaVA-1.5 (@~0.15 s/sample) | Qwen-2.5-VL-7B (@~0.6 s/sample, est.) |
@@ -164,8 +165,12 @@ result). Otherwise keep bs=1.
 
 ### Manifest the locked subset must record (`configs/final_scope/sample_ids/vqav2.json`)
 `{ "dataset": "vqav2", "n": 25000, "seed": 42,
-   "stratification": "repo 4 question-type buckets (yes/no, attribute, counting, spatial) via _stratified_sample/_question_type_id in src/data/vqav2/vqav2.py — proportional; NOT VQAv2 answer_type",
+   "selection_method": "proportional stratified sampling, seed 42 (largest-remainder to exactly 25000)",
+   "stratification_method": "official VQAv2 annotation answer_type",
+   "strata": ["yes/no", "number", "other"],
+   "answer_type_counts": {"yes/no": "...", "number": "...", "other": "..."},
    "question_ids": [ ... ], "sha256": "<hash of the ordered id list>" }`
-— version-controlled under `configs/`; every VQAv2 run (all methods, both models) reads this one file. **Note:**
-the existing val loader truncates (stratifies only `train`), so the builder must apply this stratification to the
-val split explicitly when constructing the 25k manifest.
+— version-controlled under `configs/`; every VQAv2 run (all methods, both models) reads this one file.
+**Stratification = official VQAv2 `answer_type` (yes/no / number / other), proportional, seed 42** — *not* the
+repo's old `_question_type_id` heuristic. **Note:** the existing val loader truncates (stratifies only `train`),
+so the Phase-2 builder applies the `answer_type` stratification to the val split explicitly.

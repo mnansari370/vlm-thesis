@@ -29,20 +29,23 @@ exact.
   - **VQAv2** — **LOCKED:** the final subset is **25,000 stratified validation questions sampled with seed 42**
     (the old 10k/76.44 run is **reference only**). 20k/30k are documented as alternatives only in
     `DENSE_RUNTIME_BATCHSIZE_ANALYSIS.md`.
-- IDs: GQA `questionId`; TextVQA `question_id` (= image_id); DocVQA `questionId`/`docId`+row-index; VQAv2 `question_id`.
-- The **VQAv2 manifest** (`configs/final_scope/sample_ids/vqav2.json`) records: **`n=25000`**, **`seed=42`**, the
-  **exact stratification method** (below), the **ordered `question_ids`**, and the **`sha256`** of that ordered
-  list — the **same 25k manifest is reused by dense, static, dynamic-WHICH, and dynamic-COUNT**.
-- **Stratification (defined explicitly).** Strata = the repo's **4 heuristic question-type buckets**
-  (`0=yes/no, 1=attribute, 2=counting, 3=spatial`), inferred from the question text by `_question_type_id` and
-  sampled **proportionally** per bucket by `_stratified_sample(seed=42)` in `src/data/vqav2/vqav2.py`. This is
-  the method the repo already documents — it is **NOT** VQAv2's official `answer_type` field
-  (yes/no / number / other). Selection is deterministic given seed 42.
+- IDs: GQA `questionId` (dict key); TextVQA **row index** (the jsonl `question_id` is the *image* id and is **not
+  unique** — 5,000 rows / ~3,166 image ids); DocVQA `questionId`; VQAv2 `question_id`.
+- The **VQAv2 manifest** (`configs/final_scope/sample_ids/vqav2.json`) records: **`n=25000`**, **`seed=42`**,
+  **`split=validation`**, `selection_method`, `stratification_method`, **per-`answer_type` counts**, the
+  **ordered `question_ids`**, and the **`sha256`** of that ordered list (optionally a question_type breakdown for
+  analysis) — the **same 25k manifest is reused by dense, static, dynamic-WHICH, and dynamic-COUNT**.
+- **Stratification (defined explicitly).** Sampling = **proportional stratified sampling by the official VQAv2
+  annotation `answer_type`**; strata = **`yes/no`, `number`, `other`**, joined per `question_id` from
+  `data/vqav2/v2_mscoco_val2014_annotations.json` (each annotation's `answer_type` field). Proportional quotas
+  (largest-remainder rounding to exactly 25,000), seed 42, deterministic. **Do NOT use** the repo's old heuristic
+  `_question_type_id` buckets (yes/no/attribute/counting/spatial) for the final subset — that heuristic may stay
+  in legacy code but is **not** the final thesis sampling rule.
 - **Build note (correctness).** The *existing* val data path **truncates** (`build_vqav2_dataset` passes
-  `stratify=False` for the val split; `_build_samples` stratifies only `train`). So the 25k **val** manifest must
-  be built with the above stratification **explicitly applied to the val split** by the Phase-2 sample-ID builder,
-  then frozen + sha'd. (This also means the old "10k stratified" val label was effectively plain truncation —
-  one more reason the 10k/76.44 number is **reference only**.)
+  `stratify=False` for the val split; `_build_samples` stratifies only `train`, and on the *question-type*
+  heuristic, not `answer_type`). So the 25k **val** manifest is built fresh by the Phase-2 sample-ID builder,
+  applying the `answer_type` stratification explicitly to the val split, then frozen + sha'd. (The old "10k"
+  val subset was effectively plain truncation — one more reason the 10k/76.44 number is **reference only**.)
 
 ## 2. Exact prompt per dataset
 Same user-visible instruction string across models; the chat-template wrapping differs by model

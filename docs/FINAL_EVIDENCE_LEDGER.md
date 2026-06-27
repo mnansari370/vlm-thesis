@@ -30,7 +30,7 @@ dominant efficiency lever; *how many* per sample (a dynamic budget) is not, once
 ## 3. Final datasets
 GQA (testdev_balanced, exact-match) · TextVQA (OCR + no-OCR, M4C soft-acc) · DocVQA (hub, ANLS) ·
 VQAv2 (VQA consensus; **final subset LOCKED to 25,000 stratified validation questions, seed 42**, manifest
-`configs/final_scope/sample_ids/vqav2.json`, stratified by the repo's 4 question-type buckets — not `answer_type`;
+`configs/final_scope/sample_ids/vqav2.json`, proportional stratified sampling by the official VQAv2 `answer_type` (yes/no / number / other);
 the old 10k/76.44 run is reference only; see `DENSE_DECISION_LOCK.md` #2).
 
 ## 4. Final methods

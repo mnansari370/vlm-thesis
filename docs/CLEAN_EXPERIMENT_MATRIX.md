@@ -32,8 +32,8 @@ at fixed %. "Dynamic COUNT" = adaptive per-sample budget (to be redesigned fresh
 the old **10k val first-N subset** (the val loader truncates, not stratified) and are now **reference only**. The final VQAv2 subset is **LOCKED to
 25,000 stratified validation questions (seed 42)** (`DENSE_DECISION_LOCK.md` #2;
 `configs/final_scope/sample_ids/vqav2.json`, recording `n=25000`/`seed=42`/ordered `question_ids`/`sha256`).
-Stratification = the repo's 4 question-type buckets (yes/no, attribute, counting, spatial;
-`src/data/vqav2/vqav2.py`), **not** VQAv2 `answer_type`. All VQAv2 cells (dense, static, dynamic-WHICH,
+Sampling = **proportional stratified sampling by the official VQAv2 `answer_type`** (strata `yes/no` / `number`
+/ `other`) — **not** the repo's old `_question_type_id` heuristic. All VQAv2 cells (dense, static, dynamic-WHICH,
 dynamic-COUNT) will be re-run on this same 25k manifest. 20k/30k are documented as alternatives only in
 `DENSE_RUNTIME_BATCHSIZE_ANALYSIS.md`.
 
