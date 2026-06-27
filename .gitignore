@@ -78,6 +78,10 @@ docs/*
 !docs/FINAL_CONFIG_INVENTORY.md
 !docs/FINAL_EVIDENCE_LEDGER.md
 !docs/README.md
+!docs/DENSE_BASELINE_AUDIT.md
+!docs/DENSE_PROTOCOL.md
+!docs/DENSE_DECISION_LOCK.md
+!docs/DENSE_RUNTIME_BATCHSIZE_ANALYSIS.md
 literature/
 
 # Archived/superseded material (2026-06-27 scope lock).

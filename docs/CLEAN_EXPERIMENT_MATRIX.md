@@ -28,6 +28,15 @@ at fixed %. "Dynamic COUNT" = adaptive per-sample budget (to be redesigned fresh
 **The LLaVA-1.5 static row is nearly done** — only the new budget points (15% = K86, 35% = K202) are missing;
 25/50/75% already exist at K=144/288/432.
 
+**VQAv2 final subset LOCKED to 25k** — the existing VQAv2 numbers (dense 76.44; static 74.44/75.82/76.27) are on
+the old **10k val first-N subset** (the val loader truncates, not stratified) and are now **reference only**. The final VQAv2 subset is **LOCKED to
+25,000 stratified validation questions (seed 42)** (`DENSE_DECISION_LOCK.md` #2;
+`configs/final_scope/sample_ids/vqav2.json`, recording `n=25000`/`seed=42`/ordered `question_ids`/`sha256`).
+Stratification = the repo's 4 question-type buckets (yes/no, attribute, counting, spatial;
+`src/data/vqav2/vqav2.py`), **not** VQAv2 `answer_type`. All VQAv2 cells (dense, static, dynamic-WHICH,
+dynamic-COUNT) will be re-run on this same 25k manifest. 20k/30k are documented as alternatives only in
+`DENSE_RUNTIME_BATCHSIZE_ANALYSIS.md`.
+
 **Everything Qwen-on-{GQA,TextVQA,VQAv2} is TODO** — there is no Qwen harness for these three datasets yet
 (the Qwen pruner only has DocVQA/ChartQA loaders). This is the single biggest build item.
 

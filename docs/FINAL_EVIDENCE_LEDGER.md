@@ -29,7 +29,9 @@ dominant efficiency lever; *how many* per sample (a dynamic budget) is not, once
 
 ## 3. Final datasets
 GQA (testdev_balanced, exact-match) · TextVQA (OCR + no-OCR, M4C soft-acc) · DocVQA (hub, ANLS) ·
-VQAv2 (val 10k stratified, VQA consensus).
+VQAv2 (VQA consensus; **final subset LOCKED to 25,000 stratified validation questions, seed 42**, manifest
+`configs/final_scope/sample_ids/vqav2.json`, stratified by the repo's 4 question-type buckets — not `answer_type`;
+the old 10k/76.44 run is reference only; see `DENSE_DECISION_LOCK.md` #2).
 
 ## 4. Final methods
 1. **Dense** — keep all tokens (ceiling + reproduction anchor).
@@ -49,7 +51,7 @@ Budget levels = {15, 25, 35, 50, 75, 100}% of dense. LLaVA-1.5 K-map = 86 / 144 
 
 | Claim | Number (final scope) | Status | Notes |
 |---|---|---|---|
-| **L1** Dense reproduces published | GQA **61.42**/62.0; TextVQA-OCR **57.65**/58.2 | DONE | trust anchor; VQAv2 dense **76.44**; Qwen-DocVQA dense **97.19** (n=200) |
+| **L1** Dense reproduces published | GQA **61.42**/62.0; TextVQA-OCR **57.65**/58.2 | DONE | trust anchor; VQAv2 dense **76.44** *(10k — reference only; final subset LOCKED to 25k seed 42)*; Qwen-DocVQA dense **97.19** (n=200, reference) |
 | **Static frontier — LLaVA-1.5 GQA** | K144/192/288/432 = 58.15/59.19/60.53/61.53 (ret. 94.7–100.2%) | PARTIAL | 25/50/75% done; **15% (K86), 35% (K202) TODO** |
 | **Static frontier — LLaVA-1.5 TextVQA** | OCR 55.97/56.55/56.40/57.39; noOCR 44.80/45.36/45.69/46.59 | PARTIAL | 15/35% TODO |
 | **Static frontier — LLaVA-1.5 VQAv2** | K64/128/144/192/288/432 = 71.02/74.27/74.44/75.31/75.82/76.27 | PARTIAL | 15/35% TODO |
