@@ -307,12 +307,14 @@ def run_pilot(
         max_new_tokens=max_new_tokens, decoding=decoding,
         image_pad=image_pad, sample_ids_path=os.path.join(manifest_dir, f"{dataset}.json"),
         sample_ids_sha256=manifest.sha256,
+        # prompt/decode provenance as TOP-LEVEL aggregate fields (faithful to what the model saw)
+        protocol_instruction=INSTRUCTION,
+        model_instruction_suffix=model_instruction_suffix,
+        decode_notes=decode_notes,
+        # run knobs only
         extra_pilot={"n_requested": n, "use_ocr": use_ocr if dataset == "textvqa" else None,
                      "instruction": instruction if dataset == "docvqa" else None,
-                     "max_pixels": max_pixels,
-                     "protocol_instruction": INSTRUCTION,
-                     "model_instruction_suffix": model_instruction_suffix,
-                     "decode_notes": decode_notes},
+                     "max_pixels": max_pixels},
     )
 
     gate = fairness_gate(records, agg, manifest_ids=ids, manifest_sha=manifest.sha256,
