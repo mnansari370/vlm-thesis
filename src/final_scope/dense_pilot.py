@@ -17,9 +17,11 @@ DESIGN — reuse, don't rewrite:
 Heavy / optional deps (PIL, datasets) are imported lazily inside functions so this module
 imports under a plain CPU Python for `compileall` and the self-checks.
 
-Outputs (docs/DENSE_PROTOCOL.md §12):
-  results/final_scope/{model}/{dataset}/dense_pilot_n200.jsonl   (per-sample, §6)
-  results/final_scope/{model}/{dataset}/dense_pilot_n200.json    (aggregate, §7)
+Outputs (docs/DENSE_PROTOCOL.md §12), basename is variant-aware so prompt variants do not collide:
+  results/final_scope/{model}/{dataset}/{basename}.jsonl   (per-sample, §6)
+  results/final_scope/{model}/{dataset}/{basename}.json    (aggregate, §7)
+  basename: GQA/VQAv2 = dense_pilot_n{n}; TextVQA = dense_pilot_n{n}_ocr_{on,off};
+            DocVQA = dense_pilot_n{n}_instruction_{on,off}  (see default_basename)
 """
 
 from __future__ import annotations
@@ -54,6 +56,21 @@ def describe_prompt(dataset: str, *, use_ocr: bool = True, instruction: bool = T
     if dataset == "docvqa":
         return "raw question + single-word instruction" if instruction else "raw question only"
     raise ValueError(f"unknown dataset {dataset!r}")
+
+
+def default_basename(dataset: str, n: int, *, use_ocr: bool = True, instruction: bool = True) -> str:
+    """Variant-aware output basename so prompt variants do NOT overwrite each other.
+
+      GQA / VQAv2 : dense_pilot_n{n}
+      TextVQA     : dense_pilot_n{n}_ocr_on   | dense_pilot_n{n}_ocr_off
+      DocVQA      : dense_pilot_n{n}_instruction_on | dense_pilot_n{n}_instruction_off
+    """
+    base = f"dense_pilot_n{n}"
+    if dataset == "textvqa":
+        return f"{base}_ocr_{'on' if use_ocr else 'off'}"
+    if dataset == "docvqa":
+        return f"{base}_instruction_{'on' if instruction else 'off'}"
+    return base
 MANIFEST_DIR = "configs/final_scope/sample_ids"
 OUT_ROOT = "results/final_scope"
 
@@ -268,7 +285,7 @@ def run_pilot(
     if model_name not in MODELS:
         raise ValueError(f"unknown model {model_name!r}")
     if out_basename is None:
-        out_basename = f"dense_pilot_n{n}"
+        out_basename = default_basename(dataset, n, use_ocr=use_ocr, instruction=instruction)
     manifest = load_manifest(os.path.join(manifest_dir, f"{dataset}.json"))
     ids = manifest.ids[:n]
     adapter = get_adapter(dataset, use_ocr=use_ocr, instruction=instruction)
