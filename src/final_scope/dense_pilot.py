@@ -58,14 +58,16 @@ def describe_prompt(dataset: str, *, use_ocr: bool = True, instruction: bool = T
     raise ValueError(f"unknown dataset {dataset!r}")
 
 
-def default_basename(dataset: str, n: int, *, use_ocr: bool = True, instruction: bool = True) -> str:
+def default_basename(dataset: str, n: int, *, use_ocr: bool = True,
+                     instruction: bool = True, full: bool = False) -> str:
     """Variant-aware output basename so prompt variants do NOT overwrite each other.
 
-      GQA / VQAv2 : dense_pilot_n{n}
-      TextVQA     : dense_pilot_n{n}_ocr_on   | dense_pilot_n{n}_ocr_off
-      DocVQA      : dense_pilot_n{n}_instruction_on | dense_pilot_n{n}_instruction_off
+      full=False (pilot)            full=True (final)
+      GQA / VQAv2 : dense_pilot_n{n}              dense_final
+      TextVQA     : dense_pilot_n{n}_ocr_{on,off} dense_final_ocr_{on,off}
+      DocVQA      : dense_pilot_n{n}_instruction_{on,off}  dense_final_instruction_{on,off}
     """
-    base = f"dense_pilot_n{n}"
+    base = "dense_final" if full else f"dense_pilot_n{n}"
     if dataset == "textvqa":
         return f"{base}_ocr_{'on' if use_ocr else 'off'}"
     if dataset == "docvqa":
@@ -261,6 +263,7 @@ def run_pilot(
     dataset: str,
     generate_and_count: Callable[[Sample], Tuple[str, int, int, str]],
     n: int = PILOT_N,
+    full: bool = False,
     max_new_tokens: int = MAX_NEW_TOKENS,
     image_pad: Optional[bool] = None,
     max_pixels: Optional[int] = None,
@@ -284,9 +287,14 @@ def run_pilot(
     """
     if model_name not in MODELS:
         raise ValueError(f"unknown model {model_name!r}")
-    if out_basename is None:
-        out_basename = default_basename(dataset, n, use_ocr=use_ocr, instruction=instruction)
     manifest = load_manifest(os.path.join(manifest_dir, f"{dataset}.json"))
+    total = len(manifest.ids)
+    if full:
+        n = total                       # final run = the entire manifest
+    if n > total:
+        raise ValueError(f"requested n={n} exceeds {dataset} manifest length {total}")
+    if out_basename is None:
+        out_basename = default_basename(dataset, n, use_ocr=use_ocr, instruction=instruction, full=full)
     ids = manifest.ids[:n]
     adapter = get_adapter(dataset, use_ocr=use_ocr, instruction=instruction)
     decoding = f"greedy bs=1 do_sample=False max_new_tokens={max_new_tokens}"

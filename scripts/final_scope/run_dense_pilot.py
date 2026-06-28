@@ -117,14 +117,23 @@ def build_qwen_runner(*, add_instruction: bool, max_new_tokens: int):
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Dense pilot (n=200) under the final-scope schema.")
+    ap = argparse.ArgumentParser(description="Dense pilot / final run under the final-scope schema.")
     ap.add_argument("--model", required=True, choices=list(dp.MODELS))
     ap.add_argument("--dataset", required=True, choices=list(dp.DATASETS))
-    ap.add_argument("--n", type=int, default=dp.PILOT_N)
+    ap.add_argument("--n", type=int, default=None,
+                    help="pilot size (default 200). Cannot be combined with --full.")
+    ap.add_argument("--full", action="store_true",
+                    help="FINAL run on the entire manifest; output basename = dense_final[...]. "
+                         "Final defaults: TextVQA OCR-on, DocVQA instruction-on.")
     ap.add_argument("--max-new-tokens", type=int, default=dp.MAX_NEW_TOKENS)
     ap.add_argument("--no-ocr", action="store_true", help="TextVQA: drop the OCR block (no-OCR setting)")
     ap.add_argument("--no-instruction", action="store_true", help="DocVQA: omit the single-word instruction")
     args = ap.parse_args()
+
+    # guard: --n is a pilot knob; --full uses the whole manifest.
+    if args.full and args.n is not None:
+        ap.error("--n cannot be combined with --full (a final run uses the full manifest length)")
+    n = args.n if args.n is not None else dp.PILOT_N
 
     use_ocr = not args.no_ocr
     instruction = not args.no_instruction
@@ -144,12 +153,13 @@ def main() -> int:
 
     res = dp.run_pilot(
         model_name=args.model, dataset=args.dataset, generate_and_count=gen,
-        n=args.n, max_new_tokens=args.max_new_tokens,
+        n=n, full=args.full, max_new_tokens=args.max_new_tokens,
         image_pad=meta["image_pad"], max_pixels=meta["max_pixels"],
         use_ocr=use_ocr, instruction=instruction,
         model_instruction_suffix=meta["model_instruction_suffix"], decode_notes=meta["decode_notes"],
     )
-    print(f"\n[done] {args.model} × {args.dataset}: n={res.n} score={res.score_pct}% "
+    mode = "FINAL" if args.full else "pilot"
+    print(f"\n[done] {mode}: {args.model} × {args.dataset}: n={res.n} score={res.score_pct}% "
           f"gate={'OK' if res.gate_ok else 'ISSUES'}\n  {res.out_json}\n  {res.out_jsonl}")
     return 0 if res.gate_ok else 2
 
