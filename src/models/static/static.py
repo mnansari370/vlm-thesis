@@ -113,7 +113,9 @@ SPATIAL_INDICES: dict[int, list[int]] = _build_spatial_indices()
 VALID_METHODS = frozenset(
     {"none", "random", "spatial_uniform", "cls_attn", "l2_norm", "fastv_style"}
 )
-SUPPORTED_K = frozenset({576, 432, 288, 192, 144, 96, 64})
+# 86 and 202 are the final-scope static budgets (15% and 35% of the fixed 576 backbone);
+# cls_attn selects via top-K so any K in this allow-list is valid (input-validation only).
+SUPPORTED_K = frozenset({576, 432, 288, 202, 192, 144, 96, 86, 64})
 
 
 # ── model ─────────────────────────────────────────────────────────────────────

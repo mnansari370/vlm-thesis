@@ -259,11 +259,157 @@ def test_token_flops():
     check("reduction_pct(dense vs dense) == 0", tf.reduction_pct(10.0, 10.0) == 0.0)
 
 
+def test_static_eval():
+    import os, re
+    from src.final_scope import static_eval as se
+
+    # 1. budget_pct → LLaVA keep_k map (incl. 86 and 202) and the SUPPORTED_K source extension
+    check("LLaVA budget→K map exact",
+          se.BUDGET_TO_KEEP_K == {15: 86, 25: 144, 35: 202, 50: 288, 75: 432})
+    check("BUDGETS tuple is (15,25,35,50,75)", se.BUDGETS == (15, 25, 35, 50, 75))
+    check("budget_keep_k llava 15→86", se.budget_keep_k("llava15", 15) == 86)
+    check("budget_keep_k llava 35→202", se.budget_keep_k("llava15", 35) == 202)
+    check("budget_keep_k qwen→None (per-sample)", se.budget_keep_k("qwen25vl7b", 25) is None)
+    bad_budget = False
+    try:
+        se.budget_keep_k("llava15", 40)
+    except ValueError:
+        bad_budget = True
+    check("budget_keep_k rejects an unlisted budget", bad_budget)
+    # parse SUPPORTED_K straight from the source (no torch import) → 86 and 202 are now allowed
+    _root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    _src = open(os.path.join(_root, "src/models/static/static.py")).read()
+    _m = re.search(r"SUPPORTED_K\s*=\s*frozenset\(\{([^}]*)\}\)", _src)
+    _ks = {int(x) for x in re.findall(r"\d+", _m.group(1))} if _m else set()
+    check("static.py SUPPORTED_K includes 86 and 202", {86, 202} <= _ks)
+    check("static.py SUPPORTED_K covers all LLaVA budgets",
+          set(se.BUDGET_TO_KEEP_K.values()) <= _ks)
+
+    # 2. static output basename variants
+    check("basename gqa pilot",
+          se.static_basename("gqa", 200, "cls_attn", 25) == "static_pilot_n200_cls_attn_p25")
+    check("basename gqa final",
+          se.static_basename("gqa", 0, "cls_attn", 25, full=True) == "static_final_cls_attn_p25")
+    check("basename vqav2 pilot",
+          se.static_basename("vqav2", 200, "cls_attn", 15) == "static_pilot_n200_cls_attn_p15")
+    check("basename textvqa ocr-on",
+          se.static_basename("textvqa", 200, "cls_attn", 50, use_ocr=True)
+          == "static_pilot_n200_cls_attn_p50_ocr_on")
+    check("basename textvqa ocr-off",
+          se.static_basename("textvqa", 200, "cls_attn", 50, use_ocr=False)
+          == "static_pilot_n200_cls_attn_p50_ocr_off")
+    check("basename docvqa instruction-on",
+          se.static_basename("docvqa", 200, "norm", 75, instruction=True)
+          == "static_pilot_n200_norm_p75_instruction_on")
+    check("basename docvqa instruction-off final",
+          se.static_basename("docvqa", 0, "norm", 75, instruction=False, full=True)
+          == "static_final_norm_p75_instruction_off")
+
+    # 3. --full and --n conflict  +  4. n > manifest length
+    conflict = False
+    try:
+        se.resolve_n(100, True, 1000)
+    except ValueError:
+        conflict = True
+    check("resolve_n errors on --full + --n", conflict)
+    too_big = False
+    try:
+        se.resolve_n(2000, False, 1000)
+    except ValueError:
+        too_big = True
+    check("resolve_n errors on n > manifest length", too_big)
+    default_too_big = False
+    try:
+        se.resolve_n(None, False, 50)  # default PILOT_N=200 > manifest 50 → error
+    except ValueError:
+        default_too_big = True
+    check("resolve_n errors when default PILOT_N exceeds a tiny manifest", default_too_big)
+    check("resolve_n full → total", se.resolve_n(None, True, 1000) == 1000)
+    check("resolve_n default → PILOT_N", se.resolve_n(None, False, 1000) == se.PILOT_N)
+    check("resolve_n explicit n passes", se.resolve_n(50, False, 1000) == 50)
+
+    # 5. selector defaults + per-model allow-lists
+    check("default_selector llava→cls_attn", se.default_selector("llava15") == "cls_attn")
+    check("default_selector qwen→norm", se.default_selector("qwen25vl7b") == "norm")
+    check("allowed_selectors llava == (cls_attn,)", se.allowed_selectors("llava15") == ("cls_attn",))
+    check("allowed_selectors qwen == (norm, uniform)",
+          se.allowed_selectors("qwen25vl7b") == ("norm", "uniform"))
+
+    # 6. Qwen per-sample K = clamp(round(pct% · dense_n_visual), 1, dense_n_visual)
+    check("clamp_qwen_k 15% of 1000 = 150", se.clamp_qwen_k(15, 1000) == 150)
+    check("clamp_qwen_k 75% of 100 = 75", se.clamp_qwen_k(75, 100) == 75)
+    check("clamp_qwen_k 50% of 324 = 162", se.clamp_qwen_k(50, 324) == 162)
+    check("clamp_qwen_k clamps up to >=1 (15% of 3 → 1)", se.clamp_qwen_k(15, 3) == 1)
+    check("clamp_qwen_k never exceeds dense_n_visual (75% of 4 → 3)", se.clamp_qwen_k(75, 4) == 3)
+
+    # 7. LLaVA static expected-visual-token validation against its own K
+    recK = per_sample_record(
+        sample_id=1, image_id="i", dataset="gqa", model="llava15", method="static", budget_pct=35,
+        question="q", prompt="p", pred_raw="a", pred_norm="a", gold=["a"], per_sample_score=1.0,
+        n_visual_tokens=202, n_text_tokens=30, selector="cls_attn")
+    check("LLaVA static K=202 record passes expected=202",
+          validate_visual_tokens([recK], expected_visual_tokens=202) == [])
+    bad_k = dict(recK, n_visual_tokens=200, seq_len=230)
+    check("LLaVA static wrong visual tokens rejected (expected=202)",
+          validate_visual_tokens([bad_k], expected_visual_tokens=202) != [])
+
+    # 8. schema / fairness gate accepts static method+budget+selector metadata
+    agg = aggregate_record(
+        model="llava15", dataset="gqa", split="testdev_balanced", method="static", budget_pct=35,
+        n=1, metric="gqa_exact", score_pct=100.0, visual_tokens={"avg": 202, "max": 202},
+        text_tokens_avg=30, seq_len_avg=232, flops_prefill_TFLOPs_avg=1.2, flops_convention="x",
+        token_reduction_pct=64.5, flop_reduction_pct=70.0, prompt_template="t", max_new_tokens=64,
+        decoding="greedy bs=1", image_pad=True,
+        sample_ids_path="configs/final_scope/sample_ids/gqa.json", sample_ids_sha256="abc",
+        selector_name="cls_attn", keep_k=202)
+    gate = fairness_gate([recK], agg, manifest_ids=[1], manifest_sha="abc", expected_visual_tokens=202)
+    check("fairness gate passes a clean static LLaVA (K=202) result", gate["ok"])
+
+    # Qwen static: visual tokens VARY per image → expected=None must not reject
+    qrec1 = per_sample_record(
+        sample_id=10, image_id="i", dataset="gqa", model="qwen25vl7b", method="static", budget_pct=25,
+        question="q", prompt="p", pred_raw="a", pred_norm="a", gold=["a"], per_sample_score=1.0,
+        n_visual_tokens=81, n_text_tokens=20, selector="norm")
+    qrec2 = per_sample_record(
+        sample_id=11, image_id="i", dataset="gqa", model="qwen25vl7b", method="static", budget_pct=25,
+        question="q", prompt="p", pred_raw="b", pred_norm="b", gold=["b"], per_sample_score=0.0,
+        n_visual_tokens=64, n_text_tokens=22, selector="norm")
+    qagg = aggregate_record(
+        model="qwen25vl7b", dataset="gqa", split="testdev_balanced", method="static", budget_pct=25,
+        n=2, metric="gqa_exact", score_pct=50.0, visual_tokens={"avg": 72.5, "max": 81},
+        text_tokens_avg=21, seq_len_avg=93.5, flops_prefill_TFLOPs_avg=0.4, flops_convention="x",
+        token_reduction_pct=70.0, flop_reduction_pct=80.0, prompt_template="t", max_new_tokens=64,
+        decoding="greedy bs=1", image_pad=None,
+        sample_ids_path="configs/final_scope/sample_ids/gqa.json", sample_ids_sha256="z",
+        selector_name="norm", keep_k=None)
+    qgate = fairness_gate([qrec1, qrec2], qagg, manifest_ids=[10, 11], manifest_sha="z",
+                          expected_visual_tokens=None)
+    check("fairness gate passes static Qwen (varying tokens, expected=None)", qgate["ok"])
+
+    # Qwen retained-token soft sanity: close → None; gross mismatch → flagged
+    check("qwen_retained_sanity OK within tolerance",
+          se.qwen_retained_sanity(35.0, 144.0, 25) is None)            # requested 36, |Δ|=1
+    check("qwen_retained_sanity flags gross mismatch",
+          se.qwen_retained_sanity(10.0, 144.0, 25) is not None)        # requested 36, |Δ|=26
+
+    # 9. accuracy metric rename: accuracy_delta_pp (signed) + accuracy_drop_pp (dense - static)
+    d, dr = se.accuracy_deltas(60.0, 58.0)                # static beats dense by 2pp
+    check("accuracy_delta_pp = static - dense (+2.0 when static wins)", d == 2.0)
+    check("accuracy_drop_pp = dense - static (-2.0, i.e. NEGATIVE drop, when static wins)", dr == -2.0)
+    d2, dr2 = se.accuracy_deltas(55.0, 58.0)              # static worse by 3pp
+    check("accuracy_delta_pp negative when static worse", d2 == -3.0)
+    check("accuracy_drop_pp positive when static worse", dr2 == 3.0)
+    check("accuracy_delta_pp and accuracy_drop_pp are negatives of each other", d2 == -dr2)
+    d3, dr3 = se.accuracy_deltas(58.0, 58.0)              # tie
+    check("accuracy_delta/drop both 0.0 on a tie", d3 == 0.0 and dr3 == 0.0)
+    check("accuracy_deltas returns a (delta, drop) 2-tuple", isinstance(se.accuracy_deltas(1.0, 0.0), tuple))
+
+
 def main():
     print("=== final_scope CPU self-checks ===")
     for t in (test_sha_deterministic, test_quota_and_sample, test_manifest_loader_and_validation,
               test_save_manifest_and_fingerprints, test_answer_type_strict,
-              test_schema_validator, test_token_flops):
+              test_schema_validator, test_token_flops, test_static_eval):
         print(f"\n# {t.__name__}")
         t()
     print(f"\n{'ALL PASSED' if not _failures else 'FAILURES: ' + ', '.join(_failures)}")
