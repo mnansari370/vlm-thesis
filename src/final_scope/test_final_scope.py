@@ -405,11 +405,144 @@ def test_static_eval():
     check("accuracy_deltas returns a (delta, drop) 2-tuple", isinstance(se.accuracy_deltas(1.0, 0.0), tuple))
 
 
+def test_dynamic_which():
+    from src.final_scope import static_eval as se
+    from src.final_scope import dynamic_which_eval as dw
+
+    # allowed dynamic selectors per model + defaults
+    check("dynamic selectors llava == (textsim, textsim_cls_mix)",
+          dw.allowed_dynamic_selectors("llava15") == ("textsim", "textsim_cls_mix"))
+    check("dynamic selectors qwen == (textsim, textsim_norm_mix)",
+          dw.allowed_dynamic_selectors("qwen25vl7b") == ("textsim", "textsim_norm_mix"))
+    check("default_dynamic_selector llava → textsim", dw.default_dynamic_selector("llava15") == "textsim")
+    check("default_dynamic_selector qwen → textsim", dw.default_dynamic_selector("qwen25vl7b") == "textsim")
+
+    # dynamic basename generation (same variant scheme as static)
+    check("dyn basename gqa pilot",
+          dw.dynamic_basename("gqa", 200, "textsim", 25) == "dynamic_which_pilot_n200_textsim_p25")
+    check("dyn basename gqa final",
+          dw.dynamic_basename("gqa", 0, "textsim", 25, full=True) == "dynamic_which_final_textsim_p25")
+    check("dyn basename textvqa ocr-on",
+          dw.dynamic_basename("textvqa", 200, "textsim", 75, use_ocr=True)
+          == "dynamic_which_pilot_n200_textsim_p75_ocr_on")
+    check("dyn basename docvqa instruction-on final",
+          dw.dynamic_basename("docvqa", 0, "textsim_norm_mix", 50, instruction=True, full=True)
+          == "dynamic_which_final_textsim_norm_mix_p50_instruction_on")
+
+    # budget mapping matches static EXACTLY (same map, same keep_k)
+    check("dyn BUDGET_TO_KEEP_K is the static map", dw.BUDGET_TO_KEEP_K == se.BUDGET_TO_KEEP_K)
+    check("dyn budgets == static budgets", dw.BUDGETS == se.BUDGETS == (15, 25, 35, 50, 75))
+    check("dyn budget_keep_k llava 35→202 (== static)",
+          dw.budget_keep_k("llava15", 35) == se.budget_keep_k("llava15", 35) == 202)
+    check("dyn budget_keep_k qwen → None", dw.budget_keep_k("qwen25vl7b", 25) is None)
+
+    # Qwen per-sample K rule matches static EXACTLY
+    check("dyn clamp_qwen_k is the static fn", dw.clamp_qwen_k is se.clamp_qwen_k)
+    for b, nv in [(15, 1000), (25, 729), (50, 324), (75, 100)]:
+        check(f"dyn/static K agree (b={b}, nv={nv})",
+              dw.clamp_qwen_k(b, nv) == se.clamp_qwen_k(b, nv))
+
+    # dynamic_minus_static_pp math
+    check("dynamic_minus_static positive", dw.dynamic_minus_static(60.0, 58.0) == 2.0)
+    check("dynamic_minus_static negative", dw.dynamic_minus_static(55.5, 58.0) == -2.5)
+
+    # selection: top-K then SORT back to original order (critical rule) + keep-all == identity
+    check("select_topk_sorted picks the highest, sorted",
+          dw.select_topk_sorted([0.1, 0.9, 0.5, 0.3], 2) == [1, 2])
+    check("select_topk_sorted is ascending (original visual order)",
+          dw.select_topk_sorted([0.9, 0.1, 0.8, 0.2, 0.7], 3) == [0, 2, 4])
+    check("select_topk_sorted keep-all == identity (dense-equivalence hook)",
+          dw.select_topk_sorted([0.3, 0.1, 0.2, 0.9], 4) == [0, 1, 2, 3])
+    check("select_topk_sorted clamps k≥1", dw.select_topk_sorted([0.5, 0.2], 0) == [0])
+
+    # normalized mix math (textsim_*_mix reference)
+    mixed = dw.normalized_mix([0.0, 1.0], [1.0, 0.0], 0.5)
+    check("normalized_mix alpha=0.5 averages the normalized extremes", abs(mixed[0] - 0.5) < 1e-6)
+    mixed_a1 = dw.normalized_mix([0.0, 10.0], [5.0, 5.0], 1.0)
+    check("normalized_mix alpha=1.0 == textsim only", mixed_a1[1] > mixed_a1[0])
+
+    # static reference path resolution for ALL primary static outputs (no file needed)
+    for b in se.BUDGETS:
+        check(f"static ref basename llava gqa p{b}",
+              dw.static_reference_basename("llava15", "gqa", b) == f"static_final_cls_attn_p{b}")
+        check(f"static ref basename qwen gqa p{b}",
+              dw.static_reference_basename("qwen25vl7b", "gqa", b) == f"static_final_norm_p{b}")
+    check("static ref basename llava textvqa ocr-on",
+          dw.static_reference_basename("llava15", "textvqa", 50) == "static_final_cls_attn_p50_ocr_on")
+    check("static ref basename qwen docvqa instruction-on",
+          dw.static_reference_basename("qwen25vl7b", "docvqa", 75) == "static_final_norm_p75_instruction_on")
+    check("static ref basename honors an explicit static_selector override",
+          dw.static_reference_basename("qwen25vl7b", "gqa", 25, static_selector="uniform")
+          == "static_final_uniform_p25")
+
+    # method / fairness gate accepts dynamic_which records (LLaVA static-K + Qwen varying)
+    rec = per_sample_record(
+        sample_id=1, image_id="i", dataset="gqa", model="llava15", method="dynamic_which",
+        budget_pct=35, question="q", prompt="p", pred_raw="a", pred_norm="a", gold=["a"],
+        per_sample_score=1.0, n_visual_tokens=202, n_text_tokens=30, selector="textsim")
+    agg = aggregate_record(
+        model="llava15", dataset="gqa", split="testdev_balanced", method="dynamic_which",
+        budget_pct=35, n=1, metric="gqa_exact", score_pct=100.0, visual_tokens={"avg": 202, "max": 202},
+        text_tokens_avg=30, seq_len_avg=232, flops_prefill_TFLOPs_avg=1.2, flops_convention="x",
+        token_reduction_pct=64.5, flop_reduction_pct=70.0, prompt_template="t", max_new_tokens=64,
+        decoding="greedy bs=1", image_pad=True,
+        sample_ids_path="configs/final_scope/sample_ids/gqa.json", sample_ids_sha256="abc",
+        selector_name="textsim", keep_k=202, dynamic_minus_static_pp=1.5)
+    gate = fairness_gate([rec], agg, manifest_ids=[1], manifest_sha="abc", expected_visual_tokens=202)
+    check("fairness gate passes a clean dynamic_which LLaVA (K=202) result", gate["ok"])
+
+    qrec1 = per_sample_record(
+        sample_id=10, image_id="i", dataset="gqa", model="qwen25vl7b", method="dynamic_which",
+        budget_pct=25, question="q", prompt="p", pred_raw="a", pred_norm="a", gold=["a"],
+        per_sample_score=1.0, n_visual_tokens=81, n_text_tokens=20, selector="textsim")
+    qrec2 = per_sample_record(
+        sample_id=11, image_id="i", dataset="gqa", model="qwen25vl7b", method="dynamic_which",
+        budget_pct=25, question="q", prompt="p", pred_raw="b", pred_norm="b", gold=["b"],
+        per_sample_score=0.0, n_visual_tokens=64, n_text_tokens=22, selector="textsim")
+    qagg = aggregate_record(
+        model="qwen25vl7b", dataset="gqa", split="testdev_balanced", method="dynamic_which",
+        budget_pct=25, n=2, metric="gqa_exact", score_pct=50.0, visual_tokens={"avg": 72.5, "max": 81},
+        text_tokens_avg=21, seq_len_avg=93.5, flops_prefill_TFLOPs_avg=0.4, flops_convention="x",
+        token_reduction_pct=70.0, flop_reduction_pct=80.0, prompt_template="t", max_new_tokens=64,
+        decoding="greedy bs=1", image_pad=None,
+        sample_ids_path="configs/final_scope/sample_ids/gqa.json", sample_ids_sha256="z",
+        selector_name="textsim", keep_k=None, dynamic_minus_static_pp=-1.0)
+    qgate = fairness_gate([qrec1, qrec2], qagg, manifest_ids=[10, 11], manifest_sha="z",
+                          expected_visual_tokens=None)
+    check("fairness gate passes dynamic_which Qwen (varying tokens, expected=None)", qgate["ok"])
+
+    # --full + --n conflict (reused resolve_n)
+    conflict = False
+    try:
+        dw.resolve_n(100, True, 1000)
+    except ValueError:
+        conflict = True
+    check("dyn resolve_n errors on --full + --n", conflict)
+
+    # selector_text_source: scoring uses the raw question, NOT the VLM prompt
+    import inspect
+    check("DEFAULT_SELECTOR_TEXT_SOURCE == 'sample.question'",
+          dw.DEFAULT_SELECTOR_TEXT_SOURCE == "sample.question")
+    sig = inspect.signature(dw.run_dynamic_which)
+    check("run_dynamic_which has selector_text_source default 'sample.question'",
+          sig.parameters["selector_text_source"].default == "sample.question")
+    # the metadata field is emitted under extra_dynamic_which (documented contract)
+    check("dynamic basename + text-source are wired (constant present)",
+          isinstance(dw.DEFAULT_SELECTOR_TEXT_SOURCE, str))
+
+    # keep-all equivalence script is importable (CPU-safe: torch imports are lazy) + exposes main()
+    import importlib
+    eq = importlib.import_module("scripts.final_scope.check_dynamic_which_equivalence")
+    check("equivalence script exposes main()", hasattr(eq, "main"))
+    check("equivalence script exposes build_llava_keepall/build_qwen_keepall",
+          hasattr(eq, "build_llava_keepall") and hasattr(eq, "build_qwen_keepall"))
+
+
 def main():
     print("=== final_scope CPU self-checks ===")
     for t in (test_sha_deterministic, test_quota_and_sample, test_manifest_loader_and_validation,
               test_save_manifest_and_fingerprints, test_answer_type_strict,
-              test_schema_validator, test_token_flops, test_static_eval):
+              test_schema_validator, test_token_flops, test_static_eval, test_dynamic_which):
         print(f"\n# {t.__name__}")
         t()
     print(f"\n{'ALL PASSED' if not _failures else 'FAILURES: ' + ', '.join(_failures)}")
