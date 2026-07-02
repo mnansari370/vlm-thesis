@@ -65,23 +65,9 @@ external/
 .vscode/
 .claude/
 
-# Private research material — local-only, never pushed (docs = internal reports/proposal,
+# Private research material — local-only, never pushed (docs = internal planning/reports,
 # literature = paper notes). They remain on disk and in local branch history.
-# EXCEPTION: track ONLY the clean final-scope planning docs (reviewed: no private/sensitive
-# content). All old THESIS_*/report/private docs and docs/{literature,source_findings,
-# migration_history}/ stay ignored. Use `docs/*` (not `docs/`) so git can descend to re-include.
-docs/*
-!docs/FINAL_SCOPE_LOCK.md
-!docs/CLEAN_EXPERIMENT_MATRIX.md
-!docs/CLEAN_REPOSITORY_MAP.md
-!docs/TODO_NEXT_RUNS.md
-!docs/FINAL_CONFIG_INVENTORY.md
-!docs/FINAL_EVIDENCE_LEDGER.md
-!docs/README.md
-!docs/DENSE_BASELINE_AUDIT.md
-!docs/DENSE_PROTOCOL.md
-!docs/DENSE_DECISION_LOCK.md
-!docs/DENSE_RUNTIME_BATCHSIZE_ANALYSIS.md
+docs/
 literature/
 
 # Archived/superseded material (2026-06-27 scope lock).
