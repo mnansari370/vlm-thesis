@@ -58,15 +58,17 @@ The static frontier is complete for both models on all four datasets at all five
 
 Dynamic WHICH keeps the budget identical to static and changes only which tokens survive. The selector, called `textsim`, scores every visual token by its maximum cosine similarity to the question token embeddings, keeps the top K, and restores the original spatial order. It is training free, needs no extra forward pass through the language model, and composes the same frozen generation code as the static runs, so any accuracy difference is attributable purely to the selection.
 
-The headline positive result is Qwen2.5 VL on TextVQA (full 5,000 validation questions, dense reference 81.06):
+The headline positive result is Qwen2.5 VL on TextVQA (full 5,000 validation questions, all methods on the same samples):
 
-| Budget | Dynamic WHICH | Static | Gain vs static |
-|---|---|---|---|
-| 15% | 60.56 | 53.06 | +7.50 |
-| 25% | 67.53 | 59.17 | +8.36 |
-| 35% | 71.36 | 63.57 | +7.79 |
-| 50% | 76.08 | 70.14 | +5.94 |
-| 75% | 79.80 | 78.43 | +1.37 |
+| Budget | Dynamic WHICH | Static | Dense | Gain vs static |
+|---|---|---|---|---|
+| 15% | 60.56 | 53.06 | 81.06 | +7.50 |
+| 25% | 67.53 | 59.17 | 81.06 | +8.36 |
+| 35% | 71.36 | 63.57 | 81.06 | +7.79 |
+| 50% | 76.08 | 70.14 | 81.06 | +5.94 |
+| 75% | 79.80 | 78.43 | 81.06 | +1.37 |
+
+Dense keeps all visual tokens, so its value is the same at every budget row and serves as the ceiling that both pruning methods trade accuracy against.
 
 The gain is largest exactly where the budget is tightest, which is the intended behavior of question conditioned selection. This result was additionally validated by an independent clean room reimplementation of the selector that reproduces the predictions exactly.
 
