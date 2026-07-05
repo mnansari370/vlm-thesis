@@ -61,6 +61,16 @@ FEATHER (ICCV 2025) shows this causes near-zero localisation performance
 CLIP-side scoring (cls_attn, l2_norm) operates within the CLIP vision encoder before
 the language model.  CLIP uses learned 2D position embeddings — not RoPE — so scores
 reflect genuine visual content, not raster-scan position.
+
+Frozen-engine contract
+----------------------
+This class is the LLaVA-1.5 generation engine for the ENTIRE final-scope matrix: the
+dense final (method="none", K=576), the static finals (method="cls_attn"), and — by
+composition, never modification — the Dynamic-WHICH selectors and the Dynamic-COUNT
+wrappers. The Dynamic-COUNT probe gate requires reproducing this class's predictions
+byte-for-byte, and every saved final references outputs produced through this path.
+Any change to preprocessing, prompting, selection, decoding, or post-processing here
+invalidates that chain — treat this file as frozen alongside the results.
 """
 
 import random as _random

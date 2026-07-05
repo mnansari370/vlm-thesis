@@ -13,6 +13,13 @@ M-RoPE during decode).
 
 CORRECTNESS GATE: selector="full" (keep all) must reproduce stock model.generate exactly.
 
+Frozen-engine contract: this class is the Qwen2.5-VL generation engine for the ENTIRE
+final-scope matrix — dense (selector="full"), static (selector="norm"), and, by
+composition, the Dynamic-WHICH selectors and Dynamic-COUNT wrappers (which mirror
+`_greedy` line-for-line and are gated on byte-identical predictions). Any change to
+`_inputs`/`_encode`/`_greedy`/selection here invalidates the saved finals — treat this
+file as frozen alongside the results.
+
 Run in qwen_env.
 """
 import torch

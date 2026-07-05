@@ -1,7 +1,7 @@
 """
-VisionZip (arXiv 2412.04467) — faithful re-implementation on our honest pipeline.
+VisionZip (arXiv 2412.04467) — faithful re-implementation on the locked honest pipeline.
 
-VisionZip = dominant token selection + contextual token MERGING. Our existing
+VisionZip = dominant token selection + contextual token MERGING. The repository's
 static CLS-Attn is dominant-only; VisionZip additionally merges the non-dominant
 ("contextual") tokens, so it is NOT already covered.
 
@@ -12,14 +12,14 @@ Algorithm (paper Alg. 1 + 2):
      K_contextual "target" tokens; assign every other ("merge") token to its most
      similar target and average them in. This yields K_contextual merged tokens.
   3. Feed [K_dominant dominant + K_contextual merged] = keep_k visual tokens to the
-     LLM (prune-before-LLM, same FLOPs basis as our static methods).
+     LLM (prune-before-LLM, same FLOPs basis as the static methods).
 
-Split: keep_k = K_dominant + K_contextual. We use K_contextual = round(keep_k*10/64)
+Split: keep_k = K_dominant + K_contextual, with K_contextual = round(keep_k*10/64)
 (matches the paper's documented 64-token config = 54 dominant + 10 contextual,
 ~15.6% contextual) and K_dominant = keep_k - K_contextual. Documented, not guessed.
 
-Similarity basis: VisionZip's paper merges by attention KEY vectors. We merge by the
-layer-(-2) patch FEATURES (cosine), which are the keys up to a linear projection —
+Similarity basis: VisionZip's paper merges by attention KEY vectors. Merging here uses
+the layer-(-2) patch FEATURES (cosine), which are the keys up to a linear projection —
 faithful in mechanism, avoids a fragile key-hook. Flagged in docs.
 
 This reuses StaticPrunedLlava's CLIP forward, projector, inputs_embeds assembly,
@@ -36,7 +36,7 @@ class VisionZipLlava(StaticPrunedLlava):
     def __init__(self, keep_k: int, k_contextual: int | None = None,
                  image_pad: bool = True, honest: bool = True,
                  model_name: str = "llava-hf/llava-1.5-7b-hf", seed: int = 42):
-        # Parent loads with method='cls_attn' (we reuse its CLS-attention scoring).
+        # Parent loads with method='cls_attn' (its CLS-attention scoring is reused).
         # Bypass parent's SUPPORTED_K check by allowing any keep_k for VisionZip.
         self._vz_keep_k = keep_k
         super().__init__(method="cls_attn", keep_k=288, seed=seed,

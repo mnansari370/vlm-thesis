@@ -2,7 +2,7 @@
 dynamic_which_ref — CLEAN-ROOM reference re-implementation of Dynamic-WHICH selection.
 
 Purpose: an INDEPENDENT second implementation of the WHICH selection logic, written from scratch,
-so we can cross-check the original wrappers (src/pruning/dynamic_which/*) and try rescue selectors.
+used to cross-check the original wrappers (src/pruning/dynamic_which/*) and to try rescue selectors.
 It deliberately does NOT import llava_textsim / qwen_textsim. It reuses only the FROZEN generators
 (StaticPrunedLlava, QwenPruner) and stable final-scope utilities. Training-free, no answer head,
 no learned budget, no dense LM prefill for scoring.

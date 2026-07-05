@@ -32,7 +32,7 @@ MD_PATH = os.path.join(TABLES_DIR, "dynamic_which_coverage_matrix.md")
 MODELS = ("llava15", "qwen25vl7b")
 DATASETS = ("gqa", "vqav2", "textvqa", "docvqa")
 
-# statuses ranked so we can pick the best tier present for each cell
+# statuses ranked so the best tier present for each cell can be picked
 STATUS_RANK = {"missing": 0, "n20_smoke": 1, "n200_pilot": 2, "n1000_confirm": 3, "final": 4}
 MEANINGFUL = {"n200_pilot", "n1000_confirm", "final"}   # smoke does NOT count
 

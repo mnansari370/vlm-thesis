@@ -149,8 +149,8 @@ def qwen_retained_sanity(retained_avg: float, dense_visual_avg: float, budget_pc
                          tol_frac: float = 0.12, tol_abs: float = 2.0) -> Optional[str]:
     """Soft check: the actual avg retained visual tokens should be close to the requested
     budget% of the dense avg. `uniform` can return slightly FEWER than requested (linspace
-    index collisions → .unique()), so we do NOT require equality — only flag a gross mismatch.
-    Returns an issue string, or None when within tolerance."""
+    index collisions → .unique()), so equality is NOT required — only a gross mismatch is
+    flagged. Returns an issue string, or None when within tolerance."""
     requested = budget_pct / 100.0 * float(dense_visual_avg)
     tol = max(tol_abs, tol_frac * requested)
     if abs(float(retained_avg) - requested) > tol:

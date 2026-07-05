@@ -220,8 +220,8 @@ def assemble_manifest(
 
 
 def save_manifest(path: str, manifest: Dict[str, Any]) -> None:
-    # Validate before writing so we never persist a malformed manifest. validate_manifest
-    # raises on hard schema breakage AND returns soft issues — we refuse to write on EITHER.
+    # Validate before writing so a malformed manifest is never persisted. validate_manifest
+    # raises on hard schema breakage AND returns soft issues — writing is refused on EITHER.
     issues = validate_manifest(manifest)
     if issues:
         raise ValueError(f"refusing to write invalid manifest to {path}: {issues}")

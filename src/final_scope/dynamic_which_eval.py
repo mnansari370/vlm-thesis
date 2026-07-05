@@ -12,8 +12,8 @@ It is the methodological sibling of static_eval.py and REUSES static_eval's budg
 _sha256_file, load_dense_reference) plus dense_pilot's adapters/prompts/scorers and the shared
 output_writer / schema_validator / token_flops. The new pieces here are:
   * the DYNAMIC selector names per model,
-  * loading BOTH a dense reference AND the matching STATIC final (same model/dataset/budget) so we
-    can report dynamic-vs-dense AND dynamic-vs-static deltas over the SAME samples,
+  * loading BOTH a dense reference AND the matching STATIC final (same model/dataset/budget) so the
+    runner reports dynamic-vs-dense AND dynamic-vs-static deltas over the SAME samples,
   * the dynamic output schema fields.
 
 This module contains NO model/generation code. The actual question-conditioned scoring +

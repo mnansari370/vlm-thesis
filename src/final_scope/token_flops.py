@@ -5,13 +5,14 @@ KEY RULE (docs/DENSE_PROTOCOL.md §9): FLOPs are computed **per sample** from th
 (visual + text) token count, then **averaged** — `mean_i FLOPs(n_i)`, NOT `FLOPs(mean_i n_i)`
 — because the FastV Eq.5 formula has an `n^2` (convex) term, so plugging the mean undercounts.
 This matters for Qwen (visual tokens vary per image); for LLaVA-1.5 every sample has 576
-visual tokens so the two agree, but we still go per-sample for one uniform code path.
+visual tokens so the two agree, but the computation stays per-sample so both models share
+one uniform code path.
 
 This module does NOT invent formulas. It REUSES the analytical prefill FLOPs already defined
 in the repo:
   - LLaVA-1.5 : src/analysis/flops.py  `fastv_full_flops(n_visual, n_text)`  (T=32, d=4096, m=11008)
   - Qwen-2.5  : src/analysis/qwen_flops.py  `per_layer(n)` + T (T=28, d=3584, m=18944)
-We pass the MEASURED per-sample `n_text` (we do NOT reuse qwen_flops's hardcoded N_TEXT=40).
+The MEASURED per-sample `n_text` is passed through (qwen_flops's hardcoded N_TEXT=40 is never reused).
 Convention: LLM prefill only — excludes the vision encoder, the projector, and decode steps.
 
 Pure / CPU-only.

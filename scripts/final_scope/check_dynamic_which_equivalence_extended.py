@@ -12,7 +12,7 @@ Two checks (both route through the EXISTING wrappers src/pruning/dynamic_which/*
 
   B) static-selector equivalence
      A "reference mode" that selects the SAME tokens as static must reproduce static_final at the
-     same budget. We obtain the static selection criterion INSIDE the WHICH pipeline via the mix
+     same budget. The static selection criterion is obtained INSIDE the WHICH pipeline via the mix
      selector at alpha=0 (score reduces to minmax(static-saliency) → top-K == static top-K):
        LLaVA: LlavaDynamicWhich(textsim_cls_mix, alpha=0)    → CLS-attention selection
        Qwen : QwenDynamicWhich(textsim_norm_mix, alpha=0)    → visual-norm selection

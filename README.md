@@ -101,6 +101,23 @@ The evidence supports a clear selection-over-budget reading. The dense ceilings 
 * `archive/` **all retired legacy code, configs, scripts, logs and docs** — the pre-final-scope pipelines (classification heads, the old budget controller, the distillation study, legacy evaluation harnesses, out-of-scope models and datasets) were moved here during the staged cleanup and are preserved, not deleted. Do not import from `archive/`; every move is recorded in `archive/migration_manifests/`.
 * `docs/` the final documentation set (local-only): thesis scope, repository map, protocol, one document per method, results summary, reproducibility, and limitations
 
+### Where each method lives
+
+The active code is organized around the four method families. Each row is one method, from
+implementation to committed evidence:
+
+| Method | Runner core (CPU) | Selection / generation | Launcher | Result basename |
+|---|---|---|---|---|
+| Dense | `src/final_scope/dense_pilot.py` | `models/static/static.py` (`none`) · `pruning/.../qwen_pruner.py` (`full`) | `run_dense_pilot.py` | `dense_final` |
+| Static | `src/final_scope/static_eval.py` | LLaVA `cls_attn` / Qwen `norm` (inside the engines) | `run_static_eval.py` | `static_final_{sel}_p{b}` |
+| Dynamic-WHICH | `src/final_scope/dynamic_which_eval.py` | `src/pruning/dynamic_which/` (+ `_ref` clean-room) | `run_dynamic_which_eval.py` | `dynamic_which_final_textsim_p{b}` |
+| Dynamic-COUNT (DC-D, DC-C) | `src/final_scope/dynamic_count_eval.py` | `src/pruning/dynamic_count/` | `run_dynamic_count_{probe,discrete,continuous}.py` | `dynamic_count_{probe,dcd,dcc}_*` |
+
+`src/final_scope/` holds the shared fairness toolkit (`sample_ids`, `output_writer`,
+`schema_validator`, `token_flops`) that every method reuses. The launchers live under
+`scripts/final_scope/` (grouped by method in `scripts/README.md`); the per-cell result files and the
+committed tables live under `results/final_scope/` (see `results/README.md`).
+
 ## 6. Running the code
 
 Each model runs in its own environment: LLaVA in `vlm_env` (torch 2.3, transformers 4.46.3) and Qwen in `qwen_env` (transformers 4.51 with `qwen_vl_utils`). The pinned versions matter for reproducing the numbers.
