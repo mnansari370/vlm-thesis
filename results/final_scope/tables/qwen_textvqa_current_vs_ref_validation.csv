@@ -1,0 +1,6 @@
+budget_pct,current_source,current_path,ref_path,ref_present,same_ids,same_order,n_compared,pred_raw_match,score_diff_count,current_score,ref_score,current_dyn_static,ref_dyn_static,static_score,dense_score,current_visual_avg,ref_visual_avg,current_text_avg,ref_text_avg,metadata_mismatches
+15,final_first200,dynamic_which_final_textsim_p15_ocr_on.jsonl,dynamic_which_ref_pilot_n200_textsim_ref_p15_ocr_on.jsonl,True,True,True,200,200,0,58.95,58.95,11.85,11.85,47.1,80.6,146.21,146.21,97.61,97.61,none
+25,n200_pilot,dynamic_which_pilot_n200_textsim_p25_ocr_on.jsonl,dynamic_which_ref_pilot_n200_textsim_ref_p25_ocr_on.jsonl,True,True,True,200,200,0,66.25,66.25,6.9,6.9,59.35,80.6,243.64,243.64,97.61,97.61,none
+35,n200_pilot,dynamic_which_pilot_n200_textsim_p35_ocr_on.jsonl,dynamic_which_ref_pilot_n200_textsim_ref_p35_ocr_on.jsonl,True,True,True,200,200,0,70.45,70.45,8.8,8.8,61.65,80.6,341.25,341.25,97.61,97.61,none
+50,n200_pilot,dynamic_which_pilot_n200_textsim_p50_ocr_on.jsonl,dynamic_which_ref_pilot_n200_textsim_ref_p50_ocr_on.jsonl,True,True,True,200,200,0,73.25,73.25,0.5,0.5,72.75,80.6,487.31,487.31,97.61,97.61,none
+75,final_first200,dynamic_which_final_textsim_p75_ocr_on.jsonl,dynamic_which_ref_pilot_n200_textsim_ref_p75_ocr_on.jsonl,True,True,True,200,200,0,77.75,77.75,1.65,1.65,76.1,80.6,730.7,730.7,97.61,97.61,none

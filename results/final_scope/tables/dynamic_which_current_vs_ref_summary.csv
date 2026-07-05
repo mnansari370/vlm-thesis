@@ -1,0 +1,23 @@
+model,dataset,budget_pct,scope,static_score_pct,dense_score_pct,current_textsim_dynstatic,current_best_dynstatic,current_best_selector,ref_textsim_ref_dynstatic,ref_best_dynstatic,ref_best_selector,impl_check,verdict
+llava15,docvqa,25,in-ref-scope,14.65,16.47,-7.5,-2.99,textsim_cls_mix,-7.5,-1.33,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,docvqa,35,in-ref-scope,16.2,16.47,-8.19,-3.83,textsim_cls_mix,-8.19,-1.54,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,docvqa,50,in-ref-scope,17.01,16.47,-7.46,-3.12,textsim_cls_mix,-7.46,-1.28,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,gqa,25,not-in-ref-scope,66.0,63.5,1.0,1.0,textsim,None,None,None,n/a,not-in-ref-scope (current evidence stands; ref not run by design)
+llava15,gqa,35,not-in-ref-scope,65.7,67.3,0.0,0.0,textsim,None,None,None,n/a,not-in-ref-scope (current evidence stands; ref not run by design)
+llava15,textvqa,25,in-ref-scope,36.0,41.5,-8.05,-5.5,textsim_cls_mix,-8.05,-2.45,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,textvqa,35,in-ref-scope,56.71,57.65,-8.25,-8.05,textsim_cls_mix,-8.25,-2.95,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,textvqa,50,in-ref-scope,56.4,57.65,-7.55,-4.05,textsim_cls_mix,-7.55,-1.1,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,vqav2,25,in-ref-scope,74.67,77.33,-3.17,-1.34,textsim_cls_mix,-3.17,-1.17,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+llava15,vqav2,35,in-ref-scope,75.5,77.33,-3.83,-2.67,textsim_cls_mix,-3.83,1.0,static_guarded_textsim_ref,impl-consistent,SELECTOR-DESIGN (rescue 'static_guarded_textsim_ref' recovers, +1.00pp vs static)
+qwen25vl7b,docvqa,25,in-ref-scope,49.1,88.2,-9.07,-9.07,textsim,-9.07,-7.77,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+qwen25vl7b,docvqa,35,in-ref-scope,67.84,88.2,-14.48,-14.25,textsim_norm_mix,-14.48,-11.38,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+qwen25vl7b,docvqa,50,in-ref-scope,80.15,88.2,-15.46,-9.98,textsim_norm_mix,-15.46,-8.55,static_guarded_textsim_ref,impl-consistent,TASK/REGIME (no selector beats static)
+qwen25vl7b,gqa,25,in-ref-scope,67.0,68.0,-7.0,0.0,textsim_norm_mix,-7.0,0.0,saliency_mix_ref,impl-consistent,TASK/REGIME (no selector beats static)
+qwen25vl7b,gqa,35,in-ref-scope,68.0,68.0,-7.0,-0.5,textsim_norm_mix,-7.0,-0.5,saliency_mix_ref,impl-consistent,TASK/REGIME (no selector beats static)
+qwen25vl7b,textvqa,15,final-success,47.1,80.6,7.5,None,None,11.85,11.85,textsim_ref,n/a,FINAL SUCCESS; independent ref validation pending
+qwen25vl7b,textvqa,25,final-success,59.17,81.06,6.9,6.9,textsim,6.9,6.9,textsim_ref,n/a,FINAL SUCCESS; independent ref validation pending
+qwen25vl7b,textvqa,35,final-success,63.57,81.06,8.8,8.8,textsim,8.8,8.8,textsim_ref,n/a,FINAL SUCCESS; independent ref validation pending
+qwen25vl7b,textvqa,50,final-success,70.14,81.06,0.5,0.5,textsim,0.5,0.5,textsim_ref,n/a,FINAL SUCCESS; independent ref validation pending
+qwen25vl7b,textvqa,75,final-success,78.43,81.06,1.37,None,None,1.65,1.65,textsim_ref,n/a,FINAL SUCCESS; independent ref validation pending
+qwen25vl7b,vqav2,25,in-ref-scope,79.83,83.0,-3.33,1.5,textsim_norm_mix,-3.33,1.5,static_guarded_textsim_ref,impl-consistent,SELECTOR-DESIGN (some selector beats static; margin small)
+qwen25vl7b,vqav2,35,in-ref-scope,80.5,83.0,-2.0,0.0,textsim_norm_mix,-2.0,0.0,saliency_mix_ref,impl-consistent,TASK/REGIME (no selector beats static)

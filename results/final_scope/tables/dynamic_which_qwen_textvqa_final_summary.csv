@@ -1,0 +1,6 @@
+model,dataset,method,selector,budget_pct,dynamic_score_pct,static_score_pct,dense_score_pct,dynamic_minus_static_pp,dynamic_minus_dense_pp,token_reduction_pct,flop_reduction_pct,visual_tokens_avg,n,gate_ok
+qwen25vl7b,textvqa,dynamic_which,textsim,15,60.56,53.06,81.06,7.5,-20.5,77.98,78.65,144.5634,5000,True
+qwen25vl7b,textvqa,dynamic_which,textsim,25,67.53,59.17,81.06,8.36,-13.53,68.81,69.64,240.9576,5000,True
+qwen25vl7b,textvqa,dynamic_which,textsim,35,71.36,63.57,81.06,7.79,-9.7,59.61,60.56,337.4904,5000,True
+qwen25vl7b,textvqa,dynamic_which,textsim,50,76.08,70.14,81.06,5.94,-4.98,45.86,46.84,481.9224,5000,True
+qwen25vl7b,textvqa,dynamic_which,textsim,75,79.8,78.43,81.06,1.37,-1.26,22.94,23.63,722.6682,5000,True
