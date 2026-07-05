@@ -189,3 +189,53 @@ Restore (logs): `mv archive/legacy_logs/logs/<name> logs/<name>`
 - `src/training/train_student.py` → `archive/legacy_experiments/src/training/train_student.py`
 
 *\* Corrected rows: these three `__init__.py` files are byte-identical empty files, so git's rename detection paired them arbitrarily across packages in `diff --cached -M`; the rows above record the LOGICAL move actually performed (verified on disk). Content and final locations are identical either way.*
+
+---
+
+# Pass 2 — init-trap cleanup
+
+- **cleanup pass:** Pass 2 init-trap cleanup
+- **date:** 2026-07-05
+- **branch:** method-migration
+- **commit before pass 2:** 37d6e79 ("Archive low-risk legacy code, configs, and logs")
+
+## The two `__init__.py` edits (why they were needed)
+
+Pass 1 could not archive six legacy files because two package `__init__.py` files imported them at
+package-import time, making them indirect runtime dependencies of every final-scope run:
+
+1. `src/models/static/__init__.py` contained `from .llava_wrapper import LlavaStaticVQAModel`
+   (the retired classification-head wrapper). Any `from src.models.static.static import
+   StaticPrunedLlava` executed it, pulling `llava_wrapper.py` → `answer_head.py` + `token_selector.py`.
+   **Edit:** replaced with a comment-only package marker.
+2. `src/data/vqav2/__init__.py` contained `from .vqav2 import VQAv2Dataset, build_vqav2_dataset` and
+   `from .collate import VQACollator` (the retired classification-era dataset/collator). Any
+   `from src.data.vqav2.vqav2_answers import normalize_answer` (the active VQAv2 scorer helper used by
+   `dense_pilot.py`) executed it, pulling `vqav2.py` → `image_transforms.py` and `collate.py`.
+   **Edit:** replaced with a comment-only package marker.
+
+No runtime logic changed: nothing in the active tree imported the removed names
+(`LlavaStaticVQAModel`, `VQAv2Dataset`, `build_vqav2_dataset`, `VQACollator`) — their only consumers
+were archived in Pass 1. Verified before AND after the moves: `compileall` exit 0,
+`test_final_scope` ALL PASSED, and import smokes under both production envs (vlm_env: final-scope
+cores + `StaticPrunedLlava` + `normalize_answer`; qwen_env: final-scope cores + `QwenPruner` +
+`normalize_answer`).
+
+## Files moved in Pass 2 (6 `git mv` renames)
+
+| Old path | New archive path | Reason |
+|---|---|---|
+| `src/models/static/llava_wrapper.py` | `archive/legacy_models/src/models/static/llava_wrapper.py` | retired classification-head LLaVA wrapper (VQAv2 answer-head era); only reachable via the removed package import |
+| `src/models/static/answer_head.py` | `archive/legacy_models/src/models/static/answer_head.py` | retired MLP answer head; imported only by `llava_wrapper.py` |
+| `src/models/static/token_selector.py` | `archive/legacy_models/src/models/static/token_selector.py` | retired CLS-attention selector module of the classification path; the active engine (`static.py`) has its own selection code |
+| `src/data/vqav2/vqav2.py` | `archive/legacy_datasets/src/data/vqav2/vqav2.py` | retired classification-era VQAv2 Dataset (question-type-heuristic stratification; superseded by the sha-locked 25k manifest) |
+| `src/data/vqav2/collate.py` | `archive/legacy_datasets/src/data/vqav2/collate.py` | retired batch collator; only consumed by the retired trainer path |
+| `src/data/vqav2/image_transforms.py` | `archive/legacy_datasets/src/data/vqav2/image_transforms.py` | retired expand2square transform; imported only by `vqav2.py` |
+
+Restore command (any file): `git mv archive/<bucket>/<original/relative/path> <original/relative/path>`
+— e.g. `git mv archive/legacy_models/src/models/static/llava_wrapper.py src/models/static/llava_wrapper.py`
+(restoring the wrapper also requires restoring its `__init__.py` import if package-level re-export is wanted).
+
+**Kept active (untouched):** `src/models/static/static.py` (the frozen LLaVA engine),
+`src/data/vqav2/vqav2_answers.py` (the VQAv2 consensus normalizer), and both edited `__init__.py`
+package markers.
