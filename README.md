@@ -4,7 +4,7 @@
 **Supervisor:** Decebal Constantin Mocanu
 **Advisor:** Boqian Wu
 
-> **Status: work in progress.** This is an active master's thesis project. Experiments are still running and the numbers below will be extended and refined. Only results that have already passed the full evaluation protocol are reported here.
+> **Status: experiments complete; thesis text in preparation.** The full evaluation matrix — dense, static, Dynamic-WHICH, and Dynamic-COUNT (DC-D and DC-C) on both models and all four datasets — is finished and validated. Every number below comes from a run that passed the full evaluation protocol; the complete result tables live in `results/final_scope/tables/` (tracked in this repository).
 
 ## 1. What this project studies
 
@@ -74,37 +74,46 @@ The gain is largest exactly where the budget is tightest, which is the intended 
 
 Just as important, the same selector was evaluated on the full matrix of both models and all four datasets, and it does **not** win everywhere. On GQA, VQAv2 and DocVQA it lands below the static floor by roughly one to fourteen points depending on the cell. The pattern is consistent: question conditioned selection helps when the answer lives in a small, question locatable region (scene text in TextVQA) and hurts when the task needs broad or relational coverage of the image (GQA relations, natural scenes in VQAv2, full page text in DocVQA). A dedicated failure analysis confirmed these negatives are properties of the task regime, not implementation bugs. The full matrix is being completed so that positive and negative cells are reported on the same footing.
 
-### 3.4 Dynamic COUNT: adaptive per sample budget (in progress)
+### 3.4 Dynamic COUNT: adaptive per sample budget (complete — a documented negative)
 
 Dynamic COUNT asks the complementary question: keeping the selector fixed, can choosing a different budget per sample beat the best single fixed budget at the same average cost?
 
-The first step is an oracle analysis that bounds what a perfect budget router could achieve. Using the accepted dense and static per sample results, an oracle that picks the cheapest sufficient budget per sample gains roughly two to six accuracy points over the best fixed budget while removing 60 to 83 percent of visual tokens, and it can match dense accuracy for the vast majority of samples at a fraction of the tokens. This is explicitly an upper bound, not a method: a real controller must predict the budget from the input alone. Designing and honestly evaluating such a controller against matched average compute is the current work in this project, and earlier attempts in the literature and in this project realized almost none of the oracle headroom, so the outcome may well be a carefully documented negative.
+An oracle analysis first bounded the headroom: a perfect budget router would gain roughly two to six accuracy points over the best fixed budget while removing 61 to 83 percent of visual tokens. Two real mechanisms were then built and evaluated on all eight model×dataset cells, with controllers calibrated on the first 20 percent of each manifest and scored on the held-out 80 percent, under honest multi-pass accounting (an escalated sample pays for both its cheap probe pass and its second pass):
 
-## 4. What the results say so far
+* **DC-D**, a discrete confidence-gated cascade over the budget anchors, and
+* **DC-C**, the main method: a calibrated controller (a transparent rule controller, plus a small ridge variant) that predicts a per-sample **integer** token count, executed with a real second pass at exactly that budget.
 
-The evidence so far supports a selection over budget reading. The dense ceilings are reproduced, the static floors are strong and cheap, question conditioned selection is genuinely valuable but only in a specific task regime, and the adaptive budget axis has visible oracle headroom whose practical reachability is still open. All headline claims come from frozen models under matched budgets, and negative results are reported alongside the positive ones.
+The probes that record the confidence signals reproduce the frozen static and WHICH predictions byte-for-byte (a built-in reproduction gate, zero mismatches across all 18 probe runs), so the substrate is exact. The outcome, against the static accuracy-versus-FLOPs curve at matched average compute: **DC-D wins once** (LLaVA TextVQA, +0.75 points) and otherwise near-ties or loses; **DC-C never wins** (best +0.48, a near-tie; the steep-curve cells lose by up to eleven points); and running COUNT on top of the successful WHICH selector adds **no increment** over WHICH alone. The oracle headroom is real but not harvestable by input-side confidence signals under honest accounting — a carefully documented negative result.
 
-## 5. Repository layout
+## 4. What the results say
 
-* `src/final_scope/` shared evaluation infrastructure: sample manifests, unified output schema, token and FLOP accounting, fairness gate, and the dense, static and dynamic WHICH runner cores
-* `src/models/` frozen model wrappers, including the physical token removal path for LLaVA
-* `src/pruning/` selection methods: static criteria, the `textsim` dynamic WHICH selectors, the clean room reference implementation, and the earlier budget analysis code
+The evidence supports a clear selection-over-budget reading. The dense ceilings are reproduced; the static floors are strong and cheap (within about one point of dense at the 75 percent budget on almost every cell); question conditioned selection is genuinely valuable but only in a specific task regime (Qwen2.5-VL on TextVQA — validated by an exact clean-room reproduction); and the adaptive budget axis, despite visible oracle headroom, does not survive honest matched-compute evaluation. Per cell, the best method is the static floor on five of eight cells, Dynamic WHICH on Qwen TextVQA (and nominally on a collapsed low-budget corner of Qwen DocVQA), and DC-D on LLaVA TextVQA by a small margin. All headline claims come from frozen models under matched budgets, and negative results are reported alongside the positive ones — see `results/final_scope/tables/final_thesis_results_summary.md` for the complete per-cell verdicts.
+
+## 5. Repository layout (after the 2026-07-05 cleanup)
+
+* `src/final_scope/` shared evaluation infrastructure: sample manifests, unified output schema, token and FLOP accounting, fairness gate, and the dense, static, dynamic WHICH and dynamic COUNT runner cores
+* `src/models/static/static.py` the frozen LLaVA engine (physical token removal before the language model)
+* `src/pruning/` the method code: the `textsim` dynamic WHICH selectors, the clean room reference implementation, the dynamic COUNT probes and controllers, the frozen Qwen engine (`question_conditioned_selection/qwen_pruner.py`), and the VisionZip baseline
 * `src/metrics/` the official scorers (GQA exact match, M4C, ANLS, VQA consensus)
-* `src/data/` dataset loaders
-* `scripts/final_scope/` runnable launchers, audits and table generators for the final experiment matrix
-* `configs/final_scope/sample_ids/` the frozen, sha256 verified evaluation subsets
-* `results/final_scope/` run outputs, git ignored, one aggregate JSON plus one per sample JSONL per cell
-* `docs/` the locked scope, the evidence ledger, the protocol documents and the run plan
+* `scripts/final_scope/` all runnable launchers, audits, validators and table generators for the final experiment matrix
+* `configs/final_scope/sample_ids/` the frozen, sha256 verified evaluation subsets (tracked)
+* `results/final_scope/` run outputs — per cell one aggregate JSON plus one per sample JSONL (git ignored, local evidence); **`results/final_scope/tables/`** holds all final result tables and reports (tracked); `results/final_scope/dynamic_count_configs/` holds the fitted COUNT controllers (tracked)
+* `archive/` **all retired legacy code, configs, scripts, logs and docs** — the pre-final-scope pipelines (classification heads, the old budget controller, the distillation study, legacy evaluation harnesses, out-of-scope models and datasets) were moved here during the staged cleanup and are preserved, not deleted. Do not import from `archive/`; every move is recorded in `archive/migration_manifests/`.
+* `docs/` the final documentation set (local-only): thesis scope, repository map, protocol, one document per method, results summary, reproducibility, and limitations
 
 ## 6. Running the code
 
 Each model runs in its own environment: LLaVA in `vlm_env` (torch 2.3, transformers 4.46.3) and Qwen in `qwen_env` (transformers 4.51 with `qwen_vl_utils`). The pinned versions matter for reproducing the numbers.
 
-A quick check without a GPU:
+Validating the completed results without a GPU (self-tests, then the final-matrix validators and audits — expected: ALL PASSED, ALL_FINAL_VALID=True, ALL_DC_VALID=True, 40/40 WHICH cells and 8/8 COUNT cells complete):
 
 ```bash
-python -m compileall src scripts
+python -m compileall -q src scripts
 python -m src.final_scope.test_final_scope
+python -m scripts.final_scope.validate_dynamic_which_final
+python -m scripts.final_scope.audit_dynamic_which_full_final_matrix
+python -m scripts.final_scope.validate_dynamic_count_final
+python -m scripts.final_scope.audit_dynamic_count_full_matrix
 ```
 
 Evaluations are launched per cell, for example:

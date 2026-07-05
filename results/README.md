@@ -1,21 +1,33 @@
 # `results/` — experiment results
 
-All experiment results from the three historical tracks now live here (migrated 2026-06-24). The contents
-are **git-ignored** (large, regenerable); only this `README.md` and `INDEX.md` are tracked. The
-authoritative paths for every thesis/paper number are in `docs/THESIS_EVIDENCE_LEDGER.md`.
-
 ```
 results/
-  thesis_main/      L1–L12, E1–E5 headline evidence, by track:
-    gqa/              frozen GQA-track results (was outputs/)
-    vqav2/            frozen VQAv2 budget track (was VQA_V2/outputs/)
-    highres/          high-res / Qwen selection + distillation (was v2/outputs/)
-  paper_candidates/ qwen_budget_data_*.json — raw inputs for the L10 recompute
-  archived/         superseded result sets (e.g. elastic Stage-1 checkpoints)
-  appendix/         supporting/secondary result sets
+  final_scope/                    THE final thesis evidence
+    llava15/{gqa,vqav2,textvqa,docvqa}/      per cell: one aggregate .json + one per-sample .jsonl
+    qwen25vl7b/{gqa,vqav2,textvqa,docvqa}/     (git-ignored local evidence — basenames are
+                                                load-bearing references; never rename)
+    tables/                       all 37 final tables & reports — TRACKED in git
+    dynamic_count_configs/        fitted DC-D/DC-C controllers per cell — TRACKED
+  thesis_main/{gqa,vqav2,highres}/   legacy pre-final-scope evidence (kept in place until
+                                     thesis submission; mapped by legacy_index.md)
+  paper_candidates/               old budget-generality raw inputs (out of scope, kept)
+  README.md  INDEX.md  legacy_index.md
 ```
 
-The `thesis_main/{gqa,vqav2,highres}` split preserves each track's internal layout so the ledger paths and
-the reader scripts in `src/` map by a simple prefix. **Main vs appendix classification is carried by the
-ledger's Placement column, not by physical folder.** See `INDEX.md` and
-`docs/FINAL_REPOSITORY_CLEANUP_REPORT.md`.
+**Every citable thesis number lives under `results/final_scope/`.** The run outputs cover the full
+matrix: 8 dense finals, 40 static finals (LLaVA `cls_attn`, Qwen `norm` × 5 budgets), 40
+Dynamic-WHICH textsim finals, and the complete Dynamic-COUNT set (18 reproduction-gated probes,
+DC-D cascades, DC-C rule+ridge runs, plus the separate COUNT-on-WHICH variant). Each aggregate
+records its sample-manifest sha256, its dense/static reference paths with file sha256s, and its
+fairness-gate verdict.
+
+Start with `tables/final_thesis_results_summary.md` (per-cell verdicts), then
+`tables/final_dense_static_dynamic_comparison.md` (every method setting),
+`tables/dynamic_which_final_report.md` (the WHICH phase freeze), and the DC summaries
+(`tables/dynamic_count_{dc_d,dc_c,win_loss,oracle}_summary.md`). Validation:
+`python -m scripts.final_scope.validate_dynamic_which_final` and
+`validate_dynamic_count_final` (CPU, read-only).
+
+The per-sample JSONLs are git-ignored (large); a compressed backup exists at
+`~/vlm-thesis-backups/final_scope_backup_20260705.tar.gz`. Legacy result trees under `thesis_main/`
+are historical evidence for archived analyses — do not cite them as final numbers.

@@ -1,16 +1,14 @@
-# `experiments/` — per-method experiment entrypoints
+# `experiments/` — index only
 
-The runnable experiment/evaluation code now lives under **`src/`** (organized by method), and is invoked
-from the repo root, e.g.:
+This folder is a thin pointer, not a code location. Every final-scope experiment is a module under
+`src/` launched by a script under `scripts/final_scope/`, for example:
 
 ```
-python -m src.evaluation.docvqa.qwen_kcurve --help     # selection K-curve (L5)
-python -m src.evaluation.gqa.run_static_testdev --help # static frontier (L2/L3)
-python -m src.training.train_student --help            # distilled selector (L11/L12)
+python -m scripts.final_scope.run_dense_pilot        --model llava15    --dataset gqa     --full
+python -m scripts.final_scope.run_static_eval        --model qwen25vl7b --dataset docvqa  --budget-pct 25 --full
+python -m scripts.final_scope.run_dynamic_which_eval --model qwen25vl7b --dataset textvqa --budget-pct 25 --selector textsim --full
 ```
 
-This folder is a thin index, not a code location: every experiment is an `src.*` module run via
-`python -m`, with its config in `configs/` and its results under `results/`. The mapping of experiments
-to thesis sections lives in `docs/THESIS_MASTER_PLAN.md`; the exact evidence paths are in
-`docs/THESIS_EVIDENCE_LEDGER.md`. The historical track folders this replaced (`GQA/`, `VQA_V2/`, `v2/`)
-no longer exist.
+The experiment-to-thesis mapping and all final numbers live in `results/final_scope/tables/`
+(start with `final_thesis_results_summary.md`); the method documentation lives in `docs/`
+(local-only). Historical track folders and legacy harnesses are preserved under `archive/`.
