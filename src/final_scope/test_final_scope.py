@@ -538,11 +538,217 @@ def test_dynamic_which():
           hasattr(eq, "build_llava_keepall") and hasattr(eq, "build_qwen_keepall"))
 
 
+def test_dynamic_which_ref():
+    from src.pruning import dynamic_which_ref as ref
+    from src.final_scope import dynamic_which_eval as dw
+
+    # allowed ref selectors per model (Qwen has no coverage_guarded)
+    check("llava ref selectors",
+          ref.allowed_ref_selectors("llava15")
+          == ("textsim_ref", "saliency_mix_ref", "static_guarded_textsim_ref", "coverage_guarded_textsim_ref"))
+    check("qwen ref selectors (no coverage_guarded)",
+          ref.allowed_ref_selectors("qwen25vl7b")
+          == ("textsim_ref", "saliency_mix_ref", "static_guarded_textsim_ref"))
+    check("default ref selector is textsim_ref", ref.default_ref_selector("llava15") == "textsim_ref")
+
+    # top-k sorted: identity at K=all; picks highest; ascending
+    check("topk_sorted keep-all == identity",
+          ref.topk_sorted([0.3, 0.1, 0.9, 0.2], 4) == [0, 1, 2, 3])
+    check("topk_sorted picks highest, sorted",
+          ref.topk_sorted([0.1, 0.9, 0.5, 0.3], 2) == [1, 2])
+
+    # guarded selection: never exceeds K, preserves original order, includes reserved
+    fill = [0.9, 0.1, 0.8, 0.2, 0.7, 0.0, 0.6, 0.3]   # n=8
+    reserve = [5, 1]                                   # low-score tokens forced in
+    keep = ref.guarded_select(4, reserve, fill)
+    check("guarded_select never exceeds K", len(keep) <= 4)
+    check("guarded_select exactly K when K<=n", len(keep) == 4)
+    check("guarded_select preserves original order (sorted)", keep == sorted(keep))
+    check("guarded_select includes ALL reserved tokens", set(reserve) <= set(keep))
+    check("guarded_select fills remainder from top fill_scores (0 and 2 are top non-reserved)",
+          keep == sorted(set(reserve) | {0, 2}))
+    # reserve larger than K is capped at K (still <= K, no overflow)
+    keep2 = ref.guarded_select(2, [7, 6, 5, 4], fill)
+    check("guarded_select caps oversized reserve at K", len(keep2) == 2 and set(keep2) <= {4, 5, 6, 7})
+
+    # spatial coverage indices: r evenly-spaced, sorted, unique, in-range
+    cov = ref.spatial_coverage_indices(5, 576)
+    check("spatial_coverage count == r", len(cov) == 5)
+    check("spatial_coverage sorted+unique+in-range",
+          cov == sorted(set(cov)) and all(0 <= i < 576 for i in cov))
+    check("spatial_coverage r>=n → full", ref.spatial_coverage_indices(600, 576) == list(range(576)))
+
+    # ref basename cannot collide with existing dynamic_which outputs (must carry _ref_)
+    rb = ref.ref_basename("gqa", 200, "textsim_ref", 25)
+    check("ref basename carries dynamic_which_ref", rb.startswith("dynamic_which_ref_pilot_n200"))
+    check("ref basename != current dynamic_which basename",
+          rb != dw.dynamic_basename("gqa", 200, "textsim", 25))
+    check("ref basename textvqa variant",
+          ref.ref_basename("textvqa", 200, "saliency_mix_ref", 25)
+          == "dynamic_which_ref_pilot_n200_saliency_mix_ref_p25_ocr_on")
+    check("ref basename docvqa variant",
+          ref.ref_basename("docvqa", 200, "static_guarded_textsim_ref", 35)
+          == "dynamic_which_ref_pilot_n200_static_guarded_textsim_ref_p35_instruction_on")
+
+    # ref eval CLI: NO --full flag (n-only), and passing --full is rejected
+    import importlib
+    rr = importlib.import_module("scripts.final_scope.run_dynamic_which_ref_eval")
+    parser = rr.build_parser()
+    opt_strings = {s for a in parser._actions for s in a.option_strings}
+    check("ref eval CLI has no --full flag", "--full" not in opt_strings)
+    rejected = False
+    try:
+        parser.parse_args(["--model", "llava15", "--dataset", "gqa", "--budget-pct", "25", "--full"])
+    except SystemExit:
+        rejected = True
+    check("ref eval rejects --full", rejected)
+
+    # coverage_guarded is not constructible for Qwen (documented layout limitation)
+    check("Qwen omits coverage_guarded from allowed",
+          "coverage_guarded_textsim_ref" not in ref.allowed_ref_selectors("qwen25vl7b"))
+
+
+def test_dynamic_count():
+    from src.pruning import dynamic_count as dcp
+    from src.pruning.dynamic_count.confidence import confidence_signals, risk_from_signal
+    from src.pruning.dynamic_count.controllers import (RuleController, RidgeRiskModel,
+                                                       sufficiency_fraction, threshold_for_rate,
+                                                       load_controller)
+    from src.final_scope import dynamic_count_eval as dce
+
+    # clamp + split
+    check("clamp_k rounds and clamps", dcp.clamp_k(96.6, 32, 576) == 97)
+    check("clamp_k floor", dcp.clamp_k(3, 32, 576) == 32)
+    check("clamp_k ceiling (max wins when max<min)", dcp.clamp_k(999, 32, 20) == 20)
+    cal, ev = dcp.calibration_split(list(range(100)))
+    check("calibration split is first 20% / rest", cal == list(range(20)) and ev == list(range(20, 100)))
+    check("calibration split disjoint+complete", set(cal) | set(ev) == set(range(100)))
+
+    # saliency stats
+    uni = dcp.saliency_stats([1.0] * 100)
+    check("uniform saliency → PR == n", abs(uni["sal_participation_ratio"] - 100) < 1e-6)
+    delta = dcp.saliency_stats([0.0] * 99 + [10.0])
+    check("peaked saliency → PR == 1, top32 mass == 1",
+          abs(delta["sal_participation_ratio"] - 1) < 1e-6 and abs(delta["sal_top32_mass"] - 1) < 1e-9)
+
+    # confidence signals + risk direction
+    c = confidence_signals(0.9, 0.05, 0.3, [0.9, 0.8, 0.7])
+    check("conf: margin/mean/min/len", abs(c["conf_first_margin"] - 0.85) < 1e-9
+          and abs(c["conf_mean_token_prob"] - 0.8) < 1e-9
+          and abs(c["conf_min_token_prob"] - 0.7) < 1e-9 and c["conf_answer_len"] == 3)
+    check("risk inverts prob-like, keeps entropy",
+          risk_from_signal(0.9, "conf_first_max_prob") < risk_from_signal(0.2, "conf_first_max_prob")
+          and risk_from_signal(2.0, "conf_first_entropy") > risk_from_signal(0.5, "conf_first_entropy"))
+
+    # question features
+    qf = dcp.question_features("What is the 2nd word?", 720)
+    check("question features (what/number/nvis)",
+          qf["q_is_what"] == 1.0 and qf["q_has_number"] == 1.0 and qf["nvis_native"] == 720.0)
+
+    # sufficiency fraction: interpolates BETWEEN anchors → continuous (non-anchor) values
+    sf = sufficiency_fraction({0.15: 0.2, 0.25: 0.4, 0.35: 0.8, 0.50: 0.9, 0.75: 0.9, 1.0: 0.9}, eps=0.01)
+    check("sufficiency interpolates between anchors", 0.25 < sf < 0.50 and sf not in (0.35, 0.50))
+
+    # RuleController: monotone easy→small / hard→large, continuous outputs, λ scaling
+    risks = [i / 100 for i in range(100)]
+    anch = []
+    for i in range(100):
+        if i < 50:   # easy: solvable at every anchor
+            anch.append({f: 1.0 for f in dcp.ANCHOR_FRACTIONS})
+        else:        # hard: only from 0.5 up
+            anch.append({f: (1.0 if f >= 0.50 else 0.0) for f in dcp.ANCHOR_FRACTIONS})
+    rc_ = RuleController(nbins=4).fit(risks, anch)
+    lo = rc_.predict_fraction(0.05)
+    hi = rc_.predict_fraction(0.95)
+    check("rule: low risk → small fraction, high risk → large", lo < 0.3 < hi and hi >= 0.45)
+    check("rule: isotonic (monotone in risk)",
+          rc_.predict_fraction(0.2) <= rc_.predict_fraction(0.6) <= rc_.predict_fraction(0.9))
+    check("rule: λ scales allocation", rc_.predict_fraction(0.95, lam=0.5) < hi)
+    k_mid = dcp.clamp_k(rc_.predict_fraction(0.7) * 576, 32, 576)
+    check("rule → integer K not restricted to anchors", isinstance(k_mid, int) and 32 <= k_mid <= 576)
+    rt = RuleController.from_dict(rc_.to_dict())
+    check("rule: JSON round-trip", abs(rt.predict_fraction(0.7) - rc_.predict_fraction(0.7)) < 1e-12)
+
+    # Ridge: separable synthetic → correct risk ordering + round-trip
+    X = [[1.0, 0.0]] * 40 + [[0.0, 1.0]] * 40
+    y = [0.0] * 40 + [1.0] * 40
+    rm = RidgeRiskModel(["a", "b"], alpha=0.1).fit(X, y)
+    check("ridge: wrong-class risk higher", rm.predict_risk([0.0, 1.0]) > rm.predict_risk([1.0, 0.0]))
+    rm2 = load_controller(rm.to_dict())
+    check("ridge: JSON round-trip via load_controller",
+          abs(rm2.predict_risk([0.0, 1.0]) - rm.predict_risk([0.0, 1.0])) < 1e-12)
+
+    # threshold_for_rate
+    tau = threshold_for_rate([float(i) for i in range(100)], 0.10)
+    check("threshold_for_rate ~10% above tau", sum(1 for r in range(100) if r > tau) in (9, 10, 11))
+
+    # basenames: dynamic_count_ prefix, variant-aware, no clash with frozen prefixes
+    pb = dcp.probe_basename("textvqa", "norm", 15)
+    check("probe basename", pb == "dynamic_count_probe_norm_p15_ocr_on")
+    check("dcd basename", dcp.dcd_basename("gqa", "cls_attn", 15, 75)
+          == "dynamic_count_dcd_cls_attn_p15_to_p75")
+    dcc = dcp.dcc_basename("docvqa", "norm", 25, "rule", 1.0)
+    check("dcc basename carries controller+λ+variant",
+          dcc == "dynamic_count_dcc_rule_norm_p25_lam1_00_instruction_on")
+    check("dc prefixes cannot collide with frozen outputs",
+          all(b.startswith("dynamic_count_") for b in (pb, dcc)))
+    check("probe budgets restricted to {15,25}", dcp.PROBE_BUDGETS == (15, 25))
+
+    # curve interpolation + labels
+    pts = [(1.0, 50.0), (2.0, 60.0), (4.0, 70.0)]
+    check("interp_curve midpoint", abs(dce.interp_curve(pts, 1.5) - 55.0) < 1e-9)
+    check("interp_curve clamps ends",
+          dce.interp_curve(pts, 0.1) == 50.0 and dce.interp_curve(pts, 9.0) == 70.0)
+    check("labels at ±0.50pp", dce.label_delta(0.51) == "dynamic_win"
+          and dce.label_delta(-0.4) == "near_tie" and dce.label_delta(-0.51) == "dynamic_loss")
+
+    # K-range histogram covers 100%
+    h = dce._k_range_hist([50, 100, 150, 250, 400, 500])
+    check("k-range histogram sums to 100", abs(sum(h.values()) - 100.0) < 0.1)
+
+    # multi-pass FLOP accounting: escalated = probe + second pass, exactly
+    from src.final_scope import token_flops as tfm
+    f_probe = tfm.per_sample_prefill_flops("llava15", 86, 40)
+    f_second = tfm.per_sample_prefill_flops("llava15", 391, 40)
+    check("multi-pass flops = probe + second (escalated)",
+          f_probe + f_second > f_second > f_probe > 0)
+    check("non-escalated pays probe only (strictly less than any 2-pass total)",
+          f_probe < f_probe + tfm.per_sample_prefill_flops("llava15", 87, 40))
+
+    # token reduction must come from VISUAL TOKENS, not FLOPs: executed-visual arithmetic
+    recs = [{"probe_visual_tokens": 86, "k_executed": 391, "escalated": True},
+            {"probe_visual_tokens": 86, "k_executed": 86, "escalated": False}]
+    tot = [r["probe_visual_tokens"] + (r["k_executed"] if r["escalated"] else 0) for r in recs]
+    check("executed-visual accounting: escalated=477, kept=86", tot == [477, 86])
+
+    # selector-aware basenames: pure vs COUNT-on-WHICH can never collide
+    check("dcd basenames differ across selectors (pure vs CoW)",
+          dcp.dcd_basename("textvqa", "norm", 25, 75) != dcp.dcd_basename("textvqa", "textsim", 25, 75))
+    check("dcc basenames differ across selectors (pure vs CoW)",
+          dcp.dcc_basename("textvqa", "norm", 25, "rule", 1.0)
+          != dcp.dcc_basename("textvqa", "textsim", 25, "rule", 1.0))
+    check("probe basenames differ across selectors",
+          dcp.probe_basename("textvqa", "norm", 15) != dcp.probe_basename("textvqa", "textsim", 15))
+
+    # anchor_reference_path: textsim → WHICH finals; static → static finals (never mixed)
+    ap_tx = dce.anchor_reference_path("qwen25vl7b", "textvqa", "textsim", 75)
+    ap_st = dce.anchor_reference_path("qwen25vl7b", "textvqa", "norm", 75)
+    check("textsim anchors come from frozen WHICH finals", "dynamic_which_final_textsim_p75" in ap_tx)
+    check("static anchors come from frozen static finals", "static_final_norm_p75" in ap_st)
+    raised = False
+    try:
+        dce.anchor_reference_path("llava15", "gqa", "textsim", 75)
+    except ValueError:
+        raised = True
+    check("textsim anchors rejected outside qwen×textvqa", raised)
+
+
 def main():
     print("=== final_scope CPU self-checks ===")
     for t in (test_sha_deterministic, test_quota_and_sample, test_manifest_loader_and_validation,
               test_save_manifest_and_fingerprints, test_answer_type_strict,
-              test_schema_validator, test_token_flops, test_static_eval, test_dynamic_which):
+              test_schema_validator, test_token_flops, test_static_eval, test_dynamic_which,
+              test_dynamic_which_ref, test_dynamic_count):
         print(f"\n# {t.__name__}")
         t()
     print(f"\n{'ALL PASSED' if not _failures else 'FAILURES: ' + ', '.join(_failures)}")

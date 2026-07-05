@@ -1,0 +1,9 @@
+model,dataset,probe_p15,probe_p15_equiv,probe_p25,probe_p25_equiv,textsim_probes,config,dcd,dcc_rule,dcc_ridge,cow_dcd,cow_dcc,status
+llava15,gqa,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
+llava15,textvqa,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
+llava15,docvqa,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
+llava15,vqav2,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
+qwen25vl7b,gqa,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
+qwen25vl7b,textvqa,True,True,True,True,2,True,True,True,True,1,2,dcc_complete
+qwen25vl7b,docvqa,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
+qwen25vl7b,vqav2,True,True,True,True,0,True,True,True,True,0,0,dcc_complete
