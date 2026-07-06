@@ -78,23 +78,7 @@ external/
 docs/
 literature/
 
-# Archived/superseded material (2026-06-27 scope lock).
-# Policy: TRACK archived code / docs / manifests so deletions from the active tree have
-# matching archived copies in git; DO NOT track large data / results / checkpoints.
-# (Negation works because each tracked subtree is re-included before its contents are seen;
-#  global binary ignores above — *.pt/*.zip/etc. — still apply inside the tracked subtrees.)
-archive/*
-!archive/migration_manifests/
-!archive/legacy_models/
-!archive/legacy_experiments/
-!archive/legacy_scripts/
-!archive/legacy_docs/
-!archive/legacy_datasets/
-# the bare `literature/` rule above (private active notes) over-matches the ARCHIVED copy at
-# any depth; re-include it so archived legacy docs are trackable (markdown only, reviewed clean).
-!archive/legacy_docs/docs/literature/
-# within legacy_datasets, track only source code (loaders), never the data blobs
-archive/legacy_datasets/*
-!archive/legacy_datasets/src/
-# never track archived results / checkpoints / dataset binaries
-archive/legacy_results/
+# Archived/superseded material — local-only, never pushed. Retired code, configs, docs,
+# logs, results, and migration manifests are preserved on disk for traceability but are
+# not part of the public repository.
+archive/

@@ -236,7 +236,7 @@ skip existing results rather than overwrite them.
 
 ## Notes on Archived Material
 
-Retired and out-of-scope material is preserved locally or under `archive/` for traceability. Every
-move is recorded in `archive/migration_manifests/`, and nothing was deleted. The archive is history,
-not part of the thesis story: the four method folders and the tables under `results/tables/` contain
-everything the thesis claims.
+Retired and out-of-scope material is preserved locally, outside the public repository, for
+traceability. Every move is recorded in local migration manifests, and nothing was deleted. The
+archive is history, not part of the thesis story: the four method folders and the tables under
+`results/tables/` contain everything the thesis claims.
