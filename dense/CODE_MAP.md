@@ -1,16 +1,16 @@
 # Dense — code map
 
-The shared evaluation runtime currently lives under `src/final_scope/` for backward compatibility
-(that name is an internal label from the experimentation phase; it is not part of the thesis story).
-The method-facing entry point is this folder. The exact files that implement the dense baseline:
+The shared evaluation core lives under `src/common/`; the method runner cores live under
+`src/dense/`, `src/static/`, `src/dynamic_which/`, and `src/dynamic_count/`. The method-facing entry
+point is this folder. The exact files that implement the dense baseline:
 
 ## Runner core (CPU — data, scoring, schema, FLOPs)
 
 | File | Role |
 |---|---|
-| `src/final_scope/dense_pilot.py` | dense runner core; also defines the per-dataset adapters, prompts, and scorers that every other method reuses |
+| `src/dense/evaluate_dense.py` | dense runner core; also defines the per-dataset adapters, prompts, and scorers that every other method reuses |
 
-Supporting core modules (shared by all methods): `src/final_scope/sample_ids.py` (locked manifests),
+Supporting core modules (shared by all methods): `src/common/sample_ids.py` (locked manifests),
 `output_writer.py` (unified schema), `schema_validator.py` (the fairness gate), `token_flops.py`
 (per-sample-then-averaged prefill FLOPs).
 

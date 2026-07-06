@@ -7,7 +7,7 @@ It WRAPS already-validated generation paths (does not modify them):
   * Qwen-2.5-VL → QwenPruner.generate(selector="full")          (keep-all == stock, validated)
 and feeds them the per-dataset prompt the dense protocol specifies (DENSE_PROTOCOL.md §2/§3/§4).
 Token counts + per-sample-averaged FLOPs + output writing + the fairness gate are handled by
-src/final_scope/{dense_pilot,token_flops,output_writer,schema_validator}.py.
+src/dense/evaluate_dense.py + src/common/{token_flops,output_writer,schema_validator}.py.
 
 Environments (different stacks — run each model under its own env):
   LLaVA  : conda env `vlm_env`  (torch 2.3.0+cu121, transformers 4.46.3) + 1 GPU

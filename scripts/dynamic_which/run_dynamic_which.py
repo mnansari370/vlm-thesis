@@ -11,7 +11,7 @@ The Qwen per-sample K is read from the dense FINAL JSONL
   K_sample = clamp(round(budget_pct/100 * dense_n_visual_tokens), 1, dense_n_visual_tokens)
 (no extra encode to count visual tokens); n_text is reused from the dense row. Token counts,
 per-sample-averaged FLOPs, dense+static referenced deltas, output writing, and the fairness gate
-are handled by src/final_scope/dynamic_which_eval.py.
+are handled by src/dynamic_which/evaluate_dynamic_which.py.
 
 Each cell needs the matching dense FINAL *and* the matching STATIC FINAL (same model/dataset/
 budget/variant) to already exist under results/runs/{model}/{dataset}/.

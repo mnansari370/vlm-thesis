@@ -1,6 +1,6 @@
 """Cache ChartQA (test) and DocVQA (validation) via HF datasets for the high-res
-QC-selection confirmation. Images are embedded PIL; we keep the HF cache and iterate
-the dataset object directly in the eval (no manual image extraction)."""
+QC-selection confirmation. Images are embedded PIL; the HF cache is kept and the dataset
+object is iterated directly in the eval (no manual image extraction)."""
 import sys
 from datasets import load_dataset
 

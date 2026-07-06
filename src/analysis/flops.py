@@ -48,7 +48,7 @@ def _per_layer(n: int) -> float:
 
 def fastv_full_flops(n_visual: int, n_text: int = N_QUESTION) -> float:
     """
-    Prune-before-LLM convention (our static methods): ALL T layers see n=K+n_text.
+    Prune-before-LLM convention (the static methods): ALL T layers see n=K+n_text.
     FastV paper Eq. 5 per-layer, summed over all T layers.
     """
     return float(T * _per_layer(n_visual + n_text))

@@ -1,7 +1,7 @@
 """
 static_eval.py — final-scope STATIC pruning runner core + pure helpers.
 
-Mirrors src/final_scope/dense_pilot.py but for STATIC (image-only, training-free) pruning:
+Mirrors src/dense/evaluate_dense.py but for STATIC (image-only, training-free) pruning:
   * LLaVA-1.5  → StaticPrunedLlava(method="cls_attn", keep_k=K)  (K fixed per budget; 576 backbone)
   * Qwen-2.5-VL → QwenPruner.generate(selector="norm"|"uniform", K=K_sample)  (K_sample per image)
 

@@ -7,7 +7,7 @@ It WRAPS the already-validated static generation paths (does not modify them):
   * Qwen-2.5-VL → QwenPruner.generate(selector="norm"|"uniform", K=K_sample)  (image-only floor)
 and feeds them the SAME per-dataset prompt the dense protocol uses (reused from dense_pilot).
 Token counts + per-sample-averaged FLOPs + dense-referenced reductions + output writing + the
-fairness gate are handled by src/final_scope/static_eval.py.
+fairness gate are handled by src/static/evaluate_static.py.
 
 KEY: the Qwen per-sample K is read from the accepted DENSE FINAL JSONL
   K_sample = clamp(round(budget_pct/100 * dense_n_visual_tokens), 1, dense_n_visual_tokens)

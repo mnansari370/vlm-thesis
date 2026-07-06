@@ -4,7 +4,7 @@ v1 (prune-before-LLM: all T layers see K+n_text), with Qwen2.5-7B LLM constants.
 Reads a qwen_kcurve_*.json and prints accuracy-vs-FLOPs + reduction% per selector.
 
 Honesty note: this is ANALYTICAL prefill FLOPs (clean, comparable). Real latency != FLOPs
-(per 'Are We Solving the Right Problem?'); our diagnostic decode is a Python loop, so
+(per 'Are We Solving the Right Problem?'); the diagnostic decode is a Python loop, so
 latency must be measured separately with an optimized path — flagged as a refinement.
 """
 import json, os, sys

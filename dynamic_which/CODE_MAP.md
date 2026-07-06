@@ -1,13 +1,13 @@
 # Dynamic-WHICH — code map
 
-The shared evaluation runtime currently lives under `src/final_scope/` for backward compatibility.
+The shared evaluation core lives under `src/common/`; the method runner cores live under `src/dense/`, `src/static/`, `src/dynamic_which/`, and `src/dynamic_count/`.
 The method-facing entry point is this folder. Exact files implementing Dynamic-WHICH:
 
 ## Runner core (CPU)
 
 | File | Role |
 |---|---|
-| `src/final_scope/dynamic_which_eval.py` | WHICH runner core; same budget contract as static, loads the dense final AND the same-budget static final so it can report Dyn−Dense and Dyn−Static over the same samples |
+| `src/dynamic_which/evaluate_dynamic_which.py` | WHICH runner core; same budget contract as static, loads the dense final AND the same-budget static final so it can report Dyn−Dense and Dyn−Static over the same samples |
 
 ## Selectors (GPU)
 

@@ -1,13 +1,13 @@
 # Static — code map
 
-The shared evaluation runtime currently lives under `src/final_scope/` for backward compatibility.
+The shared evaluation core lives under `src/common/`; the method runner cores live under `src/dense/`, `src/static/`, `src/dynamic_which/`, and `src/dynamic_count/`.
 The method-facing entry point is this folder. Exact files implementing static pruning:
 
 ## Runner core (CPU)
 
 | File | Role |
 |---|---|
-| `src/final_scope/static_eval.py` | static runner core; budget→K bookkeeping, loads the dense final as the same-sample reference, computes token/FLOP reductions and Δdense |
+| `src/static/evaluate_static.py` | static runner core; budget→K bookkeeping, loads the dense final as the same-sample reference, computes token/FLOP reductions and Δdense |
 
 ## Selection + generation (GPU, frozen)
 

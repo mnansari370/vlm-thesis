@@ -1,13 +1,13 @@
 # Dynamic-COUNT — code map
 
-The shared evaluation runtime currently lives under `src/final_scope/` for backward compatibility.
+The shared evaluation core lives under `src/common/`; the method runner cores live under `src/dense/`, `src/static/`, `src/dynamic_which/`, and `src/dynamic_count/`.
 The method-facing entry point is this folder. Exact files implementing Dynamic-COUNT:
 
 ## Runner core (CPU)
 
 | File | Role |
 |---|---|
-| `src/final_scope/dynamic_count_eval.py` | probe (reproduction-gated), DC-D composer, DC-C runner, same-ids static-curve builder, honest multi-pass FLOPs |
+| `src/dynamic_count/evaluate_dynamic_count.py` | probe (reproduction-gated), DC-D composer, DC-C runner, same-ids static-curve builder, honest multi-pass FLOPs |
 
 ## Signals, controllers, and GPU wrappers
 

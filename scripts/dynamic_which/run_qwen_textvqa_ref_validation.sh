@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 # Independent clean-room validation of the HEADLINE positive result:
 #   Qwen2.5-VL-7B × TextVQA × Dynamic-WHICH.
-# Runs the clean-room REFERENCE selector `textsim_ref` at n=200 for every budget, so we can check
+# Runs the clean-room REFERENCE selector `textsim_ref` at n=200 for every budget, to check
 # that the current-textsim win reproduces under an independent implementation.
 #
 #   *** n=200 PILOTS ONLY — NO FULL RUNS. GPU JOB. Do NOT run without approval. ***

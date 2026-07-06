@@ -744,7 +744,7 @@ def test_dynamic_count():
 
 
 def main():
-    print("=== final_scope CPU self-checks ===")
+    print("=== shared evaluation core CPU self-checks ===")
     for t in (test_sha_deterministic, test_quota_and_sample, test_manifest_loader_and_validation,
               test_save_manifest_and_fingerprints, test_answer_type_strict,
               test_schema_validator, test_token_flops, test_static_eval, test_dynamic_which,

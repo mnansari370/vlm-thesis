@@ -1,8 +1,10 @@
 """Source tree for the thesis "Dynamic Question-Conditioned Visual Token Pruning for
 Efficient Vision-Language Models".
 
-Method map (docs/ holds the full documentation; docs/02_repository_map.md the layout):
-  dense / static / dynamic-WHICH / dynamic-COUNT runner cores  -> src/final_scope/
+Method map (docs/ holds the full documentation; the method folders dense/, static/,
+dynamic_which/, dynamic_count/ hold the reader-facing navigation):
+  shared evaluation core (manifests, schema, gate, FLOPs)      -> src/common/
+  dense / static / dynamic-WHICH / dynamic-COUNT runner cores  -> src/{dense,static,dynamic_which,dynamic_count}/
   LLaVA-1.5 frozen engine (physical prune-before-LLM)          -> src/models/static/static.py
   Qwen2.5-VL frozen engine (M-RoPE-preserving pruning)         -> src/pruning/question_conditioned_selection/qwen_pruner.py
   Dynamic-WHICH selectors (+ clean-room reference)             -> src/pruning/dynamic_which{,_ref}/
