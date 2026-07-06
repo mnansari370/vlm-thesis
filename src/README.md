@@ -33,8 +33,6 @@ src/
   analysis/      flops.py (LLaVA) + qwen_flops.py — the FastV Eq.5 prefill formulas
                  that src/common/token_flops.py wraps
   utils/         small generic helpers (config/seed/logger/io/checkpoint/device)
-  final_scope/   backward-compatibility shims only (see src/final_scope/README.md); the real
-                 code lives in src/common and the src/{dense,static,dynamic_which,dynamic_count} packages
 ```
 
 The two model engines are **frozen**: every method composes them; the Dynamic-COUNT probes are gated

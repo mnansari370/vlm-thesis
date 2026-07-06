@@ -25,9 +25,7 @@ Each folder contains `README.md`, `CODE_MAP.md` (exact implementation files), `C
 Beneath these folders, the implementation is organized by method too: `src/` groups the code
 (`src/common/` shared core + `src/{dense,static,dynamic_which,dynamic_count}/` runner cores) and
 `scripts/` groups the runnable commands. The 2026-07-05 restructure that produced this layout is
-recorded in [`deep_structure_plan_20260705.md`](deep_structure_plan_20260705.md) and
-`archive/migration_manifests/archive_manifest_20260705.md` (a thin `src/final_scope/`
-backward-compatibility shim is kept so older commands still resolve).
+recorded in `archive/migration_manifests/archive_manifest_20260705.md`.
 
 ## 1. What this project studies
 
