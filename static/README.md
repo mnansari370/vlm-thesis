@@ -29,8 +29,8 @@ two frozen engines.
 
 ## Where results are stored
 
-Per cell: `results/final_scope/{model}/{dataset}/static_final_{cls_attn|norm}_p{b}[...].{json,jsonl}`.
-Committed summaries: `results/final_scope/tables/final_dense_static_dynamic_comparison.md` (section B)
+Per cell: `results/runs/{model}/{dataset}/static_final_{cls_attn|norm}_p{b}[...].{json,jsonl}`.
+Committed summaries: `results/tables/final_dense_static_dynamic_comparison.md` (section B)
 and `static_final_summary.csv`; reproduced in [RESULTS.md](RESULTS.md).
 
 ## Final conclusion

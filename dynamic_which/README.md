@@ -28,8 +28,8 @@ re-implementation exists purely to validate them.
 
 ## Where results are stored
 
-Per cell: `results/final_scope/{model}/{dataset}/dynamic_which_final_textsim_p{b}[...].{json,jsonl}`.
-Committed reports: `results/final_scope/tables/dynamic_which_final_report.md`,
+Per cell: `results/runs/{model}/{dataset}/dynamic_which_final_textsim_p{b}[...].{json,jsonl}`.
+Committed reports: `results/tables/dynamic_which_final_report.md`,
 `dynamic_which_textsim_full_final_summary.md`, `qwen_textvqa_current_vs_ref_validation.md`;
 reproduced in [RESULTS.md](RESULTS.md).
 

@@ -5,20 +5,23 @@
 > `COMMANDS.md` gives the CPU validation, table, and GPU-rerun commands for that method, and a safe
 > wrapper under its `scripts/`. This file is the full launcher reference.
 
-All active launchers live under `scripts/final_scope/` and are invoked as
-`python -m scripts.final_scope.<name>`. They are grouped by method family below (the files are not
-physically foldered — the `python -m` module paths are the documented interface and are referenced
-by the shell launchers, the README validation commands, and the run logs).
+Launchers are grouped by method family into subfolders and invoked as
+`python -m scripts.<group>.<name>`.
 
 ```
 scripts/
-  final_scope/   the ACTIVE layer — everything that ran the final matrix (grouped below)
-  data/          setup only: download_docchart.py (caches the DocVQA HF dataset the final
-                 evals read) · download_qwen25vl.py (fetches the Qwen model snapshot)
+  dense/          dense-baseline runners
+  static/         static-pruning runners
+  dynamic_which/  Dynamic-WHICH runners + equivalence/comparison tools
+  dynamic_count/  Dynamic-COUNT pipeline (probe → calibrate → DC-D → DC-C → oracle)
+  validation/     CPU validators and completeness audits (read-only over results)
+  tables/         table generators (read saved aggregates, write results/tables/)
+  data/           setup: build_sample_manifests.py · download_docchart.py (DocVQA HF cache) ·
+                  download_qwen25vl.py (Qwen model snapshot)
 ```
 
 ### Shared foundation
-- `build_sample_manifests.py` — builds the sha256-locked `configs/final_scope/sample_ids/*.json`
+- `build_sample_manifests.py` — builds the sha256-locked `configs/sample_ids/*.json`
   that every method and both models read (run once, before any evaluation).
 
 ### Dense

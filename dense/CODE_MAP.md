@@ -25,15 +25,15 @@ Supporting core modules (shared by all methods): `src/final_scope/sample_ids.py`
 
 | File | Role |
 |---|---|
-| `scripts/final_scope/run_dense_pilot.py` | one dense cell (`--model`, `--dataset`, `--n 200` pilot or `--full`) |
-| `scripts/final_scope/run_llava_dense_final.sh` | all LLaVA-1.5 dense finals (GPU 0, vlm_env) |
-| `scripts/final_scope/run_qwen_dense_final.sh` | all Qwen2.5-VL dense finals (GPU 1, qwen_env) |
-| `scripts/final_scope/build_sample_manifests.py` | builds the sha256-locked sample manifests read by every run (one-time setup) |
+| `scripts/dense/run_dense.py` | one dense cell (`--model`, `--dataset`, `--n 200` pilot or `--full`) |
+| `scripts/dense/run_llava_dense.sh` | all LLaVA-1.5 dense finals (GPU 0, vlm_env) |
+| `scripts/dense/run_qwen_dense.sh` | all Qwen2.5-VL dense finals (GPU 1, qwen_env) |
+| `scripts/data/build_sample_manifests.py` | builds the sha256-locked sample manifests read by every run (one-time setup) |
 
 ## Inputs and outputs
 
-- Sample manifests (read): `configs/final_scope/sample_ids/{dataset}.json`
-- Results (written): `results/final_scope/{model}/{dataset}/dense_final[...].{json,jsonl}`
+- Sample manifests (read): `configs/sample_ids/{dataset}.json`
+- Results (written): `results/runs/{model}/{dataset}/dense_final[...].{json,jsonl}`
 
 > The result **basenames are load-bearing** — static/WHICH/COUNT resolve the dense reference by
 > reconstructing the `dense_final[...]` name. Do not rename result files.

@@ -239,3 +239,71 @@ Restore command (any file): `git mv archive/<bucket>/<original/relative/path> <o
 **Kept active (untouched):** `src/models/static/static.py` (the frozen LLaVA engine),
 `src/data/vqav2/vqav2_answers.py` (the VQAv2 consensus normalizer), and both edited `__init__.py`
 package markers.
+
+---
+
+# Pass 6 — deep method-oriented structure cleanup
+
+- **cleanup pass:** Pass 6 deep method-oriented structure cleanup
+- **date:** 2026-07-05
+- **branch:** method-migration
+- **commit before pass 6:** 577cbdf ("Add method-facing thesis structure")
+- **plan:** deep_structure_plan_20260705.md (executed in isolated groups A–F, each validated before the next)
+- **backup:** ~/vlm-thesis-backups/final_scope_backup_20260705.tar.gz (pre-existing full copy of the run outputs)
+
+The experimentation-era label `final_scope` was removed from the public paths and replaced with a
+method-oriented layout. Tracked files moved with `git mv`; git-ignored trees moved with plain `mv`;
+every path-string constant and import reference was updated together per group, and the full CPU
+validation suite plus both-environment import smokes were re-run after each group. **logs/ was NOT
+moved** — the final-run logs stay at the repository root as experiment provenance.
+
+## Renamed paths (old → new)
+
+| Old | New | Reason |
+|---|---|---|
+| `configs/final_scope/sample_ids/` | `configs/sample_ids/` | drop the internal label; manifests are the only configs |
+| `results/final_scope/llava15,qwen25vl7b/` | `results/runs/llava15,qwen25vl7b/` | reader-facing name for the per-cell run outputs (git-ignored) |
+| `results/final_scope/tables/` | `results/tables/` | committed summary tables |
+| `results/final_scope/dynamic_count_configs/` | `results/configs/dynamic_count/` | committed fitted controllers |
+| `scripts/final_scope/*` | `scripts/{dense,static,dynamic_which,dynamic_count,validation,tables,data}/*` | launchers grouped by method/role (36 files, several renamed) |
+| `src/final_scope/{sample_ids,output_writer,schema_validator,token_flops}.py` | `src/common/` | the shared evaluation core |
+| `src/final_scope/test_final_scope.py` | `src/common/test_evaluation_core.py` | core self-tests |
+| `src/final_scope/dense_pilot.py` | `src/dense/evaluate_dense.py` | dense runner core |
+| `src/final_scope/static_eval.py` | `src/static/evaluate_static.py` | static runner core |
+| `src/final_scope/dynamic_which_eval.py` | `src/dynamic_which/evaluate_dynamic_which.py` | Dynamic-WHICH runner core |
+| `src/final_scope/dynamic_count_eval.py` | `src/dynamic_count/evaluate_dynamic_count.py` | Dynamic-COUNT runner core |
+
+Restore any tracked rename with `git mv <new> <old>` (and revert the corresponding constant/import edits).
+
+## Backward compatibility
+
+`src/final_scope/` is kept as a **thin re-export shim layer only** (one module per old name +
+`src/final_scope/README.md` marking it a compatibility layer), so `python -m
+src.final_scope.test_final_scope` and older `src.final_scope.*` imports still resolve. New code and
+docs use the method-oriented paths above.
+
+## Moved to archive (git-ignored trees; plain `mv`, not deleted)
+
+| Old path | New archive path | Reason |
+|---|---|---|
+| `results/thesis_main/` | `archive/legacy_results/thesis_main/` | legacy pre-final evidence (out of the final scope) |
+| `results/paper_candidates/` | `archive/legacy_results/paper_candidates/` | old budget-generality raw inputs |
+| `data/llava_mix/` (34G) | `archive/legacy_datasets/data/llava_mix/` | out-of-scope dataset |
+| `data/pope/`, `data/scienceqa/` | `archive/legacy_datasets/data/{pope,scienceqa}/` | out-of-scope datasets |
+| all `__pycache__/` (outside archive/) | `archive/local_only/pycache_20260705/<path>/` | regenerable caches, relocated not deleted |
+
+Active datasets `data/{gqa,textvqa,vqav2}` were **not** moved. Restore data: `mv archive/legacy_datasets/data/<name> data/<name>`.
+
+## Docs (local-only; docs/ is git-ignored)
+
+The previous documentation set moved to `archive/local_only/docs_replaced_by_clean_docs_20260705/`
+(plain `mv`, not deleted); `docs/` was rewritten as a clean flat set (README, overview, protocol,
+dense, static, dynamic_which, dynamic_count, final_results, reproducibility, limitations). Neither
+`docs/` nor `archive/local_only/` is tracked.
+
+## Verification (run after every group and at the end)
+
+`compileall` exit 0 · `src.common.test_evaluation_core` ALL PASSED · `src.final_scope.test_final_scope`
+(shim) ALL PASSED · `scripts.validation.validate_dynamic_{which,count}` ALL_*_VALID=True ·
+`scripts.validation.audit_dynamic_which` 40 complete/0 invalid · `scripts.validation.audit_dynamic_count`
+0 equivalence failures · both-env import smokes on `src.{dense,static,dynamic_which,dynamic_count}` OK.

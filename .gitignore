@@ -24,11 +24,19 @@ wandb/
 runs/
 feature_cache/
 
-# Migrated results (large, local-only) — track only the top-level index docs
+# Results: the per-cell run outputs under results/runs/ are large and local-only (ignored).
+# The committed evidence — the summary tables, the fitted controller configs, the top-level
+# index docs, and the per-method result index READMEs — is tracked via the negations below.
 /results/*
 !/results/README.md
 !/results/INDEX.md
 !/results/legacy_index.md
+!/results/tables/
+!/results/configs/
+!/results/dense/
+!/results/static/
+!/results/dynamic_which/
+!/results/dynamic_count/
 
 # VQAv2 outputs and caches (large, generated locally) — old + new path names
 vqa_v2/outputs/

@@ -1,7 +1,7 @@
 # Legacy Results Index (post scope-lock, 2026-06-27)
 
 *The existing evidence in `results/thesis_main/` was **left in place** (ledger-pinned; several active reader
-scripts hardcode these paths). New standardized runs go to `results/final_scope/`. This index marks which
+scripts hardcode these paths). New standardized runs go to `results/runs/`. This index marks which
 legacy results are in-scope (reusable as final evidence) vs out-of-scope (archive-class, do not cite as
 final). Nothing here was moved or deleted. Elastic Stage-1 checkpoints were moved to
 `archive/legacy_results/stage1_elastic/`.*
@@ -48,6 +48,6 @@ This folder holds **both** in-scope Qwen-2.5-VL-7B/DocVQA results **and** out-of
 `results/archived/stage1_full{,.log}`, `stage1_quickfix{,.log}` → `archive/legacy_results/stage1_elastic/`.
 
 ## Convention going forward
-Final, citable numbers come **only** from `results/final_scope/{llava15,qwen25vl7b}/<dataset>/<method>_<pct>.json`
+Final, citable numbers come **only** from `results/runs/{llava15,qwen25vl7b}/<dataset>/<method>_<pct>.json`
 once the runs in `docs/TODO_NEXT_RUNS.md` are executed. Legacy in-scope results above may be lifted directly
 where the protocol already matches (e.g. LLaVA-1.5 dense/static), but re-express static to the 15–75% grid.

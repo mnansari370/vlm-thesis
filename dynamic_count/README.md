@@ -36,9 +36,9 @@ controllers are small, transparent, and CPU-fitted.
 
 ## Where results are stored
 
-Per cell: `results/final_scope/{model}/{dataset}/dynamic_count_{probe,dcd,dcc}_*[...].{json,jsonl}`.
-Fitted controllers: `results/final_scope/dynamic_count_configs/{model}_{dataset}[_textsim].json`.
-Committed summaries: `results/final_scope/tables/dynamic_count_{dc_d,dc_c,win_loss,oracle}_summary.md`;
+Per cell: `results/runs/{model}/{dataset}/dynamic_count_{probe,dcd,dcc}_*[...].{json,jsonl}`.
+Fitted controllers: `results/configs/dynamic_count/{model}_{dataset}[_textsim].json`.
+Committed summaries: `results/tables/dynamic_count_{dc_d,dc_c,win_loss,oracle}_summary.md`;
 reproduced in [RESULTS.md](RESULTS.md).
 
 ## Final conclusion

@@ -1,6 +1,6 @@
 # Dense — results
 
-Source: `results/final_scope/tables/final_dense_static_dynamic_comparison.md` (section A). Full
+Source: `results/tables/final_dense_static_dynamic_comparison.md` (section A). Full
 manifests, all fairness gates passed.
 
 | Model | Dataset | n | Score | Avg visual tokens | Prefill TFLOPs/sample |

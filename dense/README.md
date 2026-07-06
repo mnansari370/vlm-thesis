@@ -33,9 +33,9 @@ that produce the answers.
 
 ## Where results are stored
 
-Per cell: `results/final_scope/{llava15,qwen25vl7b}/{gqa,vqav2,textvqa,docvqa}/dense_final[...].{json,jsonl}`
+Per cell: `results/runs/{llava15,qwen25vl7b}/{gqa,vqav2,textvqa,docvqa}/dense_final[...].{json,jsonl}`
 (git-ignored local evidence). The committed summary is
-`results/final_scope/tables/final_dense_static_dynamic_comparison.md` (section A), reproduced in
+`results/tables/final_dense_static_dynamic_comparison.md` (section A), reproduced in
 [RESULTS.md](RESULTS.md).
 
 ## Final conclusion

@@ -1,20 +1,15 @@
-"""
-Final-scope shared infrastructure for the dense → static → dynamic-WHICH → dynamic-COUNT
-experiment matrix (protocol: docs/03_final_scope_protocol.md).
+"""Backward-compatibility layer (thin shims only — no implementation).
 
-Fairness toolkit (CPU-only; no model/generation code lives here):
-  sample_ids       — sample-ID manifest builder helpers + loader/validator (sha256-verified;
-                     one locked manifest per dataset, shared by EVERY method and both models)
-  output_writer    — unified per-sample JSONL + aggregate JSON writer (one schema everywhere)
-  schema_validator — per-sample/aggregate schema + the fairness gate a run must pass to be accepted
-  token_flops      — per-sample token stats + per-sample-then-averaged prefill FLOPs
-                     (per-sample first because the FastV formula's n² term is convex)
+The shared evaluation core moved to method-oriented packages during the 2026-07-05
+restructure. This package re-exports the old module names so older commands and provenance
+references keep working. New code imports from the real locations:
 
-Runner cores (data/scoring/schema/deltas; generation is injected by scripts/final_scope/*):
-  dense_pilot        — dense runs + the per-dataset adapters/prompts/scorers all methods reuse
-  static_eval        — static runs; loads the dense final as the same-sample reference
-  dynamic_which_eval — WHICH runs; loads dense AND the same-budget static final (the floor)
-  dynamic_count_eval — COUNT probe/DC-D/DC-C; compares against the static curve at matched FLOPs
+  old  src.final_scope.sample_ids / output_writer / schema_validator / token_flops
+  new  src.common.*
 
-  test_final_scope   — CPU self-checks for all of the above (run via python -m)
+  old  src.final_scope.test_final_scope        new  src.common.test_evaluation_core
+  old  src.final_scope.dense_pilot             new  src.dense.evaluate_dense
+  old  src.final_scope.static_eval             new  src.static.evaluate_static
+  old  src.final_scope.dynamic_which_eval      new  src.dynamic_which.evaluate_dynamic_which
+  old  src.final_scope.dynamic_count_eval      new  src.dynamic_count.evaluate_dynamic_count
 """

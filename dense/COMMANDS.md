@@ -10,24 +10,24 @@ bash dense/scripts/validate_dense.sh
 
 # or the underlying checks directly:
 python -m compileall -q src scripts
-python -m src.final_scope.test_final_scope
+python -m src.common.test_evaluation_core
 ```
 
 The dense finals are the reference the other methods load; these audits confirm the references
 resolve over the full matrix:
 
 ```bash
-python -m scripts.final_scope.audit_dynamic_which_full_final_matrix
-python -m scripts.final_scope.audit_dynamic_count_full_matrix
+python -m scripts.validation.audit_dynamic_which
+python -m scripts.validation.audit_dynamic_count
 ```
 
 ## Table generation (CPU, regenerates committed summaries from saved results)
 
 ```bash
-python -m scripts.final_scope.make_final_thesis_tables
+python -m scripts.tables.make_final_thesis_tables
 ```
 
-Writes to `results/final_scope/tables/` (rereads saved aggregates; does not touch per-sample data).
+Writes to `results/tables/` (rereads saved aggregates; does not touch per-sample data).
 
 ## GPU rerun — EXPENSIVE, NOT needed unless reproducing the experiment
 
@@ -37,11 +37,11 @@ silently overwrite; to force a fresh run, move the existing file aside first.
 
 ```bash
 # LLaVA-1.5 (GPU 0, vlm_env): GQA, VQAv2, TextVQA, DocVQA dense finals
-bash scripts/final_scope/run_llava_dense_final.sh
+bash scripts/dense/run_llava_dense.sh
 
 # Qwen2.5-VL (GPU 1, qwen_env): GQA, VQAv2, TextVQA, DocVQA dense finals
-bash scripts/final_scope/run_qwen_dense_final.sh
+bash scripts/dense/run_qwen_dense.sh
 
 # a single pilot cell (n=200) for a quick check:
-CUDA_VISIBLE_DEVICES=0 python -m scripts.final_scope.run_dense_pilot --model llava15 --dataset gqa --n 200
+CUDA_VISIBLE_DEVICES=0 python -m scripts.dense.run_dense --model llava15 --dataset gqa --n 200
 ```

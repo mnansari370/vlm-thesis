@@ -4,7 +4,7 @@
 **Supervisor:** Decebal Constantin Mocanu
 **Advisor:** Boqian Wu
 
-> **Status: experiments complete; thesis text in preparation.** The full evaluation matrix — dense, static, Dynamic-WHICH, and Dynamic-COUNT (DC-D and DC-C) on both models and all four datasets — is finished and validated. Every number below comes from a run that passed the full evaluation protocol; the complete result tables live in `results/final_scope/tables/` (tracked in this repository).
+> **Status: experiments complete; thesis text in preparation.** The full evaluation matrix — dense, static, Dynamic-WHICH, and Dynamic-COUNT (DC-D and DC-C) on both models and all four datasets — is finished and validated. Every number below comes from a run that passed the full evaluation protocol; the complete result tables live in `results/tables/` (tracked in this repository).
 
 ## Method folders (start here)
 
@@ -22,10 +22,12 @@ and the real result numbers:
 Each folder contains `README.md`, `CODE_MAP.md` (exact implementation files), `COMMANDS.md`
 (CPU validation · tables · GPU rerun), `RESULTS.md` (real numbers), and a safe `scripts/` wrapper.
 
-The tested evaluation runtime remains under `src/` and `scripts/` for reproducibility (its paths are
-stable and referenced throughout the saved results); the method folders provide the direct
-navigation, commands, and result summaries. See [`methods_restructure_plan.md`](methods_restructure_plan.md)
-for why the runtime paths are deliberately left unchanged.
+Beneath these folders, the implementation is organized by method too: `src/` groups the code
+(`src/common/` shared core + `src/{dense,static,dynamic_which,dynamic_count}/` runner cores) and
+`scripts/` groups the runnable commands. The 2026-07-05 restructure that produced this layout is
+recorded in [`deep_structure_plan_20260705.md`](deep_structure_plan_20260705.md) and
+`archive/migration_manifests/archive_manifest_20260705.md` (a thin `src/final_scope/`
+backward-compatibility shim is kept so older commands still resolve).
 
 ## 1. What this project studies
 
@@ -49,7 +51,7 @@ This thesis decomposes visual token pruning along exactly these two axes and mea
 
 **Budgets:** every pruning method is evaluated at 15, 25, 35, 50 and 75 percent of the dense visual token count, plus the dense reference at 100 percent. For LLaVA this maps to fixed token counts (86, 144, 202, 288, 432, 576). For Qwen the budget is applied per sample, as a fraction of that image's own dense token count.
 
-**Fairness protocol.** All methods, both models, and every budget run on the exact same sample lists, which are version controlled with sha256 checksums under `configs/final_scope/sample_ids/`. Decoding is greedy with batch size 1 and identical prompts across methods. Every run writes per sample predictions plus an aggregate record, counts tokens per sample, computes analytical prefill FLOPs per sample before averaging, and must pass an automatic fairness gate before it is accepted. Token reduction and FLOP reduction are always reported separately.
+**Fairness protocol.** All methods, both models, and every budget run on the exact same sample lists, which are version controlled with sha256 checksums under `configs/sample_ids/`. Decoding is greedy with batch size 1 and identical prompts across methods. Every run writes per sample predictions plus an aggregate record, counts tokens per sample, computes analytical prefill FLOPs per sample before averaging, and must pass an automatic fairness gate before it is accepted. Token reduction and FLOP reduction are always reported separately.
 
 ## 3. Methods
 
@@ -108,17 +110,18 @@ The probes that record the confidence signals reproduce the frozen static and WH
 
 ## 4. What the results say
 
-The evidence supports a clear selection-over-budget reading. The dense ceilings are reproduced; the static floors are strong and cheap (within about one point of dense at the 75 percent budget on almost every cell); question conditioned selection is genuinely valuable but only in a specific task regime (Qwen2.5-VL on TextVQA — validated by an exact clean-room reproduction); and the adaptive budget axis, despite visible oracle headroom, does not survive honest matched-compute evaluation. Per cell, the best method is the static floor on five of eight cells, Dynamic WHICH on Qwen TextVQA (and nominally on a collapsed low-budget corner of Qwen DocVQA), and DC-D on LLaVA TextVQA by a small margin. All headline claims come from frozen models under matched budgets, and negative results are reported alongside the positive ones — see `results/final_scope/tables/final_thesis_results_summary.md` for the complete per-cell verdicts.
+The evidence supports a clear selection-over-budget reading. The dense ceilings are reproduced; the static floors are strong and cheap (within about one point of dense at the 75 percent budget on almost every cell); question conditioned selection is genuinely valuable but only in a specific task regime (Qwen2.5-VL on TextVQA — validated by an exact clean-room reproduction); and the adaptive budget axis, despite visible oracle headroom, does not survive honest matched-compute evaluation. Per cell, the best method is the static floor on five of eight cells, Dynamic WHICH on Qwen TextVQA (and nominally on a collapsed low-budget corner of Qwen DocVQA), and DC-D on LLaVA TextVQA by a small margin. All headline claims come from frozen models under matched budgets, and negative results are reported alongside the positive ones — see `results/tables/final_thesis_results_summary.md` for the complete per-cell verdicts.
 
 ## 5. Repository layout (after the 2026-07-05 cleanup)
 
-* `src/final_scope/` shared evaluation infrastructure: sample manifests, unified output schema, token and FLOP accounting, fairness gate, and the dense, static, dynamic WHICH and dynamic COUNT runner cores
+* `src/common/` the shared evaluation core: sample manifests, unified output schema, token and FLOP accounting, and the fairness gate
+* `src/{dense,static,dynamic_which,dynamic_count}/` the four method runner cores (`evaluate_*.py`)
 * `src/models/static/static.py` the frozen LLaVA engine (physical token removal before the language model)
 * `src/pruning/` the method code: the `textsim` dynamic WHICH selectors, the clean room reference implementation, the dynamic COUNT probes and controllers, the frozen Qwen engine (`question_conditioned_selection/qwen_pruner.py`), and the VisionZip baseline
 * `src/metrics/` the official scorers (GQA exact match, M4C, ANLS, VQA consensus)
-* `scripts/final_scope/` all runnable launchers, audits, validators and table generators for the final experiment matrix
-* `configs/final_scope/sample_ids/` the frozen, sha256 verified evaluation subsets (tracked)
-* `results/final_scope/` run outputs — per cell one aggregate JSON plus one per sample JSONL (git ignored, local evidence); **`results/final_scope/tables/`** holds all final result tables and reports (tracked); `results/final_scope/dynamic_count_configs/` holds the fitted COUNT controllers (tracked)
+* `scripts/{dense,static,dynamic_which,dynamic_count,validation,tables,data}/` all runnable launchers, audits, validators and table generators, grouped by method
+* `configs/sample_ids/` the frozen, sha256 verified evaluation subsets (tracked)
+* `results/runs/` run outputs — per cell one aggregate JSON plus one per sample JSONL (git ignored, local evidence); **`results/tables/`** holds all final result tables and reports (tracked); `results/configs/dynamic_count/` holds the fitted COUNT controllers (tracked)
 * `archive/` **all retired legacy code, configs, scripts, logs and docs** — the pre-final-scope pipelines (classification heads, the old budget controller, the distillation study, legacy evaluation harnesses, out-of-scope models and datasets) were moved here during the staged cleanup and are preserved, not deleted. Do not import from `archive/`; every move is recorded in `archive/migration_manifests/`.
 * `docs/` the final documentation set (local-only): thesis scope, repository map, protocol, one document per method, results summary, reproducibility, and limitations
 
@@ -129,15 +132,15 @@ implementation to committed evidence:
 
 | Method | Runner core (CPU) | Selection / generation | Launcher | Result basename |
 |---|---|---|---|---|
-| Dense | `src/final_scope/dense_pilot.py` | `models/static/static.py` (`none`) · `pruning/.../qwen_pruner.py` (`full`) | `run_dense_pilot.py` | `dense_final` |
-| Static | `src/final_scope/static_eval.py` | LLaVA `cls_attn` / Qwen `norm` (inside the engines) | `run_static_eval.py` | `static_final_{sel}_p{b}` |
-| Dynamic-WHICH | `src/final_scope/dynamic_which_eval.py` | `src/pruning/dynamic_which/` (+ `_ref` clean-room) | `run_dynamic_which_eval.py` | `dynamic_which_final_textsim_p{b}` |
-| Dynamic-COUNT (DC-D, DC-C) | `src/final_scope/dynamic_count_eval.py` | `src/pruning/dynamic_count/` | `run_dynamic_count_{probe,discrete,continuous}.py` | `dynamic_count_{probe,dcd,dcc}_*` |
+| Dense | `src/dense/evaluate_dense.py` | `models/static/static.py` (`none`) · `pruning/.../qwen_pruner.py` (`full`) | `scripts/dense/run_dense.py` | `dense_final` |
+| Static | `src/static/evaluate_static.py` | LLaVA `cls_attn` / Qwen `norm` (inside the engines) | `scripts/static/run_static.py` | `static_final_{sel}_p{b}` |
+| Dynamic-WHICH | `src/dynamic_which/evaluate_dynamic_which.py` | `src/pruning/dynamic_which/` (+ `_ref` clean-room) | `scripts/dynamic_which/run_dynamic_which.py` | `dynamic_which_final_textsim_p{b}` |
+| Dynamic-COUNT (DC-D, DC-C) | `src/dynamic_count/evaluate_dynamic_count.py` | `src/pruning/dynamic_count/` | `scripts/dynamic_count/run_{probe,discrete,continuous}.py` | `dynamic_count_{probe,dcd,dcc}_*` |
 
-`src/final_scope/` holds the shared fairness toolkit (`sample_ids`, `output_writer`,
-`schema_validator`, `token_flops`) that every method reuses. The launchers live under
-`scripts/final_scope/` (grouped by method in `scripts/README.md`); the per-cell result files and the
-committed tables live under `results/final_scope/` (see `results/README.md`).
+`src/common/` holds the shared fairness toolkit (`sample_ids`, `output_writer`, `schema_validator`,
+`token_flops`) that every method reuses. The launchers live under the `scripts/` method folders
+(see `scripts/README.md`); the per-cell result files and the committed tables live under `results/`
+(see `results/README.md`).
 
 ## 6. Running the code
 
@@ -147,19 +150,19 @@ Validating the completed results without a GPU (self-tests, then the final-matri
 
 ```bash
 python -m compileall -q src scripts
-python -m src.final_scope.test_final_scope
-python -m scripts.final_scope.validate_dynamic_which_final
-python -m scripts.final_scope.audit_dynamic_which_full_final_matrix
-python -m scripts.final_scope.validate_dynamic_count_final
-python -m scripts.final_scope.audit_dynamic_count_full_matrix
+python -m src.common.test_evaluation_core
+python -m scripts.validation.validate_dynamic_which
+python -m scripts.validation.audit_dynamic_which
+python -m scripts.validation.validate_dynamic_count
+python -m scripts.validation.audit_dynamic_count
 ```
 
 Evaluations are launched per cell, for example:
 
 ```bash
-python -m scripts.final_scope.run_dense_pilot --model llava15 --dataset gqa --full
-python -m scripts.final_scope.run_static_eval --model llava15 --dataset gqa --budget-pct 25 --full
-python -m scripts.final_scope.run_dynamic_which_eval --model qwen25vl7b --dataset textvqa --budget-pct 25 --selector textsim --full
+python -m scripts.dense.run_dense --model llava15 --dataset gqa --full
+python -m scripts.static.run_static --model llava15 --dataset gqa --budget-pct 25 --full
+python -m scripts.dynamic_which.run_dynamic_which --model qwen25vl7b --dataset textvqa --budget-pct 25 --selector textsim --full
 ```
 
 Static runs require the matching dense final to exist first, and dynamic WHICH runs additionally require the matching static final, because deltas and per sample budgets are computed against those references.

@@ -10,17 +10,17 @@ bash dynamic_which/scripts/validate_dynamic_which.sh
 
 # or directly:
 python -m compileall -q src scripts
-python -m src.final_scope.test_final_scope
-python -m scripts.final_scope.validate_dynamic_which_final          # the 5 Qwen x TextVQA finals
-python -m scripts.final_scope.audit_dynamic_which_full_final_matrix  # all 40 cells complete/valid
+python -m src.common.test_evaluation_core
+python -m scripts.validation.validate_dynamic_which          # the 5 Qwen x TextVQA finals
+python -m scripts.validation.audit_dynamic_which  # all 40 cells complete/valid
 ```
 
 ## Table generation (CPU, from saved results)
 
 ```bash
-python -m scripts.final_scope.make_dynamic_which_textsim_full_final_summary
-python -m scripts.final_scope.make_dynamic_which_dense_static_dynamic_table
-python -m scripts.final_scope.make_final_thesis_tables
+python -m scripts.tables.make_dynamic_which_summary
+python -m scripts.tables.make_dense_static_dynamic_table
+python -m scripts.tables.make_final_thesis_tables
 ```
 
 ## GPU rerun — EXPENSIVE, NOT needed unless reproducing the experiment
@@ -30,12 +30,12 @@ launcher skips any cell whose result is saved (no silent overwrite).
 
 ```bash
 # the full textsim matrix (35 remaining full finals; Qwen x TextVQA already complete):
-bash scripts/final_scope/run_dynamic_which_textsim_full_missing.sh
+bash scripts/dynamic_which/run_dynamic_which_full_matrix.sh
 
 # a single cell:
-CUDA_VISIBLE_DEVICES=1 python -m scripts.final_scope.run_dynamic_which_eval \
+CUDA_VISIBLE_DEVICES=1 python -m scripts.dynamic_which.run_dynamic_which \
     --model qwen25vl7b --dataset textvqa --budget-pct 25 --selector textsim --full
 
 # independent clean-room validation of the headline win (n=200 pilots, no overwrite of finals):
-bash scripts/final_scope/run_qwen_textvqa_ref_validation.sh
+bash scripts/dynamic_which/run_qwen_textvqa_ref_validation.sh
 ```

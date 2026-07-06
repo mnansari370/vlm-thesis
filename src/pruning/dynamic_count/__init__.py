@@ -1,7 +1,7 @@
 """
 dynamic_count — the REAL Dynamic-COUNT phase: per-sample token budgets.
 
-Two variants (docs: results/final_scope/tables/dynamic_count_full_matrix_method_plan.md):
+Two variants (docs: results/tables/dynamic_count_full_matrix_method_plan.md):
   * DC-D (dc_discrete)   — baseline: confidence-gated cascade over the anchor budgets
                            {15,25,35,50,75}%. Composable offline from frozen anchor finals.
   * DC-C (dc_continuous) — THE main method: a calibrated controller predicts a sample-specific

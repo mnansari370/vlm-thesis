@@ -10,14 +10,14 @@ bash static/scripts/validate_static.sh
 
 # or directly:
 python -m compileall -q src scripts
-python -m src.final_scope.test_final_scope
-python -m scripts.final_scope.audit_dynamic_which_full_final_matrix   # confirms static references resolve
+python -m src.common.test_evaluation_core
+python -m scripts.validation.audit_dynamic_which   # confirms static references resolve
 ```
 
 ## Table generation (CPU, from saved results)
 
 ```bash
-python -m scripts.final_scope.make_final_thesis_tables
+python -m scripts.tables.make_final_thesis_tables
 ```
 
 ## GPU rerun — EXPENSIVE, NOT needed unless reproducing the experiment
@@ -27,12 +27,12 @@ whose result is already saved, so they do not overwrite; move a file aside to fo
 
 ```bash
 # LLaVA-1.5 cls_attn (GPU 0, vlm_env): 4 datasets x 5 budgets
-bash scripts/final_scope/run_llava_static_final.sh
+bash scripts/static/run_llava_static.sh
 
 # Qwen2.5-VL norm (GPU 1, qwen_env): 4 datasets x 5 budgets
-bash scripts/final_scope/run_qwen_static_final.sh
+bash scripts/static/run_qwen_static.sh
 
 # a single cell:
-CUDA_VISIBLE_DEVICES=0 python -m scripts.final_scope.run_static_eval \
+CUDA_VISIBLE_DEVICES=0 python -m scripts.static.run_static \
     --model llava15 --dataset gqa --budget-pct 25 --full
 ```

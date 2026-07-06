@@ -21,19 +21,19 @@ The method-facing entry point is this folder. Exact files implementing Dynamic-W
 
 | File | Role |
 |---|---|
-| `scripts/final_scope/run_dynamic_which_eval.py` | one WHICH cell (`--selector textsim`, `--budget-pct`) |
-| `scripts/final_scope/run_dynamic_which_ref_eval.py` | clean-room reference pilots |
-| `scripts/final_scope/run_dynamic_which_textsim_full_missing.sh` | the 35 full finals (Qwen×TextVQA finals already existed) |
-| `scripts/final_scope/validate_dynamic_which_final.py` | validates the five Qwen×TextVQA WHICH finals |
-| `scripts/final_scope/audit_dynamic_which_full_final_matrix.py` | audits all 40 WHICH cells for completeness |
-| `scripts/final_scope/compare_qwen_textvqa_current_vs_ref.py` | current textsim vs clean-room, per budget |
-| `scripts/final_scope/check_dynamic_which_equivalence{,_extended}.py` | keep-all == dense / α=0-mix == static (GPU, small n) |
+| `scripts/dynamic_which/run_dynamic_which.py` | one WHICH cell (`--selector textsim`, `--budget-pct`) |
+| `scripts/dynamic_which/run_dynamic_which_ref.py` | clean-room reference pilots |
+| `scripts/dynamic_which/run_dynamic_which_full_matrix.sh` | the 35 full finals (Qwen×TextVQA finals already existed) |
+| `scripts/validation/validate_dynamic_which.py` | validates the five Qwen×TextVQA WHICH finals |
+| `scripts/validation/audit_dynamic_which.py` | audits all 40 WHICH cells for completeness |
+| `scripts/dynamic_which/compare_qwen_textvqa_current_vs_ref.py` | current textsim vs clean-room, per budget |
+| `scripts/dynamic_which/check_equivalence{,_extended}.py` | keep-all == dense / α=0-mix == static (GPU, small n) |
 
 ## Inputs and outputs
 
 - Reads: the matching **dense final** AND the matching **static final** (both required) +
-  `configs/final_scope/sample_ids/{dataset}.json`.
-- Writes: `results/final_scope/{model}/{dataset}/dynamic_which_final_textsim_p{b}[...].{json,jsonl}`
+  `configs/sample_ids/{dataset}.json`.
+- Writes: `results/runs/{model}/{dataset}/dynamic_which_final_textsim_p{b}[...].{json,jsonl}`
   (and `dynamic_which_ref_pilot_*` for the clean-room validation).
 
 > Result **basenames are load-bearing** — the Dynamic-COUNT COUNT-on-WHICH path resolves the frozen

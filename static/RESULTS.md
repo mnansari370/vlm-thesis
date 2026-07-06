@@ -1,6 +1,6 @@
 # Static — results
 
-Source: `results/final_scope/tables/final_dense_static_dynamic_comparison.md` (section B) and
+Source: `results/tables/final_dense_static_dynamic_comparison.md` (section B) and
 `static_final_summary.csv`. Full manifests, all fairness gates passed. Δdense in parentheses.
 
 | Model | Dataset | Dense | p15 | p25 | p35 | p50 | p75 |

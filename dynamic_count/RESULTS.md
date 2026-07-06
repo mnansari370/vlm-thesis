@@ -1,6 +1,6 @@
 # Dynamic-COUNT — results
 
-Sources: `results/final_scope/tables/dynamic_count_dc_d_summary.md`, `dynamic_count_dc_c_summary.md`,
+Sources: `results/tables/dynamic_count_dc_d_summary.md`, `dynamic_count_dc_c_summary.md`,
 `dynamic_count_win_loss_summary.md`, `dynamic_count_oracle_summary.md`, and
 `final_thesis_results_summary.md`. Evaluated on the held-out 80% split; Δ is vs the static
 accuracy-vs-FLOPs curve at matched average compute (labels at ±0.50 pp).

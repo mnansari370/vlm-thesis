@@ -1,6 +1,6 @@
 # Dynamic-WHICH — results
 
-Sources: `results/final_scope/tables/dynamic_which_final_report.md`,
+Sources: `results/tables/dynamic_which_final_report.md`,
 `dynamic_which_textsim_full_final_summary.md`, `qwen_textvqa_current_vs_ref_validation.md`. Full
 manifests (GQA 12,578 · VQAv2 25,000 · TextVQA 5,000 · DocVQA 5,349), all fairness gates passed.
 Win/loss vs static at the same budget: **6 wins, 2 near-ties, 32 losses**.

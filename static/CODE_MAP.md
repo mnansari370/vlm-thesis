@@ -21,9 +21,9 @@ The method-facing entry point is this folder. Exact files implementing static pr
 
 | File | Role |
 |---|---|
-| `scripts/final_scope/run_static_eval.py` | one static cell (`--model`, `--dataset`, `--budget-pct {15,25,35,50,75}`, `--selector`) |
-| `scripts/final_scope/run_llava_static_final.sh` | all LLaVA-1.5 `cls_attn` static finals (GPU 0) |
-| `scripts/final_scope/run_qwen_static_final.sh` | all Qwen2.5-VL `norm` static finals (GPU 1) |
+| `scripts/static/run_static.py` | one static cell (`--model`, `--dataset`, `--budget-pct {15,25,35,50,75}`, `--selector`) |
+| `scripts/static/run_llava_static.sh` | all LLaVA-1.5 `cls_attn` static finals (GPU 0) |
+| `scripts/static/run_qwen_static.sh` | all Qwen2.5-VL `norm` static finals (GPU 1) |
 
 ## Budget → K
 
@@ -33,8 +33,8 @@ The method-facing entry point is this folder. Exact files implementing static pr
 
 ## Inputs and outputs
 
-- Reads: the matching **dense final** (required) + `configs/final_scope/sample_ids/{dataset}.json`.
-- Writes: `results/final_scope/{model}/{dataset}/static_final_{cls_attn|norm}_p{b}[...].{json,jsonl}`.
+- Reads: the matching **dense final** (required) + `configs/sample_ids/{dataset}.json`.
+- Writes: `results/runs/{model}/{dataset}/static_final_{cls_attn|norm}_p{b}[...].{json,jsonl}`.
 
 > Result **basenames are load-bearing** — Dynamic-WHICH resolves the same-budget static reference by
 > reconstructing the `static_final_{sel}_p{b}[...]` name. Do not rename result files.
