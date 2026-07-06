@@ -1,5 +1,9 @@
 # `configs/`
 
+> **For method-specific navigation, start from [`dense/`](../dense/), [`static/`](../static/),
+> [`dynamic_which/`](../dynamic_which/), or [`dynamic_count/`](../dynamic_count/).** All methods share
+> the sample manifests below.
+
 ```
 configs/
   final_scope/sample_ids/{gqa,textvqa,docvqa,vqav2}.json

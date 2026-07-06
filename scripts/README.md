@@ -1,5 +1,10 @@
 # `scripts/` — runnable launchers
 
+> **For method-specific commands, start from [`dense/`](../dense/), [`static/`](../static/),
+> [`dynamic_which/`](../dynamic_which/), or [`dynamic_count/`](../dynamic_count/)** — each folder's
+> `COMMANDS.md` gives the CPU validation, table, and GPU-rerun commands for that method, and a safe
+> wrapper under its `scripts/`. This file is the full launcher reference.
+
 All active launchers live under `scripts/final_scope/` and are invoked as
 `python -m scripts.final_scope.<name>`. They are grouped by method family below (the files are not
 physically foldered — the `python -m` module paths are the documented interface and are referenced

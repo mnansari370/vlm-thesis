@@ -6,6 +6,27 @@
 
 > **Status: experiments complete; thesis text in preparation.** The full evaluation matrix — dense, static, Dynamic-WHICH, and Dynamic-COUNT (DC-D and DC-C) on both models and all four datasets — is finished and validated. Every number below comes from a run that passed the full evaluation protocol; the complete result tables live in `results/final_scope/tables/` (tracked in this repository).
 
+## Method folders (start here)
+
+The repository is organized around the four thesis methods. Each folder is a self-contained,
+reader-facing entry point — what the method does, exactly which code implements it, safe commands,
+and the real result numbers:
+
+| Folder | Method | Best outcome |
+|---|---|---|
+| [`dense/`](dense/) | Dense baseline (keep all tokens) | the accuracy ceiling and reference every method loads |
+| [`static/`](static/) | Static pruning (image-only, fixed budget) | a strong floor — near-dense at the 75% budget |
+| [`dynamic_which/`](dynamic_which/) | Dynamic-WHICH (question-conditioned selection) | wins on Qwen×TextVQA (+8.36 pp over static) |
+| [`dynamic_count/`](dynamic_count/) | Dynamic-COUNT (adaptive per-sample budget) | a documented negative — does not beat the static curve |
+
+Each folder contains `README.md`, `CODE_MAP.md` (exact implementation files), `COMMANDS.md`
+(CPU validation · tables · GPU rerun), `RESULTS.md` (real numbers), and a safe `scripts/` wrapper.
+
+The tested evaluation runtime remains under `src/` and `scripts/` for reproducibility (its paths are
+stable and referenced throughout the saved results); the method folders provide the direct
+navigation, commands, and result summaries. See [`methods_restructure_plan.md`](methods_restructure_plan.md)
+for why the runtime paths are deliberately left unchanged.
+
 ## 1. What this project studies
 
 Vision language models such as LLaVA and Qwen2.5 VL spend most of their compute on visual tokens. A single image can occupy hundreds or thousands of positions in the language model sequence, while the answer to a question often depends on a small part of the image. Pruning visual tokens is therefore a natural way to make inference cheaper.

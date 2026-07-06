@@ -1,5 +1,10 @@
 # `results/` — experiment results
 
+> **For a per-method results summary, start from [`dense/RESULTS.md`](../dense/RESULTS.md),
+> [`static/RESULTS.md`](../static/RESULTS.md), [`dynamic_which/RESULTS.md`](../dynamic_which/RESULTS.md),
+> or [`dynamic_count/RESULTS.md`](../dynamic_count/RESULTS.md).** This file describes the full result
+> tree; the citable tables live under `results/final_scope/tables/`.
+
 ```
 results/
   final_scope/                    THE final thesis evidence

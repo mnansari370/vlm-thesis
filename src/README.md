@@ -1,4 +1,8 @@
-# `src/` — final-scope source tree
+# `src/` — shared evaluation core
+
+> **For method-specific navigation, start from [`dense/`](../dense/), [`static/`](../static/),
+> [`dynamic_which/`](../dynamic_which/), or [`dynamic_count/`](../dynamic_count/).** Each names the
+> exact files below that implement its method. This tree is the shared, tested runtime.
 
 All active code for the final thesis matrix (dense · static · Dynamic-WHICH · Dynamic-COUNT DC-D/DC-C
 on LLaVA-1.5-7B + Qwen2.5-VL-7B × GQA/VQAv2/TextVQA/DocVQA), run from the repo root as
