@@ -21,10 +21,16 @@ Just as important, the trade is measured honestly, with frozen backbones, locked
 identical prompts and decoding for every method, and compute accounting that charges every executed
 forward pass.
 
-## Research Question
+## Research Questions
 
-> **Can vision-language models reduce visual-token computation without losing too much task
-> accuracy, and does question-conditioned pruning help more than image-only pruning?**
+This thesis is organized around three research questions:
+
+- **RQ1.** Can vision language models reduce visual token computation without losing too much
+  task accuracy?
+- **RQ2.** Can dynamic, question conditioned pruning improve the accuracy and efficiency trade
+  off compared with dense inference and a strong static pruning baseline?
+- **RQ3.** How did AI assisted development tools support the implementation, experimentation,
+  and verification process of this thesis?
 
 Any pruning method quietly makes two separate decisions, and this thesis evaluates them as two
 separate axes:
