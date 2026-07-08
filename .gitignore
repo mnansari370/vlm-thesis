@@ -74,9 +74,12 @@ external/
 .claude/
 
 # Private research material — local-only, never pushed (docs = internal planning/reports,
-# literature = paper notes). They remain on disk and in local branch history.
+# literature = paper notes, thesis = the thesis manuscript text). They remain on disk and in
+# local branch history.
 docs/
 literature/
+thesis/
+thesis_latex/
 
 # Archived/superseded material — local-only, never pushed. Retired code, configs, docs,
 # logs, results, and migration manifests are preserved on disk for traceability but are
