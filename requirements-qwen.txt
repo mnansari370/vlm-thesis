@@ -1,0 +1,39 @@
+# ============================================================================
+# Dynamic, Question-Conditioned Visual Token Pruning — Qwen2.5-VL environment
+# ----------------------------------------------------------------------------
+# This file pins the environment used for the Qwen2.5-VL-7B-Instruct result
+# cells ONLY. The LLaVA-1.5-7B cells used a separate environment; see
+# requirements.txt. Versions below were exported from the working `qwen_env`
+# conda environment that produced the Qwen result cells.
+#
+#   Python 3.11.15 · CUDA 12.1 · 2x NVIDIA RTX 6000 Ada (48 GB)
+#   Model checkpoint: Qwen/Qwen2.5-VL-7B-Instruct
+#     revision (local cache snapshot used): cc594898137f460bfe9f0759e9844b3ce807cfb5
+#
+# Setup:
+#   conda create -n qwen_env python=3.11 -y
+#   conda activate qwen_env
+#   pip install -r requirements-qwen.txt
+#
+# The Qwen cells require transformers 4.51.x and qwen_vl_utils; they are NOT
+# compatible with the transformers pin in requirements.txt. These versions are
+# result-critical for reproducing the reported Qwen numbers.
+# ============================================================================
+
+# --- Core (result-critical pins) --------------------------------------------
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
+transformers==4.51.3
+tokenizers==0.21.4
+accelerate==1.14.0
+qwen-vl-utils==0.0.14
+safetensors==0.8.0
+huggingface-hub==0.36.2
+
+# --- Data / numerics ----------------------------------------------------------
+datasets==5.0.0             # DocVQA validation loading (lmms-lab/DocVQA)
+numpy==1.26.4
+pillow==12.2.0
+pyarrow==24.0.0
+av==17.1.0

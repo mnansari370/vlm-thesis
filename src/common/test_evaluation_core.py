@@ -341,6 +341,15 @@ def test_static_eval():
     check("clamp_qwen_k 50% of 324 = 162", se.clamp_qwen_k(50, 324) == 162)
     check("clamp_qwen_k clamps up to >=1 (15% of 3 → 1)", se.clamp_qwen_k(15, 3) == 1)
     check("clamp_qwen_k never exceeds dense_n_visual (75% of 4 → 3)", se.clamp_qwen_k(75, 4) == 3)
+    # exact half-integer ties resolve to the nearest EVEN integer (Python round; matches Sec 3.7)
+    check("clamp_qwen_k tie 50% of 5 = 2.5 → 2 (even)", se.clamp_qwen_k(50, 5) == 2)
+    check("clamp_qwen_k tie 50% of 7 = 3.5 → 4 (even)", se.clamp_qwen_k(50, 7) == 4)
+    check("clamp_qwen_k tie 50% of 9 = 4.5 → 4 (even)", se.clamp_qwen_k(50, 9) == 4)
+    check("clamp_qwen_k tie 50% of 3 = 1.5 → 2 (even)", se.clamp_qwen_k(50, 3) == 2)
+    check("clamp_qwen_k tie 25% of 6 = 1.5 → 2 (even)", se.clamp_qwen_k(25, 6) == 2)
+    check("clamp_qwen_k tie 25% of 10 = 2.5 → 2 (even)", se.clamp_qwen_k(25, 10) == 2)
+    check("clamp_qwen_k tie 25% of 14 = 3.5 → 4 (even)", se.clamp_qwen_k(25, 14) == 4)
+    check("clamp_qwen_k tie 25% of 2 = 0.5 → 0 then clamped to 1", se.clamp_qwen_k(25, 2) == 1)
 
     # 7. LLaVA static expected-visual-token validation against its own K
     recK = per_sample_record(
