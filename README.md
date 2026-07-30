@@ -1,225 +1,293 @@
 # Dynamic Question-Conditioned Visual Token Pruning for Efficient Vision-Language Models
 
-**Author:** Mo Nafees
-**Supervisor:** Prof. Decebal Constantin Mocanu
-**Advisor:** Boqian Wu
-**Master in Information and Computer Science, University of Luxembourg, 2026**
-
-> Master's thesis repository. All experiments are complete and validated; every number in this
-> README comes from a committed table under [`results/tables/`](results/tables/), produced by runs
-> that passed an automatic fairness gate.
-
-## Overview
-
-Vision-language models such as LLaVA-1.5 and Qwen2.5-VL spend most of their language-model compute
-on visual tokens. A single image occupies hundreds to over a thousand positions in the sequence,
-while the evidence for an answer is often local to a small part of the image. Pruning visual tokens
-is therefore a natural way to make inference cheaper.
-
-This thesis studies visual token pruning at inference time, on frozen backbones. The goal is to
-reduce visual-token computation while preserving answer quality across visual question answering
-tasks, and, just as important, to measure that trade honestly: locked evaluation samples, identical
-prompts and decoding for every method, and computation accounting that charges every executed
-language-model pass, including any pass used only to make a pruning decision.
-
-## Research Questions
-
-This thesis is organized around three research questions:
-
-- **RQ1.** Can vision-language models reduce visual token computation without losing too much
-  task accuracy?
-- **RQ2.** Can dynamic, question-conditioned pruning improve the accuracy-efficiency trade-off
-  compared with dense inference and a strong static pruning baseline?
-- **RQ3.** How did AI-assisted development tools support the implementation, experimentation,
-  and verification process of this thesis?
-
-Any pruning method quietly makes two separate decisions, and this thesis evaluates them as two
-separate axes:
-
-- **Dynamic-WHICH** asks *which* visual tokens should be kept at a fixed budget. Does letting the
-  question choose the tokens beat choosing them from the image alone?
-- **Dynamic-COUNT** asks *how many* visual tokens should be kept for each sample. Does an adaptive
-  per-sample budget beat the fixed-budget curve of the same selector at the same average compute?
-
-## Thesis Scope
-
-This repository focuses on two models and four datasets only:
+Master's thesis · **Mo Nafees** · University of Luxembourg, 2026
 
 | | |
 |---|---|
-| **Models** (both frozen, no backbone training) | LLaVA-1.5-7B (fixed 576 visual tokens at 336 px) · Qwen2.5-VL-7B-Instruct (native per-image token count) |
-| **Datasets** | GQA (testdev balanced, 12,578, exact match) · VQAv2 (25,000 validation questions, stratified by official answer type, seed 42, adapted consensus) · TextVQA (val, 5,000, soft accuracy, OCR in the prompt) · DocVQA (val, 5,349, ANLS) |
-| **Budgets** | 15 / 25 / 35 / 50 / 75 % of each sample's dense visual-token count, plus dense (100 %) |
-| **Methods** | Dense baseline · Static pruning · Dynamic-WHICH · Dynamic-COUNT (DC-D and DC-C) |
+| **Degree** | Master in Information and Computer Sciences |
+| **Faculty** | Faculty of Science, Technology and Medicine |
+| **Supervisor** | Prof. Decebal Constantin Mocanu |
+| **Reviewer** | Prof. Thomas Engel |
+| **Advisor** | Boqian Wu |
 
-The VQAv2 scorer is an adapted consensus score, min(matches/3, 1) over the ten reference answers
-without the official leave-one-out averaging. It is applied identically to every method, so VQAv2
-comparisons are internally consistent, but the absolute values are not official leaderboard scores.
+> All experiments are complete. Every number in this README comes from a committed table under
+> [`results/tables/`](results/tables/), produced by runs that passed an automatic schema and
+> comparison check.
 
-Fairness is enforced mechanically, not by convention: every method and both models score the exact
-same sha256-locked sample lists ([`configs/sample_ids/`](configs/sample_ids/)), decode greedily at
-batch size 1 with identical prompts, save per-sample predictions plus an aggregate record, and
-compute analytical prefill FLOPs per sample before averaging. The FLOP estimate covers language-model
-input processing only; the vision encoder, selector operations, and decoding sit outside it and are
-excluded identically for every method. Token reduction and FLOP reduction are always reported
-separately. A score difference is called a win above +0.50 points, a near-tie within ±0.50, and a
-loss below −0.50; that reporting convention (not a statistical test) is used everywhere below.
+---
 
-## Models and Datasets
+## Contents
 
-LLaVA-1.5-7B is the fixed-grid case: every image costs exactly 576 tokens, so budgets map to exact
-counts (86 / 144 / 202 / 288 / 432 / 576). Qwen2.5-VL-7B is the native-resolution case: its token
-count varies per image (about 359 on GQA and VQAv2, about 964 on TextVQA, about 1,229 on DocVQA),
-so budgets are applied per sample as a fraction of that image's own dense count. The four datasets
-span scene reasoning (GQA), broad natural-image questions (VQAv2), scene text (TextVQA), and dense
-document pages (DocVQA). Together they cover regimes where pruning is easy and regimes where it is
-punishing.
+- [In one paragraph](#in-one-paragraph)
+- [Research questions](#research-questions)
+- [The two pruning decisions](#the-two-pruning-decisions)
+- [Evaluation scope](#evaluation-scope)
+- [How comparisons are kept fair](#how-comparisons-are-kept-fair)
+- [Methods](#methods)
+- [Results](#results)
+- [Findings](#findings)
+- [Repository structure](#repository-structure)
+- [Reproducibility](#reproducibility)
+- [Limitations](#limitations)
+- [Future work](#future-work)
+- [Thesis manuscript](#thesis-manuscript)
+- [Citation](#citation)
 
-## Method Summary
+---
 
-### Dense Baseline
+## In one paragraph
 
-Keeps all visual tokens. It is the full-compute reference: it fixes the unpruned score and cost that
-every pruning result is measured against, and it supplies each sample's dense token count from which
-the budgets are derived. It is a reference, not an accuracy ceiling: a pruned run can land slightly
-above it (LLaVA GQA at the 75 % static budget is +0.11 over dense), and the oracle analysis below
-exceeds it in every cell.
+A vision-language model turns an image into hundreds of visual tokens, and the language model
+processes all of them before producing the first word of an answer. Removing some of those tokens is
+a direct way to cut that cost. This thesis measures how far that can be pushed on **frozen**
+backbones, and it separates something the literature usually changes all at once: pruning makes
+**two** decisions, *which* tokens to keep and *how many*, and a method that changes both together
+cannot tell you which decision earned the result. Each decision is therefore measured with the other
+held fixed, under one shared evaluation, with every executed language-model pass charged, including
+any pass used only to make a pruning decision.
+
+The short answer: a fixed, question-independent rule is already a strong baseline. Question
+conditioning helps consistently in exactly one of eight settings. Adaptive per-sample budgeting does
+not consistently help at all, even though a retrospective oracle shows the headroom is real.
+
+---
+
+## Research questions
+
+| | Question |
+|---|---|
+| **RQ1** | Can vision-language models reduce visual token computation without losing too much task accuracy? |
+| **RQ2** | Can dynamic, question-conditioned pruning improve the accuracy-efficiency trade-off compared with dense inference and a strong static pruning baseline? |
+| **RQ3** | How did AI-assisted development tools support the implementation, experimentation, and verification process of this thesis? |
+
+---
+
+## The two pruning decisions
+
+| Axis | Question | Held fixed | Compared against |
+|---|---|---|---|
+| **Dynamic-WHICH** | Which visual tokens to keep? | Retained-token count, identical per sample | Static pruning at the same budget |
+| **Dynamic-COUNT** | How many visual tokens to keep? | The selection rule | Fixed-budget curve of the *same* selector, at matched mean computation |
+
+Holding the count equal removes "it kept more tokens" as an explanation for a selection result.
+Holding the selector fixed removes "it picked better tokens" as an explanation for a budget result.
+
+---
+
+## Evaluation scope
+
+**Models** — both frozen, no backbone weights trained.
+
+| Model | Visual tokens per image | Static selector |
+|---|---|---|
+| LLaVA-1.5-7B (`llava-hf/llava-1.5-7b-hf`) | Fixed 576 | CLS attention in the vision encoder |
+| Qwen2.5-VL-7B-Instruct (`Qwen/Qwen2.5-VL-7B-Instruct`) | Native: ≈359 GQA/VQAv2, ≈964 TextVQA, ≈1229 DocVQA | Activation norm on post-merger embeddings |
+
+**Datasets**
+
+| Dataset | Split | Samples | Metric |
+|---|---|--:|---|
+| GQA | testdev balanced | 12,578 | Exact match |
+| VQAv2 | validation, stratified by official answer type, seed 42 | 25,000 | Adapted consensus, min(m/3, 1) |
+| TextVQA | val, OCR text supplied in the prompt | 5,000 | Leave-one-out soft accuracy |
+| DocVQA | validation | 5,349 | ANLS, threshold 0.5 |
+
+**Budgets** — 15 / 25 / 35 / 50 / 75 % of each sample's own dense visual-token count, plus dense.
+For LLaVA-1.5 that is 86 / 144 / 202 / 288 / 432 of 576. For Qwen2.5-VL the count is computed per
+sample, rounded half to even, then clamped to at least 1 and at most the dense count.
+
+> **On VQAv2 scores.** The scorer is an adapted direct-count consensus metric, not the official
+> leave-one-out averaging. It is applied identically to every method, so VQAv2 comparisons here are
+> internally consistent, but the absolute values are **not** official leaderboard scores.
+
+---
+
+## How comparisons are kept fair
+
+Fairness is enforced mechanically rather than by convention.
+
+- **Locked samples.** Every method and both models score the exact same ordered sample lists, stored
+  with SHA-256 values in [`configs/sample_ids/`](configs/sample_ids/). A run whose identifiers,
+  ordering or hash diverge is rejected.
+- **Identical generation.** Greedy decoding, batch size 1, `max_new_tokens=64`, natural
+  end-of-sequence stop, no repetition penalty, and one shared short-answer instruction across all
+  four datasets.
+- **One computation scope.** An analytical estimate of **language-model input-processing**
+  computation, one multiply-accumulate counted as one operation. **Every executed pass is charged**,
+  including a probe pass whose answer is later kept. Excluded identically for every method: vision
+  encoding, projection or merging, token scoring and selection, controller inference, generated-token
+  decoding, latency and memory. **This is not an end-to-end cost.**
+- **Token reduction ≠ computation reduction.** The two are reported separately, never interchanged.
+- **A descriptive reporting band.** A difference is called an *improvement* above +0.50 points, a
+  *near-tie* within ±0.50, and a *decrease* below −0.50. This is a reporting convention, **not** a
+  statistical test. No confidence intervals or hypothesis tests are reported.
+
+---
+
+## Methods
+
+### Dense inference — the full-token reference
+
+Keeps every visual token. It fixes the unpruned score and cost that pruned results are measured
+against, and supplies each sample's dense token count from which budgets are derived.
+
+It is a **reference, not an accuracy ceiling**: a pruned run can land slightly above it (LLaVA-1.5 on
+GQA at 75 % retention is +0.11), and the retrospective oracle exceeds it in all eight settings.
 
 | Model | GQA | VQAv2 | TextVQA | DocVQA |
 |---|--:|--:|--:|--:|
-| LLaVA-1.5-7B | 61.42 | 77.33 | 57.65 | 21.53 |
-| Qwen2.5-VL-7B | 60.96 | 84.27 | 81.06 | 94.76 |
+| LLaVA-1.5 | 61.42 | 77.33 | 57.65 | 21.53 |
+| Qwen2.5-VL | 60.96 | 84.27 | 81.06 | 94.76 |
 
-The low LLaVA DocVQA score is expected and informative: 576 low-resolution tokens cannot read a
-dense document page.
+The low LLaVA-1.5 DocVQA score is itself informative: 576 tokens at 336 px cannot resolve a dense
+document page, so small changes there say little about document understanding.
 
-### Static Pruning
+### Static pruning — the question-independent baseline
 
-Applies fixed-budget, image-based pruning; the question is never consulted. LLaVA ranks patches by
-CLS attention in the vision encoder, and Qwen ranks merged visual embeddings by activation norm; the
-two selectors are architecture-specific because the models expose different visual signals at the
-pruning point. Tokens are physically removed before the language model, so the savings are real.
-Static is the strong baseline every dynamic method must beat: at the 75 % budget it sits within 0.02
-to 2.63 points of dense on every model-dataset cell while removing roughly a quarter of the FLOPs,
-and on GQA and VQAv2 even the 15 % budget loses only about 4 to 8 points. It collapses on the
-text-heavy Qwen settings: Qwen TextVQA falls from 81.06 to 53.06 and Qwen DocVQA from 94.76 to 29.90
-at the tightest budget, plausibly because the required evidence there is fine-grained and spread
-across many positions, though the experiments do not isolate the cause.
+Fixed budget, image-based ranking, question never consulted. Tokens are physically removed before the
+language model, so the saving is real. The two selectors are architecture-specific because the models
+expose different visual signals at the pruning point.
 
-### Dynamic-WHICH
+This is the baseline every dynamic method has to beat, and it is demanding: at 75 % retention it stays
+within **0.02 to 2.63 points** of dense across all eight settings while cutting reported computation
+by **22.30 to 25.03 %**.
 
-Question-conditioned token selection at the same fixed budgets as static. The `textsim` selector
-scores every visual token by its maximum cosine similarity to the question-token embeddings, keeps
-the top K, and restores the original spatial order. The selector is training-free and needs no extra
-language-model pass for scoring. Because the per-sample budget is identical to static, the
-comparison isolates the selection decision. The main success is Qwen2.5-VL-7B on TextVQA, confirmed
-by an independent clean-room reimplementation that reproduces the predictions exactly.
+### Dynamic-WHICH — question-conditioned selection
 
-### Dynamic-COUNT
+Training-free. Each visual token is scored by its maximum cosine similarity to the question-token
+embeddings, the top *K* are kept, and the original spatial order is restored. No extra language-model
+pass is needed for scoring, and the retained count is identical to static at every budget, so the
+comparison isolates the selection decision alone.
 
-Adaptive per-sample token budget, with the selector held fixed. A reduced-budget probe pass (15 % or
-25 %) produces a provisional answer and 27 decision features: seven decoding-confidence signals, ten
-selector-score statistics, and ten question and input features. A controller fitted on the first
-20 % of each sample list then decides, per sample, whether the probe answer stands or a second pass
-at a larger budget is needed. Two variants: **DC-D**, a discrete cascade that either keeps the probe
-answer or escalates once to a calibrated fixed budget (50 % or 75 %), and **DC-C**, a continuous
-controller that predicts a per-sample integer token count and runs a second pass only when the
-prediction exceeds the probe count. The accounting is honest: an escalated sample pays for both
-passes. Each controller is compared with the fixed-budget accuracy-versus-FLOPs curve of its own
-selector, rebuilt on the held-out samples, at matched average compute. The result is mostly negative
-or near-tie, and that outcome is central to the thesis rather than a footnote.
+### Dynamic-COUNT — adaptive per-sample budget
 
-## Results Summary
+A reduced-budget probe pass (15 % or 25 %) produces a provisional answer plus decision features. A
+controller fitted on the **first 20 %** of each sample list decides, per sample, whether the probe
+answer stands or a second pass at a larger budget is needed. Evaluation uses the **held-out 80 %**.
 
-The complete matrix: 2 models × 4 datasets, all budgets, with the fairness gate passed on every run.
-Dense, static, and WHICH are measured on the full locked sample lists. DC-D and DC-C are calibrated
-on the first 20 % of each list and evaluated on the held-out 80 %, so their deltas are against the
-static accuracy-compute curve rebuilt on those same held-out ids at matched average FLOPs. WHICH
-deltas are against static at the same budget.
+- **DC-D** — discrete cascade: keep the probe answer, or escalate once to a calibrated budget.
+- **DC-C** — continuous: predict a per-sample integer token count, run a second pass only if it
+  exceeds the probe count.
 
-| Model | Dataset | Dense | Best static | Best WHICH Δstatic | Best DC-D Δcurve | Best DC-C Δcurve | Verdict |
+An escalated sample pays for **both** passes. Each controller is compared with the fixed-budget curve
+of its own selector, rebuilt on the same held-out samples, at matched mean computation.
+
+---
+
+## Results
+
+### Complete matrix
+
+Dense, static and WHICH use the full locked sample lists. DC-D and DC-C are calibrated on the first
+20 % and evaluated on the held-out 80 %, so **their absolute scores are not comparable with the
+full-set columns**. Only their paired differences against matched references are.
+
+| Model | Dataset | Dense | Best static | WHICH Δ static | DC-D Δ curve | DC-C Δ curve | Outcome |
 |---|---|--:|---|--:|--:|--:|---|
-| LLaVA-1.5 | GQA | 61.42 | 61.53 (p75) | −0.73 | −0.10 | −1.26 | static stands |
-| LLaVA-1.5 | VQAv2 | 77.33 | 77.31 (p75) | −1.59 | +0.06 | −0.25 | static stands |
-| LLaVA-1.5 | TextVQA | 57.65 | 57.39 (p75) | −3.91 | **+0.75** | +0.48 | DC-D beats static |
-| LLaVA-1.5 | DocVQA | 21.53 | 21.36 (p75) | −3.97 | −0.89 | −0.54 | static stands |
-| Qwen2.5-VL | GQA | 60.96 | 60.85 (p75) | −0.68 | −0.03 | −0.19 | static stands |
-| Qwen2.5-VL | VQAv2 | 84.27 | 83.66 (p75) | −0.06 | +0.21 | −0.84 | static stands |
-| Qwen2.5-VL | TextVQA | 81.06 | 78.43 (p75) | **+8.36** | +0.02 | −7.27 | **WHICH beats static** |
-| Qwen2.5-VL | DocVQA | 94.76 | 93.98 (p75) | +3.19 | −4.61 | −11.07 | see caveat below |
+| LLaVA-1.5 | GQA | 61.42 | 61.53 (75 %) | −0.73 | −0.10 | −1.26 | static holds |
+| LLaVA-1.5 | VQAv2 | 77.33 | 77.31 (75 %) | −1.59 | +0.06 | −0.25 | static holds |
+| LLaVA-1.5 | TextVQA | 57.65 | 57.39 (75 %) | −3.91 | **+0.75** | +0.48 | DC-D improves |
+| LLaVA-1.5 | DocVQA | 21.53 | 21.36 (75 %) | −3.97 | −0.89 | −0.54 | static holds |
+| Qwen2.5-VL | GQA | 60.96 | 60.85 (75 %) | −0.68 | −0.03 | −0.19 | static holds |
+| Qwen2.5-VL | VQAv2 | 84.27 | 83.66 (75 %) | −0.06 | +0.21 | −0.84 | static holds |
+| Qwen2.5-VL | TextVQA | 81.06 | 78.43 (75 %) | **+8.36** | +0.02 | −7.27 | **WHICH improves** |
+| Qwen2.5-VL | DocVQA | 94.76 | 93.98 (75 %) | +3.19 | −4.61 | −11.07 | see caveat |
 
-The headline positive result, Qwen2.5-VL-7B on TextVQA over the full 5,000 validation questions:
+### The one consistent selection improvement
 
-| Budget | Dynamic-WHICH | Static | Dense | Gain vs static | FLOP reduction |
+Qwen2.5-VL on TextVQA, full 5,000 validation questions, question-conditioned versus static at
+identical retained-token counts:
+
+| Budget | Question-conditioned | Static | Dense | Δ static | Computation reduction |
 |--:|--:|--:|--:|--:|--:|
-| 15 % | 60.56 | 53.06 | 81.06 | **+7.50** | 78.7 % |
-| 25 % | 67.53 | 59.17 | 81.06 | **+8.36** | 69.6 % |
-| 35 % | 71.36 | 63.57 | 81.06 | **+7.79** | 60.6 % |
-| 50 % | 76.08 | 70.14 | 81.06 | **+5.94** | 46.8 % |
-| 75 % | 79.80 | 78.43 | 81.06 | **+1.37** | 23.6 % |
+| 15 % | 60.56 | 53.06 | 81.06 | **+7.50** | 78.65 % |
+| 25 % | 67.53 | 59.17 | 81.06 | **+8.36** | 69.64 % |
+| 35 % | 71.36 | 63.57 | 81.06 | **+7.79** | 60.56 % |
+| 50 % | 76.08 | 70.14 | 81.06 | **+5.94** | 46.84 % |
+| 75 % | 79.80 | 78.43 | 81.06 | **+1.37** | 23.63 % |
 
-The gain peaks at the 25 % budget (+8.36) rather than at the tightest one, and it stays above the
-near-tie band even at 75 %. The clean-room reimplementation reproduces the selector
-prediction-for-prediction (200/200 exact matches, zero score difference, at every budget).
+The gain peaks at 25 %, not at the tightest budget, and stays above the near-tie band even at 75 %.
+An **independent reimplementation** of the selector reproduced all 200 checked predictions at every
+budget with zero score difference. That supports implementation consistency in this setting. It does
+not explain *why* the selector helps, and it does not establish correctness elsewhere.
 
-**Qwen DocVQA caveat.** Dynamic-WHICH shows a localized low-budget improvement there (+3.19 at the
-15 % budget: 33.09 vs static 29.90), but it is not the overall best method for that dataset. The
-win occurs where both methods have already collapsed, while higher static budgets and dense remain
-far stronger in absolute accuracy (static p75 = 93.98, dense = 94.76).
+> **Qwen2.5-VL DocVQA caveat.** There is a +3.19 improvement at 15 % retention (33.09 vs 29.90), but
+> both conditions sit far below the dense reference of 94.76, and the improvement does not persist at
+> any larger budget. It is not evidence that question conditioning helps on DocVQA.
 
-**Stacking COUNT on WHICH** (Qwen2.5-VL × TextVQA, held-out): DC-D lands +6.99 above the static
-curve but −0.41 against the fixed-budget curve of its own question-conditioned selector, and DC-C is
-−2.03 to −2.30 against that curve. The whole gain belongs to the selector; adaptive budgeting adds
-no further increment on top of it.
+### Adaptive budgeting
 
-## Key Findings
+Across the **24** comparisons with static selection: **1 improvement, 10 near-ties, 13 decreases**.
+The single improvement is DC-D on LLaVA-1.5 TextVQA at +0.75. **No continuous controller** exceeds
+the +0.50 boundary anywhere.
 
-1. **Static pruning is a strong and reliable baseline.** Near-dense at the 75 % budget on every
-   cell, graceful on scene-centric tasks even at 15 %. A dynamic method has to be judged against
-   this floor, not only against dense inference; beating dense alone says little about the quality
-   of a pruning rule.
-2. **Dynamic-WHICH is not universal.** Across the 40-cell matrix it records 6 wins, 2 near-ties, and
-   32 losses against static at the same budget; all 20 LLaVA cells are negative.
-3. **Where it works, it works well.** On Qwen2.5-VL × TextVQA, question-conditioned selection gains
-   +5.94 to +8.36 points at the four tighter budgets, a validated and reproducible improvement. The
-   pattern is consistent with questions pointing at localized, readable evidence in
-   language-aligned visual features, though the token-level mechanism was not verified directly.
-4. **Dynamic-COUNT does not consistently beat the fixed-budget curve.** DC-D achieves one small win
-   (LLaVA TextVQA, +0.75) and otherwise near-ties or loses; DC-C gives no win at all (best +0.48, a
-   near-tie; the steep-curve cells lose by up to −11.07). Stacking COUNT on top of the successful
-   WHICH selector adds no further increment.
-5. **The oracle headroom is real but not recovered.** A perfect per-sample budget router over the
-   five static budgets would beat the best fixed budget by +2.09 to +6.25 points, exceed even dense
-   in every cell, and retain 61 to 83 % fewer visual tokens; yet the practical controllers do not
-   reliably recover this headroom under honest two-pass accounting.
-6. **Negative results are included by design.** All eight model-dataset cells are reported for every
-   method, on identical samples, with the gate verdict stored in every result file. The negatives
-   are as load-bearing for the thesis as the single strong positive.
+Stacking budgeting on top of the successful selector (Qwen2.5-VL × TextVQA, held out):
 
-## Repository Structure
+| Controller | Score | Δ question-conditioned curve | Δ static curve |
+|---|--:|--:|--:|
+| Discrete cascade | 62.07 | −0.41 | **+6.99** |
+| Continuous (ridge) | 77.09 | −2.30 | −0.35 |
+| Continuous (rule) | 77.92 | −2.03 | −0.79 |
+
+The +6.99 belongs to the **selector**, not the budget decision: the same result sits *below* the
+fixed-budget curve of its own selector. Adaptive budgeting adds nothing on top.
+
+### Retrospective oracle
+
+Routing each sample to its best-scoring evaluated budget beats the best single fixed budget by
+**+2.09 to +6.25 points** in all eight settings, exceeds dense in all eight, and retains
+**61.50 to 82.99 %** fewer visual tokens.
+
+This is an **upper bound, not a method.** It selects *after* seeing the outcomes, so it is not
+deployable, and it says nothing about token counts outside the five evaluated budgets. It shows the
+headroom exists. It does not show a controller can reach it.
+
+---
+
+## Findings
+
+1. **Static pruning is a strong baseline.** Within 0.02–2.63 points of dense at 75 % retention on
+   every setting. A dynamic method must be judged against this, not against dense alone, since
+   beating dense says little about the quality of a pruning rule.
+2. **Question conditioning is not general.** Across 40 matched comparisons: **6 improvements, 2
+   near-ties, 32 decreases**. All 20 LLaVA-1.5 comparisons fall below static.
+3. **Where it works, it works well.** Qwen2.5-VL × TextVQA gains +5.94 to +8.36 points at the four
+   tighter budgets, reproducible and independently checked. This is consistent with questions
+   pointing at localized readable evidence in language-aligned features, though the token-level
+   mechanism was never verified directly.
+4. **Adaptive budgeting does not consistently pay.** One improvement in 24 comparisons, none from a
+   continuous controller, and no increment on top of question-conditioned selection.
+5. **Oracle headroom is real but unrecovered.** The gap between retrospective potential and practical
+   controllers is the central negative result, not a footnote.
+6. **Negative results are reported by design.** All eight settings appear for every method, on
+   identical samples, with the validation verdict stored in every result file.
+
+---
+
+## Repository structure
 
 ```
-dense/                  method-facing entry point for the dense baseline
-static/                 method-facing entry point for static pruning
-dynamic_which/          method-facing entry point for Dynamic-WHICH
-dynamic_count/          method-facing entry point for Dynamic-COUNT
-src/                    implementation code grouped by role and method
-scripts/                runnable scripts grouped by method, validation, and tables
-results/                committed result tables and fitted Dynamic-COUNT controller configs
-configs/                sha256-locked sample manifests (sample_ids/*.json)
-requirements.txt        pinned environment for the LLaVA-1.5-7B result cells
-requirements-qwen.txt   pinned environment for the Qwen2.5-VL-7B result cells
+dense/                  entry point + docs for the dense reference
+static/                 entry point + docs for static pruning
+dynamic_which/          entry point + docs for question-conditioned selection
+dynamic_count/          entry point + docs for adaptive budgeting
+src/                    implementation, grouped by role and method
+  common/                 sample manifests, output schema, validation, FLOP accounting
+scripts/                runnable scripts: per method, validation, table generation
+results/tables/         committed summary tables, the evidence behind this README
+results/configs/        fitted Dynamic-COUNT controllers
+configs/sample_ids/     SHA-256 locked sample manifests
+requirements.txt        pinned environment for LLaVA-1.5 runs
+requirements-qwen.txt   pinned environment for Qwen2.5-VL runs
 ```
 
-Each method folder contains a `README.md` (what and why), `CODE_MAP.md` (exact implementation
-files), `COMMANDS.md` (safe CPU validation, table generation, and GPU rerun commands), `RESULTS.md`
-(the real numbers), and a safe wrapper script. The shared evaluation core (sample manifests,
-output schema, fairness gate, FLOP accounting) lives in `src/common/`, and the per-method runner
-cores live in `src/dense/`, `src/static/`, `src/dynamic_which/`, and `src/dynamic_count/`.
+Each method folder carries `README.md`, `CODE_MAP.md`, `COMMANDS.md` and `RESULTS.md`.
 
-Datasets, model weights, per-sample run outputs, and run logs are local-only and are not part of
-the public repository; the committed evidence is the summary tables, the fitted controller
-configs, the locked sample manifests, and the two pinned environment specifications.
+**Not in this repository:** datasets, model weights, per-sample prediction records, run logs and the
+thesis manuscript. The committed evidence is the summary tables, the fitted controllers, the locked
+manifests and the two environment specifications.
+
+---
 
 ## Reproducibility
 
@@ -228,60 +296,99 @@ The committed results can be re-verified on CPU in minutes, with no model and no
 ```bash
 python -m compileall -q src scripts
 python -m src.common.test_evaluation_core
-python -m scripts.validation.validate_dynamic_count
 python -m scripts.validation.validate_dynamic_which
-python -m scripts.validation.audit_dynamic_count
 python -m scripts.validation.audit_dynamic_which
+python -m scripts.validation.validate_dynamic_count
+python -m scripts.validation.audit_dynamic_count
 ```
 
-Expected output: all self-checks pass, both validators report `ALL_*_VALID=True`, the WHICH audit
-reports 40/40 cells complete, and the COUNT audit reports zero probe-reproduction failures.
+Expected: all self-checks pass, both validators report `ALL_*_VALID=True`, the WHICH audit reports
+40 of 40 settings complete, and the COUNT audit reports zero probe-reproduction failures.
 
-Full GPU reruns are expensive (two pinned conda environments, two GPUs, many hours) and are only
-needed to reproduce the experiments from scratch; because the per-sample records stay local,
-regenerating the source tables externally requires such a rerun. Each method folder (`dense/`,
-`static/`, `dynamic_which/`, `dynamic_count/`) documents its rerun commands in `COMMANDS.md`, and
-all launchers skip existing results rather than overwrite them. Decoding is greedy, so there is no
-sampling randomness, but bitwise-identical model reruns across different hardware or library
-versions are not guaranteed.
+Regenerate the summary tables:
+
+```bash
+python -m scripts.tables.make_dynamic_which_summary
+python -m scripts.tables.make_dynamic_count_tables
+python -m scripts.tables.make_final_thesis_tables
+```
+
+**Two pinned environments are required** for model runs, because the two models are not compatible
+with a single `transformers` version:
+
+```bash
+conda create -n vlm_env python=3.11 -y && conda activate vlm_env
+pip install -r requirements.txt          # torch 2.3.0+cu121, transformers 4.46.3
+
+conda create -n qwen_env python=3.11 -y && conda activate qwen_env
+pip install -r requirements-qwen.txt     # torch 2.5.1+cu121, transformers 4.51.3
+```
+
+Full GPU reruns are expensive and are only needed to reproduce from scratch. Because the per-sample
+records stay local, regenerating the source tables externally requires such a rerun. Each method
+folder documents its commands in `COMMANDS.md`, and launchers skip existing results rather than
+overwrite them. Decoding is greedy, so there is no sampling randomness, but **bitwise-identical
+reruns across different hardware or library versions are not guaranteed**.
+
+---
 
 ## Limitations
 
-- Two models and four VQA-style datasets only; conclusions beyond this grid are not claimed.
-- The two static baselines use different architecture-specific ranking signals (CLS attention for
-  LLaVA, activation norm for Qwen). The study does not establish that activation norm is the
-  strongest possible question-independent selector for Qwen, and a stronger static baseline could
-  shrink the TextVQA gains.
-- No training-based learned selector in the final thesis scope; all selection methods are
-  training-free on frozen backbones, and the Dynamic-COUNT controllers fit only small components
-  outside the model.
-- Dynamic-WHICH does not generalize across all tasks; it is a regime-specific tool.
-- Dynamic-COUNT did not reliably recover the oracle headroom; the simple, explainable controllers
-  used here (a rule controller and a small ridge model) are a deliberate design choice, not an
-  exhaustive search.
-- Compute is measured as analytical prefill FLOPs of language-model input processing, applied
-  identically to every method; the vision encoder, selector operations, and decoding are outside
-  the estimate, and wall-clock latency and memory were not measured in the final scope.
-- The VQAv2 scorer is an adapted consensus metric, so VQAv2 values are internally comparable but
-  not official leaderboard scores.
-- Result paths and sample manifests are locked for reproducibility: result file names encode the
-  references other methods resolve, so they must not be renamed.
+- **Two models, four short-answer VQA datasets.** No claim is made beyond this grid. Captioning,
+  long-form generation and multi-turn interaction were not evaluated.
+- **The static baselines are architecture-specific** (CLS attention vs activation norm). The study
+  does not establish that activation norm is the strongest question-independent selector for
+  Qwen2.5-VL, and a stronger baseline could shrink the TextVQA gains.
+- **One question-conditioned rule**, held fixed across all settings. Results describe that rule
+  rather than question-conditioned selection in general.
+- **Frozen backbones by design.** No trained selector, so the results say nothing about what training
+  could recover.
+- **Simple controllers by design.** A rule controller and a small ridge model, chosen for
+  transparency rather than as an exhaustive search.
+- **Computation is analytical, not end-to-end.** Vision encoding, projection or merging, token
+  scoring and selection, controller inference, decoding, latency and memory are all outside the
+  estimate.
+- **No uncertainty estimates.** The ±0.50 band is descriptive, not a statistical test.
+- **VQAv2 values are not official leaderboard scores** (adapted consensus scoring).
+- **Result file names and manifests are load-bearing** and must not be renamed or regenerated.
+- **Reproducibility gaps.** Manuscript table values were transferred by hand with no automated check,
+  per-sample records remain local, and the DocVQA snapshot has a content fingerprint but no recorded
+  upstream revision.
 
-## Future Work
+---
 
-- Learned question-conditioned selectors, especially for models whose visual features are not
-  natively language-aligned.
-- Stronger adaptive-budget controllers, and calibration methods for the confidence and risk signals
-  the budget decision depends on.
-- Broader coverage: more models, more datasets, and tasks beyond short-answer VQA.
-- Training-time pruning or distillation, which the frozen-backbone scope deliberately excluded.
-- Latency and memory analysis beyond analytical FLOPs.
-- Task-aware or OCR-aware pruning for text-heavy datasets, where the static floor collapses and the
-  potential gain from smarter selection is largest.
+## Future work
 
-## Notes on Local-Only Material
+- Compare the Qwen2.5-VL static selector against other question-independent selectors, to test
+  whether the TextVQA advantage survives a different comparator.
+- Alternative similarity functions, representations from other layers, and trained selectors.
+- Additional frozen models, or one family at several scales, to separate architecture, scale and
+  selector effects.
+- Token-level coverage analysis on TextVQA and DocVQA, to test the proposed explanations directly.
+- Controllers with a larger calibration set, alternative pre-answer signals, or a budget decision
+  that avoids a full probe pass.
+- End-to-end measurement including latency, memory and the currently excluded components.
+- Uncertainty estimates such as bootstrap intervals and repeated controller fits, plus stronger
+  external reproducibility.
 
-Retired and out-of-scope material, internal planning documents, and the thesis manuscript are
-preserved locally, outside the public repository. Every move into the archive is recorded in local
-migration manifests, and nothing was deleted. The archive is history, not part of the thesis story:
-the four method folders and the tables under `results/tables/` contain everything the thesis claims.
+---
+
+## Thesis manuscript
+
+The written thesis is a nine-chapter LaTeX document with two appendices covering the full result
+tables and reproducibility notes. It is kept **local-only** and is not part of this repository.
+
+---
+
+## Citation
+
+```bibtex
+@mastersthesis{nafees2026pruning,
+  title  = {Dynamic Question-Conditioned Visual Token Pruning for
+            Efficient Vision-Language Models},
+  author = {Nafees, Mo},
+  school = {University of Luxembourg},
+  year   = {2026},
+  type   = {Master's thesis}
+}
+```
