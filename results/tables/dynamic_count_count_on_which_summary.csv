@@ -1,0 +1,4 @@
+model,dataset,selector,variant,n,score_pct,avg_TFLOPs,which_curve_at_matched_flops,delta_vs_which_curve_pp,static_curve_at_matched_flops,delta_vs_static_curve_pp,eval_population
+qwen25vl7b,textvqa,textsim,DC-C ridge,4000,77.09,4.204,79.39,-2.3,77.44,-0.35,eval-80%
+qwen25vl7b,textvqa,textsim,DC-C rule,4000,77.92,4.48,79.95,-2.03,78.71,-0.79,eval-80%
+qwen25vl7b,textvqa,textsim,DC-D,4000,62.07,1.396,62.48,-0.41,55.08,6.99,eval-80%

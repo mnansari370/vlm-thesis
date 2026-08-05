@@ -18,6 +18,7 @@ against the fixed Dynamic-WHICH textsim curve.
 
 from __future__ import annotations
 
+import csv
 import glob
 import json
 import os
@@ -172,9 +173,51 @@ def cow_vs_which_curve():
         ex = a["extra_dynamic_count"]
         tag = ("DC-D" if a["method"].endswith("dcd") else f"DC-C {ex.get('controller')}")
         which_at = dce.interp_curve(pts, a["flops_prefill_TFLOPs_avg"])
-        out.append((tag, a["score_pct"], round(a["flops_prefill_TFLOPs_avg"], 3),
-                    a["delta_vs_static_curve_pp"], round(a["score_pct"] - which_at, 2)))
+        out.append({
+            "model": "qwen25vl7b",
+            "dataset": "textvqa",
+            "selector": "textsim",
+            "variant": tag,
+            "n": a.get("n"),
+            "score_pct": a["score_pct"],
+            "avg_TFLOPs": round(a["flops_prefill_TFLOPs_avg"], 3),
+            "which_curve_at_matched_flops": round(which_at, 2),
+            "delta_vs_which_curve_pp": round(a["score_pct"] - which_at, 2),
+            "static_curve_at_matched_flops": a["static_at_matched_flops"],
+            "delta_vs_static_curve_pp": a["delta_vs_static_curve_pp"],
+            "eval_population": "eval-80%",
+        })
     return out
+
+
+COW_COLS = ["model", "dataset", "selector", "variant", "n", "score_pct", "avg_TFLOPs",
+            "which_curve_at_matched_flops", "delta_vs_which_curve_pp",
+            "static_curve_at_matched_flops", "delta_vs_static_curve_pp", "eval_population"]
+
+
+def write_count_on_which(cow_attr):
+    """Machine-readable COUNT-on-WHICH summary (qwen25vl7b x textvqa, held-out 80%)."""
+    path_csv = os.path.join(TABLES, "dynamic_count_count_on_which_summary.csv")
+    with open(path_csv, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f, lineterminator="\n")
+        w.writerow(COW_COLS)
+        for r in cow_attr:
+            w.writerow(["" if r[c] is None else str(r[c]) for c in COW_COLS])
+    md = ["# Dynamic-COUNT after question-conditioned selection (qwen25vl7b x textvqa)", "",
+          "Held-out 80% evaluation after calibration. Both references are fixed-budget curves",
+          "reconstructed on the same held-out ids and interpolated at the matched mean analytical",
+          "language-model input-processing computation. Deltas are controller score minus reference.", "",
+          "| Model | Dataset | Sel | Variant | n | Score | avgTFLOPs | WHICH-curve@same | dWHICH | static@same | dstatic |",
+          "|---|---|---|---|--:|--:|--:|--:|--:|--:|--:|"]
+    for r in cow_attr:
+        md.append(f"| {r['model']} | {r['dataset']} | {r['selector']} | {r['variant']} | {r['n']} | "
+                  f"{r['score_pct']:.2f} | {r['avg_TFLOPs']:.3f} | {r['which_curve_at_matched_flops']:.2f} | "
+                  f"{r['delta_vs_which_curve_pp']:+.2f} | {r['static_curve_at_matched_flops']:.2f} | "
+                  f"{r['delta_vs_static_curve_pp']:+.2f} |")
+    path_md = os.path.join(TABLES, "dynamic_count_count_on_which_summary.md")
+    with open(path_md, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(md) + "\n")
+    return path_md, path_csv
 
 
 def fmt(v):
@@ -227,18 +270,20 @@ def write_main(rows, warnings, cow_attr):
     md += ["## COUNT-on-WHICH attribution (qwen25vl7b × textvqa, eval-80%)", "",
            "| Variant | Score | TFLOPs | Δ vs STATIC curve | Δ vs fixed TEXTSIM curve (COUNT's own increment) |",
            "|---|--:|--:|--:|--:|"]
-    for tag, sc, fl, ds, dw in cow_attr:
-        md.append(f"| {tag} | {sc:.2f} | {fl:.3f} | {ds:+.2f} | {dw:+.2f} |")
+    for c in cow_attr:
+        md.append(f"| {c['variant']} | {c['score_pct']:.2f} | {c['avg_TFLOPs']:.3f} | "
+                  f"{c['delta_vs_static_curve_pp']:+.2f} | {c['delta_vs_which_curve_pp']:+.2f} |")
     if warnings:
         md += ["", "## Warnings", ""] + [f"- {w}" for w in warnings]
     path_md = os.path.join(TABLES, "final_dense_static_dynamic_comparison.md")
     with open(path_md, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(md) + "\n")
     path_csv = os.path.join(TABLES, "final_dense_static_dynamic_comparison.csv")
-    with open(path_csv, "w", encoding="utf-8", newline="\n") as f:
-        f.write(",".join(COLS) + "\n")
+    with open(path_csv, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f, lineterminator="\n")
+        w.writerow(COLS)
         for r in rows:
-            f.write(",".join("" if r[c] is None else str(r[c]) for c in COLS) + "\n")
+            w.writerow(["" if r[c] is None else str(r[c]) for c in COLS])
     return path_md, path_csv, len(rows)
 
 
@@ -310,7 +355,8 @@ def thesis_summary(frows, cow_attr):
                   f"{which_d} | {dcd_d} | {dcc_d} | {r['verdict']} |")
     md += ["",
            "**COUNT-on-WHICH (qwen × textvqa, separate):** " +
-           "; ".join(f"{t}: Δstatic {ds:+.2f}, Δtextsim-curve {dw:+.2f}" for t, _, _, ds, dw in cow_attr) + ".",
+           "; ".join(f"{c['variant']}: Δstatic {c['delta_vs_static_curve_pp']:+.2f}, "
+                     f"Δtextsim-curve {c['delta_vs_which_curve_pp']:+.2f}" for c in cow_attr) + ".",
            "",
            "**Reading:** Dynamic-WHICH (textsim) beats the static floor only on Qwen×TextVQA "
            "(localized, text-addressable evidence + language-aligned visual features) — validated "
@@ -335,6 +381,9 @@ def main() -> int:
     p1, p1c, nmain = write_main(rows, warnings, cow_attr)
     p2, p2c, frows = best_method_tables(rows)
     p3 = thesis_summary(frows, cow_attr)
+    p4md, p4csv = write_count_on_which(cow_attr)
+    for _p in (p4md, p4csv):
+        print(f"[written] {_p}")
     for p in (p1, p1c, p2, p2c, p3):
         print(f"[written] {p}")
     print(f"\nMAIN_TABLE_ROWS={nmain}  BEST_METHOD_ROWS={len(frows)}  COW_ATTRIBUTION_ROWS={len(cow_attr)}")
